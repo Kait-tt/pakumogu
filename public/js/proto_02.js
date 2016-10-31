@@ -16,38 +16,50 @@ function initGame() {
     game.preload(mapImg, charImg);
 
     var socket = new Socket();
-    socket.join('dummy user');
-
-    socket.on('joinRoom', () => {
+    socket.join(getRequest('user'));
+    
+    socket.on('joinRoom', ({user}) => {
         console.log('on join room');
-        socket.initGame();
     });
-
-    socket.on('initGame', () => {
-        console.log('on init game');
-        socket.startGame();
-    });
-
-    socket.on('startGame', () => {
-        console.log('on start game');
-    });
-
+    
+    //only user xx can start game
+    if(getRequest('user') == 'xx'){
+    	socket.on('initGame', () => {
+	        console.log('on init game');
+	        socket.initGame();
+	    });
+	
+	    socket.on('startGame', () => {
+	        console.log('on start game');
+	        socket.startGame();
+	    });
+    }
+    //end start game socket
+    
     game.onload = function () {
     	
     	var map = initMap(game);
         
-        var player = initPlayer(game,map,socket);
+        var player = initPlayer(game,map,socket,'xx');
+        var player2 = initPlayer(game,map,socket,'yy');
 
         socket.on('movePlayer', (req) => {
             // const playerId = req.player.id;
             const {x, y} = req.player.coordinate;
-            player.x = x;
-            player.y = y;
+            console.log("username : " + req.player.user.username);
+            if(req.player.user.username == 'xx'){
+	            player.x = x;
+	            player.y = y;
+            }else{
+            	player2.x = x;
+	            player2.y = y;
+            }
         });
         
         // Add elements to scene.
         game.rootScene.addChild(map);
         game.rootScene.addChild(player);
+        game.rootScene.addChild(player2);
     };
     game.start();
 }
@@ -142,14 +154,20 @@ function initMap(game){
     return map;
 }
 
-function initPlayer(game,map,socket){
+function initPlayer(game,map,socket,userId){
 	 // Player for now will be a 36x36.
     var player = new Sprite(32, 32);
     player.image = game.assets[charImg];
     player.x = 16 * 2;
     player.y = 16 * 2;
     player.speed = 16;
-    player.frame = [6, 6, 7, 7];
+    
+    //switch player character by user id
+    if(userId == 'xx'){
+    	player.frame = [6, 6, 7, 7]; //brown
+    }else{
+    	player.frame = [1, 1, 2, 2]; // white
+    }
 
     var x = player.x;
     var y = player.y;
@@ -159,8 +177,8 @@ function initPlayer(game,map,socket){
     	// First move the player. If the player's new location has resulted
         // in the player being in a "hit" zone, then back the player up to
         // its original location. Tweak "hits" by "offset" pixels.
-    	var xoffset = 4;
-    	var yoffset = 4;
+    	var xoffset = 0;
+    	var yoffset = 0;
         if (game.input.up) {            // Move up
             y -= player.speed;
             if (map.hitTest(x + xoffset, y + yoffset)) {
@@ -192,4 +210,9 @@ function initPlayer(game,map,socket){
     });
     
     return player;
+}
+
+function getRequest(name){
+	   if(name=(new RegExp('[?&]'+encodeURIComponent(name)+'=([^&]*)')).exec(location.search))
+	      return decodeURIComponent(name[1]);
 }
