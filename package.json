@@ -1,0 +1,53 @@
+{
+  "name": "pakumogu",
+  "version": "0.0.1",
+  "description": "paku paku mogu mogu",
+  "main": "app.js",
+  "scripts": {
+    "start": "node ./bin/www",
+    "lint": "eslint",
+    "lint:all": "eslint . --ext .js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kait-tt/pakumogu.git"
+  },
+  "keywords": [
+    "web",
+    "game",
+    "multi-play"
+  ],
+  "author": "Kait-tt",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Kait-tt/pakumogu/issues"
+  },
+  "homepage": "https://github.com/Kait-tt/pakumogu#readme",
+  "engines": {
+    "node": "~6.3.1"
+  },
+  "dependencies": {
+    "bluebird": "^3.4.1",
+    "body-parser": "^1.15.2",
+    "co": "^4.6.0",
+    "cookie-parser": "^1.4.3",
+    "cross-env": "^2.0.0",
+    "debug": "^2.2.0",
+    "ejs": "^2.5.1",
+    "eventemitter2": "^2.1.0",
+    "express": "^4.14.0",
+    "express-session": "^1.14.0",
+    "lodash": "^4.14.2",
+    "moment": "^2.14.1",
+    "morgan": "^1.7.0",
+    "serve-favicon": "^2.3.0",
+    "socket.io": "^1.4.8",
+    "socket.io-client": "^1.4.8"
+  },
+  "devDependencies": {
+    "eslint": "^3.6.0",
+    "eslint-config-standard": "^6.0.1",
+    "eslint-plugin-promise": "^2.0.1",
+    "eslint-plugin-standard": "^2.0.0"
+  }
+}
