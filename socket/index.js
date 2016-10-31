@@ -66,17 +66,17 @@ class SocketRouter {
 
     initGame () {
         this.gameMaster.initGame();
-        this.emits('initGame', {game: this.game});
+        this.emits('initGame', {game: this.gameMaster.game.serialize()});
     }
 
     startGame () {
         this.gameMaster.startGame();
-        this.emits('startGame', {game: this.game});
+        this.emits('startGame', {game: this.gameMaster.game.serialize()});
     }
 
     movePlayer (user, {x, y}) {
         const player = this.gameMaster.movePlayer(user, {x, y});
-        this.emits('movePlayer', {player});
+        this.emits('movePlayer', {player: player.serialize()});
     }
 
     emits (key, params) {
