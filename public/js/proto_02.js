@@ -15,11 +15,35 @@ function initGame() {
 
     game.preload(mapImg, charImg);
 
+    var socket = new Socket();
+    socket.join('dummy user');
+
+    socket.on('joinRoom', () => {
+        console.log('on join room');
+        socket.initGame();
+    });
+
+    socket.on('initGame', () => {
+        console.log('on init game');
+        socket.startGame();
+    });
+
+    socket.on('startGame', () => {
+        console.log('on start game');
+    });
+
     game.onload = function () {
     	
     	var map = initMap(game);
         
-        var player = initPlayer(game,map);
+        var player = initPlayer(game,map,socket);
+
+        socket.on('movePlayer', (req) => {
+            // const playerId = req.player.id;
+            const {x, y} = req.player.coordinate;
+            player.x = x;
+            player.y = y;
+        });
         
         // Add elements to scene.
         game.rootScene.addChild(map);
@@ -118,7 +142,7 @@ function initMap(game){
     return map;
 }
 
-function initPlayer(game,map){
+function initPlayer(game,map,socket){
 	 // Player for now will be a 36x36.
     var player = new Sprite(32, 32);
     player.image = game.assets[charImg];
@@ -126,6 +150,9 @@ function initPlayer(game,map){
     player.y = 16 * 2;
     player.speed = 16;
     player.frame = [6, 6, 7, 7];
+
+    var x = player.x;
+    var y = player.y;
     
     // Let player move within bounds.
     player.addEventListener(Event.ENTER_FRAME, function () {
@@ -135,28 +162,32 @@ function initPlayer(game,map){
     	var xoffset = 4;
     	var yoffset = 4;
         if (game.input.up) {            // Move up
-            player.y -= player.speed;
-            if (map.hitTest(player.x + xoffset, player.y + yoffset)) {
-                player.y += player.speed;
+            y -= player.speed;
+            if (map.hitTest(x + xoffset, y + yoffset)) {
+                y += player.speed;
             }
         }
         else if (game.input.down) {     // Move down
-            player.y += player.speed;
-            if (map.hitTest(player.x + xoffset, player.y + yoffset)) {
-                player.y -= player.speed;
+            y += player.speed;
+            if (map.hitTest(x + xoffset, y + yoffset)) {
+                y -= player.speed;
             }
         }
         else if (game.input.left) {     // Move left
-            player.x -= player.speed;
-            if (map.hitTest(player.x + xoffset, player.y + yoffset)) {
-                player.x += player.speed;
+            x -= player.speed;
+            if (map.hitTest(x + xoffset, y + yoffset)) {
+                x += player.speed;
             }
         }
         else if (game.input.right) {    // Move right
-            player.x += player.speed;
-            if (map.hitTest(player.x + xoffset, player.y + yoffset)) {
-                player.x -= player.speed;
+            x += player.speed;
+            if (map.hitTest(x + xoffset, y + yoffset)) {
+                x -= player.speed;
             }
+        }
+
+        if (x !== player.x || y !== player.y) {
+            socket.movePlayer({x, y});
         }
     });
     

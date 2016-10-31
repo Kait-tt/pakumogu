@@ -22,7 +22,7 @@
             this.io.emit('startGame');
         }
 
-        movePlayer (x, y) {
+        movePlayer ({x, y}) {
             this.io.emit('movePlayer', {x, y});
         }
 
