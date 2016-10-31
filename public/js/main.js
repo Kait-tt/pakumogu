@@ -9,8 +9,9 @@
         socket.initGame();
     });
 
-    socket.on('initGame', () => {
+    socket.on('initGame', ({game}) => {
         console.log('on init game');
+        console.log(game.players);
         socket.startGame();
     });
 
