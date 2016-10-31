@@ -39,11 +39,11 @@ class SocketRouter {
             });
 
             socket.on('initGame', () => {
-                this.initGame();
+                this.initGame(user);
             });
 
             socket.on('startGame', () => {
-                this.startGame();
+                this.startGame(user);
             });
 
             socket.on('movePlayer', ({x, y}) => {
@@ -54,29 +54,54 @@ class SocketRouter {
 
     joinRoom (user) {
         user.socket.join(this.gameRoomKey);
-        this.gameMaster.addPlayer(user);
-        this.emits('joinRoom', {username: user.username, id: user.id});
+        try {
+            this.gameMaster.addPlayer(user);
+            this.emits('joinRoom', {username: user.username, id: user.id});
+        } catch (e) {
+            console.error(e);
+            user.socket.emit('operationError', {error: e, message: e.message});
+        }
     }
 
     leaveRoom (user) {
         this.emits('leaveRoom', {username: user.username, id: user.id});
-        this.gameMaster.removePlayer(user);
-        user.socket.leave(this.gameRoomKey);
+        try {
+            this.gameMaster.removePlayer(user);
+            user.socket.leave(this.gameRoomKey);
+        } catch (e) {
+            console.error(e);
+            user.socket.emit('operationError', {error: e, message: e.message});
+        }
     }
 
-    initGame () {
-        this.gameMaster.initGame();
-        this.emits('initGame', {game: this.gameMaster.game.serialize()});
+    initGame (user) {
+        try {
+            this.gameMaster.initGame();
+            this.emits('initGame', {game: this.gameMaster.game.serialize()});
+        } catch (e) {
+            console.error(e);
+            user.socket.emit('operationError', {error: e, message: e.message});
+        }
     }
 
-    startGame () {
-        this.gameMaster.startGame();
-        this.emits('startGame', {game: this.gameMaster.game.serialize()});
+    startGame (user) {
+        try {
+            this.gameMaster.startGame();
+            this.emits('startGame', {game: this.gameMaster.game.serialize()});
+        } catch (e) {
+            console.error(e);
+            user.socket.emit('operationError', {error: e, message: e.message});
+        }
     }
 
     movePlayer (user, {x, y}) {
-        const player = this.gameMaster.movePlayer(user, {x, y});
-        this.emits('movePlayer', {player: player.serialize()});
+        try {
+            const player = this.gameMaster.movePlayer(user, {x, y});
+            this.emits('movePlayer', {player: player.serialize()});
+        } catch (e) {
+            console.error(e);
+            user.socket.emit('operationError', {error: e, message: e.message});
+        }
     }
 
     emits (key, params) {
