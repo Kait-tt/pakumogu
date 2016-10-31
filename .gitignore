@@ -1,0 +1,16 @@
+*~
+*.swp
+
+.idea/
+
+node_modules/
+
+css/
+
+.sass-cache
+
+*.log
+
+temp/
+tmp/
+
