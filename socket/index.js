@@ -1,5 +1,7 @@
+'use strict';
 const socketio = require('socket.io');
 const SocketUser = require('./user');
+const GameMaster = require('../lib/models/game_master');
 
 class SocketRouter {
     static get gameRoomKey () {
@@ -9,6 +11,9 @@ class SocketRouter {
     constructor (server) {
         this.io = socketio.listen(server);
         this.users = {};
+        this.gameMaster = new GameMaster();
+
+        this.gameMaster.createGame();
 
         this.io.sockets.on('connection', socket => {
             const user = new SocketUser(socket);
@@ -23,6 +28,7 @@ class SocketRouter {
 
             socket.on('leaveRoom', () => {
                 this.leaveRoom(user);
+                user.username = null;
             });
 
             socket.on('disconnect', () => {
@@ -31,20 +37,50 @@ class SocketRouter {
                 user.active = false;
                 delete this.users[socket.id];
             });
-        });
-    }
 
-    emits (key, params) {
-        this.io.to(this.gameRoomKey).emit(key, params);
+            socket.on('initGame', () => {
+                this.initGame();
+            });
+
+            socket.on('startGame', () => {
+                this.startGame();
+            });
+
+            socket.on('movePlayer', ({x, y}) => {
+                this.movePlayer(user, {x, y});
+            });
+        });
     }
 
     joinRoom (user) {
         user.socket.join(this.gameRoomKey);
+        this.gameMaster.addPlayer(user);
+        this.emits('joinRoom', {username: user.username, id: user.id});
     }
 
     leaveRoom (user) {
-        user.username = null;
+        this.emits('leaveRoom', {username: user.username, id: user.id});
+        this.gameMaster.removePlayer(user);
         user.socket.leave(this.gameRoomKey);
+    }
+
+    initGame () {
+        this.gameMaster.initGame();
+        this.emits('initGame', {game: this.gameMaster.game.serialize()});
+    }
+
+    startGame () {
+        this.gameMaster.startGame();
+        this.emits('startGame', {game: this.gameMaster.game.serialize()});
+    }
+
+    movePlayer (user, {x, y}) {
+        const player = this.gameMaster.movePlayer(user, {x, y});
+        this.emits('movePlayer', {player: player.serialize()});
+    }
+
+    emits (key, params) {
+        this.io.to(this.gameRoomKey).emit(key, params);
     }
 }
 
