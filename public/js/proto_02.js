@@ -66,8 +66,8 @@ function initPlayer(game,map,socket,userObj){
     player.image = game.assets[charImg];
     
     //starting point
-    player.x = userObj.coordinate.x * pixel;
-    player.y = userObj.coordinate.y * pixel;
+    player.x = userObj.coordinate.x;
+    player.y = userObj.coordinate.y;
 
     
     //if enemy = brown
@@ -94,7 +94,7 @@ function initPlayerMove(game, map, socket, player) {
             y += DY[i] * mySpeed;
         });
 
-        if (!myHitTest(map, x, y)) {
+        if (x !== player.x && y !== player.y && !myHitTest(map, x, y)) {
             socket.movePlayer({x, y});
         }
     });
