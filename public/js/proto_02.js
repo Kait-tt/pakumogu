@@ -2,64 +2,41 @@
  * http://usejsdoc.org/
  */
 
-
-window.onload = initGame;
-enchant();
-
 var mapImg = '/img/map1.png';
 var charImg = '/img/chara1.png';
 
-function initGame() {
+function initGame(userObj) {
+	
+	enchant();
+	
     var game = new Core(640, 640); //game dimension
     game.fps = 16;
 
     game.preload(mapImg, charImg);
-
-    var socket = new Socket();
-    socket.join(getRequest('user'));
-    
-    socket.on('joinRoom', ({user}) => {
-        console.log('on join room');
-    });
-    
-    //only user xx can start game
-    if(getRequest('user') == 'xx'){
-    	socket.on('initGame', () => {
-	        console.log('on init game');
-	        socket.initGame();
-	    });
-	
-	    socket.on('startGame', () => {
-	        console.log('on start game');
-	        socket.startGame();
-	    });
-    }
-    //end start game socket
     
     game.onload = function () {
     	
     	var map = initMap(game);
-        
-        var player = initPlayer(game,map,socket,'xx');
-        var player2 = initPlayer(game,map,socket,'yy');
-
+    	game.rootScene.addChild(map);
+    	
+    	var character =[];
+    	for(var i=0;i<userObj.length;i++){
+    		var objId = userObj[i].user.id;
+    		
+    		character[objId] = initPlayer(game,map,socket,userObj[i]);
+    		// Add elements to scene.
+        	game.rootScene.addChild(character[objId]);
+    	}
+    	
+    	console.log(character);
         socket.on('movePlayer', (req) => {
-            // const playerId = req.player.id;
             const {x, y} = req.player.coordinate;
-            console.log("username : " + req.player.user.username);
-            if(req.player.user.username == 'xx'){
-	            player.x = x;
-	            player.y = y;
-            }else{
-            	player2.x = x;
-	            player2.y = y;
-            }
+            var objId = req.player.user.id;
+            character[objId].x = x;
+            character[objId].y = y;
         });
         
-        // Add elements to scene.
-        game.rootScene.addChild(map);
-        game.rootScene.addChild(player);
-        game.rootScene.addChild(player2);
+        
     };
     game.start();
 }
@@ -154,7 +131,7 @@ function initMap(game){
     return map;
 }
 
-function initPlayer(game,map,socket,userId){
+function initPlayer(game,map,socket,userObj){
 	 // Player for now will be a 36x36.
     var player = new Sprite(32, 32);
     player.image = game.assets[charImg];
@@ -162,11 +139,11 @@ function initPlayer(game,map,socket,userId){
     player.y = 16 * 2;
     player.speed = 16;
     
-    //switch player character by user id
-    if(userId == 'xx'){
-    	player.frame = [6, 6, 7, 7]; //brown
+    //if enemy = brown
+    if(userObj.isEnemy){
+    	player.frame = [1, 1, 2, 2]; //white
     }else{
-    	player.frame = [1, 1, 2, 2]; // white
+    	player.frame = [6, 6, 7, 7]; //brown
     }
 
     var x = player.x;
