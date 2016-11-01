@@ -1,4 +1,4 @@
-var mapImg = '/img/map64.png';
+var mapImg = '/img/map.png';
 var charImg = '/img/chara.png';
 var mySpeed = 8;
 var SHEEP_SPEED = 16;
