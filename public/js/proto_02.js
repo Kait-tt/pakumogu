@@ -24,7 +24,7 @@ function initGame(userObj,mapObj) {
     	
     	var character = {};
     	for(var i=0;i<userObj.length;i++){
-    		var objId = userObj[i].user.id;
+    		var objId = userObj[i].id;
     		if(myId == objId){
     			//set speed every move
                 if(userObj[i].isEnemy){
@@ -41,7 +41,7 @@ function initGame(userObj,mapObj) {
     	console.log(character);
         socket.on('movePlayer', (req) => {
             const {x, y} = req.player.coordinate;
-            var objId = req.player.user.id;
+            var objId = req.player.id;
             character[objId].x = x;
             character[objId].y = y;
         });
@@ -57,9 +57,8 @@ function initPlayer(game,map,socket,userObj){
     player.image = game.assets[charImg];
     
     //starting point
-    // TODO: set point with userObj.coordinate
-    player.x = pixel;
-    player.y = pixel;
+    player.x = userObj.coordinate.x * pixel;
+    player.y = userObj.coordinate.y * pixel;
    
     
     //if enemy = brown
