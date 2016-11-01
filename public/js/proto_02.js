@@ -7,6 +7,7 @@ var pixel = 64;
 var DIRS = ['up', 'right', 'down', 'left'];
 var DX   = [0, 1, 0, -1];
 var DY   = [-1, 0, 1, 0];
+var sheepId;
 
 function initGame(userObj,mapObj) {
 	
@@ -34,6 +35,11 @@ function initGame(userObj,mapObj) {
             }
     		// Add elements to scene.
         	game.rootScene.addChild(character[objId]);
+        	
+        	//set sheep id for killing
+        	if(!userObj[i].isEnemy){
+    			sheepId = objId;
+    		}
     	}
     	
     	console.log(character);
@@ -42,6 +48,11 @@ function initGame(userObj,mapObj) {
             var objId = req.player.id;
             character[objId].x = x;
             character[objId].y = y;
+            
+            //kill by sheepId
+            if(sheepId!=objId && character[sheepId].intersect(character[objId])) {
+            	game.rootScene.removeChild(character[sheepId]);
+            }
         });
         
         
