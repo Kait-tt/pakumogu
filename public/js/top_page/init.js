@@ -5,7 +5,7 @@
 
 window.onload = initTopPage;
 var socket;
-
+var myId;
 
 function initTopPage(){
 	socket = new Socket();//init socket when start client this is a global socket
@@ -19,6 +19,11 @@ function initTopPage(){
 	        console.log(req.game.players);
 	        updateUserList(req.game.players);
 	    });
+		
+		socket.on('yourInfo', (req) => {
+			myId = req.id;
+		});
+		
 		$("#enter").hide();
 		$("#start").show();	
 	});
@@ -29,7 +34,7 @@ function initTopPage(){
 	});
 	
 	socket.on('initGame', (req) => {
-		console.log(req.game.map); // decided map
+		//console.log(req.game.map); // decided map
 		console.log('on init game');
 	});
 
@@ -38,7 +43,7 @@ function initTopPage(){
         console.log('on start game');
         console.log(req.game.players);
         $('body').html("");
-	    initGame(req.game.players);
+	    initGame(req.game.players,req.game.map);
 	    /*$('body').append("<div id='exit' style='position:absolute;padding-top: 50px'>Exit game</div>");
 	    $("#exit").click(function() {
 	    	//socket.leaveRoom(); //undefined method

@@ -4,37 +4,15 @@
 
 var mapImg = '/img/map1.png';
 
-function initMapDynamic(game){
+function initDynamicMap(game,mapObj){
 	// Create a map with 32x32 tiles
-    var map = new Map(32, 32);
+    var map = new Map(pixel, pixel);
     
     // Associate a tilesheet with the map.
     map.image = game.assets[mapImg]; 
     
     //recieve from server
-    var collisionData = [
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
-        [1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1], 
-        [1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1], 
-        [1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1], 
-        [1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1], 
-        [1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1], 
-        [1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1], 
-        [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1], 
-        [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1], 
-        [1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1], 
-        [1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1], 
-        [1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1], 
-        [1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1], 
-        [1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1], 
-        [1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
-        [1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
-        [1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1], 
-        [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1], 
-        [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1], 
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-    ];
-    
+    var collisionData = mapObj.tiles;
     
     // Tell the map which tiles should be where.
     map.loadData(collisionToBackGround(collisionData));
@@ -48,8 +26,11 @@ function initMapDynamic(game){
 }
 
 function collisionToBackGround(collisionData){
-	var backgrondData = [[]];
+	var backgrondData = new Array(collisionData.length);
+	//console.log("collisionData.length : " + collisionData.length);
 	for(var i=0;i<collisionData.length;i++){
+		backgrondData[i] = new Array(collisionData[i].length);
+		//console.log("collisionData[i].length : " + collisionData[i].length);
 		for(var j=0;j<collisionData[i].length;j++){
 			//0 = walkable
 			if(collisionData[i][j] == 0){
@@ -59,4 +40,5 @@ function collisionToBackGround(collisionData){
 			}
 		}
 	}
+	return backgrondData;
 }
