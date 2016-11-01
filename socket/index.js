@@ -57,6 +57,7 @@ class SocketRouter {
         try {
             this.gameMaster.addPlayer(user);
             this.emits('joinRoom', {username: user.username, id: user.id, game: this.gameMaster.game.serialize()});
+            user.socket.emit('yourInfo', {username: user.username, id: user.id});
         } catch (e) {
             console.error(e);
             user.socket.emit('operationError', {error: e, message: e.message});
