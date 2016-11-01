@@ -22,7 +22,7 @@ function initGame(userObj,mapObj) {
     	var map = initDynamicMap(game,mapObj);
     	game.rootScene.addChild(map);
     	
-    	var character =[];
+    	var character = {};
     	for(var i=0;i<userObj.length;i++){
     		var objId = userObj[i].user.id;
     		if(myId == objId){
@@ -57,6 +57,7 @@ function initPlayer(game,map,socket,userObj){
     player.image = game.assets[charImg];
     
     //starting point
+    // TODO: set point with userObj.coordinate
     player.x = pixel;
     player.y = pixel;
    
@@ -106,16 +107,7 @@ function initPlayer(game,map,socket,userObj){
             }
             socket.movePlayer({x, y});
         }
-
-        /*if (x !== player.x || y !== player.y) {
-        	socket.movePlayer({x, y});
-        }*/
     });
     
     return player;
-}
-
-function getRequest(name){
-	   if(name=(new RegExp('[?&]'+encodeURIComponent(name)+'=([^&]*)')).exec(location.search))
-	      return decodeURIComponent(name[1]);
 }

@@ -1,22 +1,17 @@
-/**
- * http://usejsdoc.org/
- */
-
-
 window.onload = initTopPage;
 var socket;
 var myId;
 
 function initTopPage(){
-	socket = new Socket();//init socket when start client this is a global socket
+	socket = new Socket(); //init socket when start client this is a global socket
 	console.log("init top page");
+
 	$("#enter").click(function() {
 		var username = $("#username").val();
 		socket.join(username);
 		
 		socket.on('joinRoom', (req) => {
-	        console.log('on join room');
-	        console.log(req.game.players);
+	        console.log('on join room', req);
 	        updateUserList(req.game.players);
 	    });
 		
@@ -34,16 +29,14 @@ function initTopPage(){
 	});
 	
 	socket.on('initGame', (req) => {
-		//console.log(req.game.map); // decided map
-		console.log('on init game');
+		console.log('on init game', req);
 	});
 
     socket.on('startGame', (req) => {
-		console.log(req.game.map); // decided map
-        console.log('on start game');
-        console.log(req.game.players);
+        console.log('on start game', req);
         $('body').html("");
-	    initGame(req.game.players,req.game.map);
+	    initGame(req.game.players, req.game.map);
+
 	    /*$('body').append("<div id='exit' style='position:absolute;padding-top: 50px'>Exit game</div>");
 	    $("#exit").click(function() {
 	    	//socket.leaveRoom(); //undefined method
