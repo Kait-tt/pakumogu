@@ -1,5 +1,5 @@
 var mapImg = '/img/map64.png';
-var charImg = '/img/chara64.png';
+var charImg = '/img/chara.png';
 var mySpeed = 8;
 var SHEEP_SPEED = 16;
 var WOLF_SPEED = 12;
@@ -61,9 +61,9 @@ function initPlayer(game,map,socket,userObj){
     
     //if enemy = brown
     if(userObj.isEnemy){
-    	player.frame = [1, 1, 2, 2]; //white
+    	player.frame = [3, 3, 4, 4]; // wolf
     }else{
-    	player.frame = [6, 6, 7, 7]; //brown
+    	player.frame = [0, 0, 1, 1]; // sheep
     }
     
     return player;
