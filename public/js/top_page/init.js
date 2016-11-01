@@ -28,11 +28,13 @@ function initTopPage(){
 	    socket.startGame();
 	});
 	
-	socket.on('initGame', () => {
+	socket.on('initGame', (req) => {
+		console.log(req.game.map); // decided map
 		console.log('on init game');
 	});
 
     socket.on('startGame', (req) => {
+		console.log(req.game.map); // decided map
         console.log('on start game');
         console.log(req.game.players);
         $('body').html("");
