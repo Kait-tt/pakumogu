@@ -6,15 +6,25 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>パクパクモグモグ</title>
-    <link rel="stylesheet" href="/css/main.css">
+    <!--<link rel="stylesheet" href="/css/main.css">-->
 </head>
 <body>
 <h1>パクパクモグモグ</h1>
 <p>hogehoge</p>
+<div id='inputDiv'>
+<input type=text id='username' value='xx' />
+<br>
+<div id='enter'>Enter</div>
+<div id='start' style='display:none'>Start</div>
+<div id='userList'>User List <br></div>
+</div>
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="/vendor/enchant.js"></script>
 <script src="/js/socket.js"></script>
+<script src="/vendor/jquery-1.11.0.min.js"></script>
+<script src="/js/top_page/init.js"></script>
+<script src="/js/game/map.js"></script>
 <script src="/js/proto_02.js"></script>
 </body>
 </html>
