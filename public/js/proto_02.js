@@ -1,13 +1,12 @@
-/**
- * http://usejsdoc.org/
- */
-
 var mapImg = '/img/map64.png';
 var charImg = '/img/chara64.png';
 var mySpeed = 8;
 var SHEEP_SPEED = 16;
 var WOLF_SPEED = 12;
 var pixel = 64;
+var DIRS = ['up', 'right', 'down', 'left'];
+var DX   = [0, 1, 0, -1];
+var DY   = [-1, 0, 1, 0];
 
 function initGame(userObj,mapObj) {
 	
@@ -27,13 +26,12 @@ function initGame(userObj,mapObj) {
     		var objId = userObj[i].id;
     		if(myId == objId){
     			//set speed every move
-                if(userObj[i].isEnemy){
-                	mySpeed = WOLF_SPEED;
-                }else{
-                	mySpeed = SHEEP_SPEED;
-                }
+                mySpeed = userObj[i].isEnemy ? WOLF_SPEED : SHEEP_SPEED;
     		}
     		character[objId] = initPlayer(game,map,socket,userObj[i]);
+            if(myId == objId) {
+                initPlayerMove(game, map, socket, character[objId]);
+            }
     		// Add elements to scene.
         	game.rootScene.addChild(character[objId]);
     	}
@@ -67,46 +65,28 @@ function initPlayer(game,map,socket,userObj){
     }else{
     	player.frame = [6, 6, 7, 7]; //brown
     }
-
-    var x = player.x;
-    var y = player.y;
     
+    return player;
+}
+
+function initPlayerMove(game, map, socket, player) {
     // Let player move within bounds.
     player.addEventListener(Event.ENTER_FRAME, function () {
-    	// First move the player. If the player's new location has resulted
+        // First move the player. If the player's new location has resulted
         // in the player being in a "hit" zone, then back the player up to
         // its original location. Tweak "hits" by "offset" pixels.
-        if (game.input.up) {            // Move up
-            y -= mySpeed;
-            if (myHitTest(map, x, y)) {
-                y += mySpeed;
-            }
-            socket.movePlayer({x, y});
-        }
-        else if (game.input.down) {     // Move down
-            y += mySpeed;
-            if (myHitTest(map, x, y)) {
-                y -= mySpeed;
-            }
-            socket.movePlayer({x, y});
-        }
-        else if (game.input.left) {     // Move left
-            x -= mySpeed;
-            if (myHitTest(map, x, y)) {
-                x += mySpeed;
-            }
-            socket.movePlayer({x, y});
-        }
-        else if (game.input.right) {    // Move right
-            x += mySpeed;
-            if (myHitTest(map, x, y)) {
-                x -= mySpeed;
-            }
+
+        let {x, y} = player;
+        DIRS.forEach((dir, i) => {
+            if (!game.input[dir]) { return; }
+            x += DX[i] * mySpeed;
+            y += DY[i] * mySpeed;
+        });
+
+        if (!myHitTest(map, x, y)) {
             socket.movePlayer({x, y});
         }
     });
-    
-    return player;
 }
 
 function myHitTest (map, x, y) {
