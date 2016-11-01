@@ -48,7 +48,7 @@ function initGame(userObj,mapObj) {
             var objId = req.player.id;
             character[objId].x = x;
             character[objId].y = y;
-            
+
             //kill by sheepId
             if(sheepId!=objId && character[sheepId].intersect(character[objId])) {
             	game.rootScene.removeChild(character[sheepId]);
@@ -94,7 +94,7 @@ function initPlayerMove(game, map, socket, player) {
             y += DY[i] * mySpeed;
         });
 
-        if (x !== player.x && y !== player.y && !myHitTest(map, x, y)) {
+        if (!myHitTest(map, x, y)) {
             socket.movePlayer({x, y});
         }
     });
