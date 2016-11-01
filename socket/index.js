@@ -49,6 +49,10 @@ class SocketRouter {
             socket.on('movePlayer', ({x, y}) => {
                 this.movePlayer(user, {x, y});
             });
+
+            socket.on('killSheep', () => {
+                this.killSheep(user);
+            });
         });
     }
 
@@ -99,6 +103,19 @@ class SocketRouter {
         try {
             const player = this.gameMaster.movePlayer(user, {x, y});
             this.emits('movePlayer', {player: player.serialize()});
+        } catch (e) {
+            console.error(e);
+            user.socket.emit('operationError', {error: e, message: e.message});
+        }
+    }
+
+    killSheep (user) {
+        const sheep = this.gameMaster.game.players.find(x => !x.isEnemy);
+        if (!sheep.isAlive) { return; }
+
+        try {
+            this.gameMaster.killSheep();
+            this.emits('killSheep', {});
         } catch (e) {
             console.error(e);
             user.socket.emit('operationError', {error: e, message: e.message});
