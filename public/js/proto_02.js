@@ -59,7 +59,7 @@ function initPlayer(game,map,socket,userObj){
     //starting point
     player.x = userObj.coordinate.x * pixel;
     player.y = userObj.coordinate.y * pixel;
-   
+
     
     //if enemy = brown
     if(userObj.isEnemy){
@@ -76,32 +76,30 @@ function initPlayer(game,map,socket,userObj){
     	// First move the player. If the player's new location has resulted
         // in the player being in a "hit" zone, then back the player up to
         // its original location. Tweak "hits" by "offset" pixels.
-    	var xoffset = pixel/2;
-    	var yoffset = pixel/2;
         if (game.input.up) {            // Move up
             y -= mySpeed;
-            if (map.hitTest(x + xoffset, y + yoffset)) {
+            if (myHitTest(map, x, y)) {
                 y += mySpeed;
             }
             socket.movePlayer({x, y});
         }
         else if (game.input.down) {     // Move down
             y += mySpeed;
-            if (map.hitTest(x + xoffset, y + yoffset)) {
+            if (myHitTest(map, x, y)) {
                 y -= mySpeed;
             }
             socket.movePlayer({x, y});
         }
         else if (game.input.left) {     // Move left
             x -= mySpeed;
-            if (map.hitTest(x + xoffset, y + yoffset)) {
+            if (myHitTest(map, x, y)) {
                 x += mySpeed;
             }
             socket.movePlayer({x, y});
         }
         else if (game.input.right) {    // Move right
             x += mySpeed;
-            if (map.hitTest(x + xoffset, y + yoffset)) {
+            if (myHitTest(map, x, y)) {
                 x -= mySpeed;
             }
             socket.movePlayer({x, y});
@@ -109,4 +107,11 @@ function initPlayer(game,map,socket,userObj){
     });
     
     return player;
+}
+
+function myHitTest (map, x, y) {
+    return map.hitTest(x, y) ||
+        map.hitTest(x + pixel - 1, y) ||
+        map.hitTest(x, y + pixel - 1) ||
+        map.hitTest(x + pixel - 1, y + pixel - 1);
 }
