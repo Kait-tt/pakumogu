@@ -1,13 +1,12 @@
-/**
- * http://usejsdoc.org/
- */
-
 var mapImg = '/img/map64.png';
 var charImg = '/img/chara64.png';
 var mySpeed = 8;
 var SHEEP_SPEED = 16;
 var WOLF_SPEED = 12;
 var pixel = 64;
+var DIRS = ['up', 'right', 'down', 'left'];
+var DX   = [0, 1, 0, -1];
+var DY   = [-1, 0, 1, 0];
 
 function initGame(userObj,mapObj) {
 	
@@ -22,18 +21,17 @@ function initGame(userObj,mapObj) {
     	var map = initDynamicMap(game,mapObj);
     	game.rootScene.addChild(map);
     	
-    	var character =[];
+    	var character = {};
     	for(var i=0;i<userObj.length;i++){
-    		var objId = userObj[i].user.id;
+    		var objId = userObj[i].id;
     		if(myId == objId){
     			//set speed every move
-                if(userObj[i].isEnemy){
-                	mySpeed = WOLF_SPEED;
-                }else{
-                	mySpeed = SHEEP_SPEED;
-                }
+                mySpeed = userObj[i].isEnemy ? WOLF_SPEED : SHEEP_SPEED;
     		}
     		character[objId] = initPlayer(game,map,socket,userObj[i]);
+            if(myId == objId) {
+                initPlayerMove(game, map, socket, character[objId]);
+            }
     		// Add elements to scene.
         	game.rootScene.addChild(character[objId]);
     	}
@@ -41,7 +39,7 @@ function initGame(userObj,mapObj) {
     	console.log(character);
         socket.on('movePlayer', (req) => {
             const {x, y} = req.player.coordinate;
-            var objId = req.player.user.id;
+            var objId = req.player.id;
             character[objId].x = x;
             character[objId].y = y;
         });
@@ -57,9 +55,9 @@ function initPlayer(game,map,socket,userObj){
     player.image = game.assets[charImg];
     
     //starting point
-    player.x = pixel;
-    player.y = pixel;
-   
+    player.x = userObj.coordinate.x * pixel;
+    player.y = userObj.coordinate.y * pixel;
+
     
     //if enemy = brown
     if(userObj.isEnemy){
@@ -67,55 +65,33 @@ function initPlayer(game,map,socket,userObj){
     }else{
     	player.frame = [6, 6, 7, 7]; //brown
     }
-
-    var x = player.x;
-    var y = player.y;
-    
-    // Let player move within bounds.
-    player.addEventListener(Event.ENTER_FRAME, function () {
-    	// First move the player. If the player's new location has resulted
-        // in the player being in a "hit" zone, then back the player up to
-        // its original location. Tweak "hits" by "offset" pixels.
-    	var xoffset = pixel/2;
-    	var yoffset = pixel/2;
-        if (game.input.up) {            // Move up
-            y -= mySpeed;
-            if (map.hitTest(x + xoffset, y + yoffset)) {
-                y += mySpeed;
-            }
-            socket.movePlayer({x, y});
-        }
-        else if (game.input.down) {     // Move down
-            y += mySpeed;
-            if (map.hitTest(x + xoffset, y + yoffset)) {
-                y -= mySpeed;
-            }
-            socket.movePlayer({x, y});
-        }
-        else if (game.input.left) {     // Move left
-            x -= mySpeed;
-            if (map.hitTest(x + xoffset, y + yoffset)) {
-                x += mySpeed;
-            }
-            socket.movePlayer({x, y});
-        }
-        else if (game.input.right) {    // Move right
-            x += mySpeed;
-            if (map.hitTest(x + xoffset, y + yoffset)) {
-                x -= mySpeed;
-            }
-            socket.movePlayer({x, y});
-        }
-
-        /*if (x !== player.x || y !== player.y) {
-        	socket.movePlayer({x, y});
-        }*/
-    });
     
     return player;
 }
 
-function getRequest(name){
-	   if(name=(new RegExp('[?&]'+encodeURIComponent(name)+'=([^&]*)')).exec(location.search))
-	      return decodeURIComponent(name[1]);
+function initPlayerMove(game, map, socket, player) {
+    // Let player move within bounds.
+    player.addEventListener(Event.ENTER_FRAME, function () {
+        // First move the player. If the player's new location has resulted
+        // in the player being in a "hit" zone, then back the player up to
+        // its original location. Tweak "hits" by "offset" pixels.
+
+        let {x, y} = player;
+        DIRS.forEach((dir, i) => {
+            if (!game.input[dir]) { return; }
+            x += DX[i] * mySpeed;
+            y += DY[i] * mySpeed;
+        });
+
+        if (!myHitTest(map, x, y)) {
+            socket.movePlayer({x, y});
+        }
+    });
+}
+
+function myHitTest (map, x, y) {
+    return map.hitTest(x, y) ||
+        map.hitTest(x + pixel - 1, y) ||
+        map.hitTest(x, y + pixel - 1) ||
+        map.hitTest(x + pixel - 1, y + pixel - 1);
 }
