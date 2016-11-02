@@ -1,3 +1,7 @@
+/**
+ * http://usejsdoc.org/
+ */
+
 var mapImg = '/img/map.png';
 
 function initDynamicMap(game,mapObj){
@@ -30,9 +34,9 @@ function collisionToBackGround(collisionData){
 		for(var j=0;j<collisionData[i].length;j++){
 			//0 = walkable
 			if(collisionData[i][j] == 0){
-				backgrondData[i][j] = 0; // sand
+				backgrondData[i][j] = 0; //sand
 			}else {
-				backgrondData[i][j] = 1; // block
+				backgrondData[i][j] = 1;//grass
 			}
 		}
 	}

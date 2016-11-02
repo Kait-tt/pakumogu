@@ -1,4 +1,3 @@
-var mapImg = '/img/map.png';
 var charImg = '/img/chara.png';
 var mySpeed = 8;
 var SHEEP_SPEED = 16;
@@ -15,13 +14,14 @@ function initGame(userObj,mapObj) {
     var game = new Core(mapObj.width * pixel, mapObj.height * pixel); //game dimension
     game.fps = 16;
 
-    game.preload(mapImg, charImg);
+    game.preload(mapImg, charImg, itemImg);
     
     game.onload = function () {
     	
     	var map = initDynamicMap(game,mapObj);
     	game.rootScene.addChild(map);
     	
+    	//init all character
     	var character = {};
     	for(var i=0;i<userObj.length;i++){
     		var objId = userObj[i].id;
@@ -31,7 +31,7 @@ function initGame(userObj,mapObj) {
     		}
     		character[objId] = initPlayer(game,map,socket,userObj[i]);
             if(myId == objId) {
-                initPlayerMove(game, map, socket, character, userObj);
+            	initPlayerMove(game, map, socket, character, userObj, mapObj);
             }
     		// Add elements to scene.
         	game.rootScene.addChild(character[objId]);
@@ -41,6 +41,16 @@ function initGame(userObj,mapObj) {
     			sheepId = objId;
     		}
     	}
+    	
+    	//init item
+    	var itemPosition = [ [1,1], [1,4] ];
+    	var itemList = [];
+    	for(var i=0;i<itemPosition.length;i++){
+    		//init item obj and assign to list for checking when sheep hit
+    		itemList[i] = initItem(game,itemPosition[i]);
+    		game.rootScene.addChild(itemList[i]);
+    	}
+    	
     	
     	console.log(character);
         socket.on('movePlayer', (req) => {
@@ -52,6 +62,16 @@ function initGame(userObj,mapObj) {
             //kill by sheepId
             if(sheepId!=objId && character[sheepId].intersect(character[objId])) {
             	game.rootScene.removeChild(character[sheepId]);
+            }else if(sheepId == objId){//the move object is sheep
+            	//check sheep intersect with item
+            	for(var i=0;i<itemList.length;i++){
+            		if(character[sheepId].intersect(itemList[i])){
+            			//remove item after hit
+            			game.rootScene.removeChild(itemList[i]);
+            			
+            			//item take effect
+            		}
+            	}
             }
         });
 
@@ -65,7 +85,7 @@ function initGame(userObj,mapObj) {
 }
 
 function initPlayer(game,map,socket,userObj){
-	 // Player for now will be a 36x36.
+	 // Player for now will be a pixel x pixel.
     var player = new Sprite(pixel, pixel);
     player.image = game.assets[charImg];
     
@@ -74,7 +94,7 @@ function initPlayer(game,map,socket,userObj){
     player.y = userObj.coordinate.y;
 
     
-    //if enemy = brown
+    //if enemy = wolf
     if(userObj.isEnemy){
     	player.frame = [3, 3, 4, 4]; // wolf
     }else{
@@ -84,7 +104,7 @@ function initPlayer(game,map,socket,userObj){
     return player;
 }
 
-function initPlayerMove(game, map, socket, character, userObj) {
+function initPlayerMove(game, map, socket, character, userObj, mapObj) {
     const myUserObj = userObj.find(x => x.id === myId);
     const myCharacter = character[myId];
 
@@ -99,11 +119,13 @@ function initPlayerMove(game, map, socket, character, userObj) {
             if (!game.input[dir]) { return; }
             x += DX[i] * mySpeed;
             y += DY[i] * mySpeed;
+            
+            //check the wall
+            if (!myHitTest(map, x, y)) {
+            	//check for warp portal at the border of map
+            	warpPortal(x, y, mapObj);
+            }
         });
-
-        if (!myHitTest(map, x, y)) {
-            socket.movePlayer({x, y});
-        }
 
         // kill by sheepId
         if (myId === sheepId && myUserObj.isAlive) {
@@ -111,6 +133,7 @@ function initPlayerMove(game, map, socket, character, userObj) {
                 socket.killSheep();
             }
         }
+
     });
 }
 
@@ -119,4 +142,20 @@ function myHitTest (map, x, y) {
         map.hitTest(x + pixel - 1, y) ||
         map.hitTest(x, y + pixel - 1) ||
         map.hitTest(x + pixel - 1, y + pixel - 1);
+}
+
+
+function warpPortal(x, y, mapObj){
+	var mapXLimit = (mapObj.width * pixel)-(pixel/2);
+	var mapYLimit = (mapObj.height * pixel)-(pixel/2);
+	if(x>mapXLimit){
+		x = pixel/2;
+	}else if(x<pixel/2){
+		x = mapXLimit;
+	}else if(y>mapYLimit){
+		y = pixel/2;
+	}else if(y<pixel/2){
+		y = mapYLimit;
+	}
+	socket.movePlayer({x, y});
 }
