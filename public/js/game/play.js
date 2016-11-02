@@ -138,7 +138,7 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
         const {x, y} = req.player.coordinate;
         var targetUser = userObj.find(x => x.id === req.player.id);
         var objId = req.player.id;
-        
+
         //rotate head before change position
         //rotate character
         if(character[objId].x<x){ //right
