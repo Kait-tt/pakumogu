@@ -13,15 +13,15 @@ var gameBgm = '/bgm/game1.mp3';
 var topPageBgm = '/bgm/title_result.mp3';
 var powerup1Bgm = '/bgm/powerup1.mp3';
 
-var foodSe = '/se/Food.mp3';
-var sheepDeathSe = '/se/Sheep_death.mp3';
-var startSe = '/se/Start.mp3';
+var foodSe = '/se/food.mp3';
+var sheepDeathSe = '/se/sheep_death.mp3';
+var startSe = '/se/start.mp3';
 var footStepsSe = '/se/foot_steps.mp3';
-var decisionSe = '/se/Decision.mp3';
-var clearSe = '/se/Clear.mp3';
+var decisionSe = '/se/decision.mp3';
+var clearSe = '/se/clear.mp3';
 var endSe = '/se/end.mp3';
-var powerUpSe = '/se/Power_Up.mp3';
-var wolfDeathSe = '/se/Wolf_Death.mp3';
+var powerUpSe = '/se/power_up.mp3';
+var wolfDeathSe = '/se/wolf_death.mp3';
 
 var socket;
 var myId;
