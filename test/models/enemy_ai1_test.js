@@ -32,7 +32,11 @@ for (let i = 0 ; i < mapMaxY-1 ; i++) {
     }
 }
 const mapMaxX = map[0].length;
-const eAI1 = new EnemyAI1(2,map,mapMaxX,mapMaxY);
+const eAI1 = new EnemyAI1(2,{
+    tiles: map,
+    width: mapMaxX,
+    height: mapMaxY
+});
 
 //map[y][x]
 // players = [player1, player2, ...]
