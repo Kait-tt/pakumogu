@@ -30,8 +30,16 @@
             this.io.emit('killSheep', {});
         }
 
+        killWolf ({wolfId}) {
+            this.io.emit('killWolf', {wolfId});
+        }
+
         takeNormalItem ({itemId}) {
             this.io.emit('takeNormalItem', {itemId})
+        }
+
+        takePowerItem ({itemId}) {
+            this.io.emit('takePowerItem', {itemId});
         }
 
         join (username) {
