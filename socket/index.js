@@ -27,6 +27,10 @@ class SocketRouter {
             this.emits('endInvincible', {});
         });
 
+        this.gameMaster.on('endGame', ({game}) => {
+            this.emits('endGame', {});
+        });
+
         this.io.sockets.on('connection', socket => {
             const user = new SocketUser(socket);
 
