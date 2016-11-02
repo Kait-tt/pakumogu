@@ -108,7 +108,8 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
 		//set right side profile
 		var player = new Sprite(pixel, pixel);
 	    player.image = game.assets[charImg];
-	    
+        player.frame = userObj[i].imageIndex * 3;
+
 	    deathFrame[objId] = userObj[i].imageIndex * 3 + 2;
 	    
 	    //starting point
@@ -178,7 +179,6 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
     	game.assets[sheepDeathSe].play();
 
     	addDeathOnProfile(game,scene,cProfile,sheep.id,deathFrame);
-    	
     });
 
     socket.on('killWolf', (req) => {
