@@ -51,6 +51,13 @@ function enchantTopPage(){
         startBt.width = 630;
         startBt.height = 190;
         
+        var backBt = new Button();
+        backBt.font = "30px Arial, Helvetica, sans-serif";
+        backBt.text = "Back";
+        backBt.moveTo(1110, 470);
+        backBt.width = 240;
+        backBt.height = 95;
+        
         //sheep 560 * 316
         //position 235 * 680
         var sImg = new Sprite(560, 320);
@@ -90,14 +97,21 @@ function enchantTopPage(){
     		
     		//add new startButton
     		scene.addChild(startBt);
+    		scene.addChild(backBt);
     		scene.addChild(userList);
-    		
         });
 		
 		//start button event start game
 		startBt.addEventListener(Event.TOUCH_START, function () {
 			socket.initGame();
 		    socket.startGame();
+		});
+		
+		//back button event
+		backBt.addEventListener(Event.TOUCH_START, function () {
+			//back button action
+			
+			
 		});
 		
 		//prepare socket
