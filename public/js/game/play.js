@@ -12,6 +12,11 @@ var wolfImageIndex = 0;
 
 function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, game) {
     isInvincible = false;
+    
+    //start the music
+	game.assets[startSe].play();
+	game.assets[gameBgm].play();
+    
 	var scene = new Scene();
 	//add scene environment
 	var bg = new Sprite(1920, 1080);
@@ -104,6 +109,8 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, game) {
 
 	
     socket.on('movePlayer', (req) => {
+    	game.assets[footStepsSe].play();
+    	
         const {x, y} = req.player.coordinate;
         var objId = req.player.id;
         
@@ -132,12 +139,17 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, game) {
         const sheep = userObj.find(x => !x.isEnemy);
         sheep.isAlive = false;
         scene.removeChild(character[sheep.id]);
+
+        game.assets[gameBgm].stop();
+    	game.assets[sheepDeathSe].play();
+    	game.assets[endSe].play();
     });
 
     socket.on('killWolf', (req) => {
         const wolf = userObj.find(x => x.id === req.player.id);
         wolf.isAlive = false;
         scene.removeChild(character[wolf.id]);
+        game.assets[wolfDeathSe].play();
     });
 
     socket.on('takeNormalItem', (req) => {
@@ -146,6 +158,7 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, game) {
 
         const item = normalItemList[targetItemObj.id];
         scene.removeChild(item);
+        game.assets[foodSe].play();
     });
 
     socket.on('takePowerItem', (req) => {
@@ -154,20 +167,25 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, game) {
 
         const item = powerItemList[targetItemObj.id];
         scene.removeChild(item);
+        game.assets[powerUpSe].play();
     });
 
     socket.on('startInvincible', () => {
         isInvincible = true;
-
         // enable super mode
         character[sheepId].frame = [0, 1];
+        
+        game.assets[gameBgm].stop();
+        game.assets[powerup1Bgm].play();
     });
 
     socket.on('endInvincible', () => {
         isInvincible = false;
-
         // disable super mode
         character[sheepId].frame = [0, 0, 0, 0, 1, 1, 1, 1];
+        
+        game.assets[gameBgm].play();
+        game.assets[powerup1Bgm].stop();
     });
     
     game.replaceScene(scene);
