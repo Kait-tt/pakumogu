@@ -110,7 +110,6 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, game) {
     });
 
     socket.on('startInvincible', () => {
-        console.log('start invincible');
         isInvincible = true;
 
         // enable super mode
@@ -118,14 +117,12 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, game) {
     });
 
     socket.on('endInvincible', () => {
-        console.log('end invincible');
         isInvincible = false;
 
         // disable super mode
         character[sheepId].frame = [0, 0, 0, 0, 1, 1, 1, 1];
     });
     
-    console.log("push scene");
     game.replaceScene(scene);
 }
 
@@ -178,7 +175,6 @@ function initPlayerMove(game, map, socket, character, userObj, mapObj, normalIte
                 if (userObj[i] === myUserObj) { continue; }
                 if (!userObj[i].isAlive) { continue; }
                 if (character[userObj[i].id].intersect(myCharacter)) {
-                    console.log(isInvincible);
                     if (isInvincible) {
                         socket.killWolf({wolfId: userObj[i].id});
                         userObj[i].isAlive = false;
@@ -207,7 +203,6 @@ function initPlayerMove(game, map, socket, character, userObj, mapObj, normalIte
                 const item = powerItemList[powerItemObj[i].id];
                 if(myCharacter.intersect(item)){
                     powerItemObj[i].enabled = false;
-                    console.log(`take ${powerItemObj[i].id}`);
                     socket.takePowerItem({itemId: powerItemObj[i].id});
                 }
             }
