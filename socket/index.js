@@ -105,9 +105,9 @@ class SocketRouter {
     }
 
     leaveRoom (user) {
-        this.emits('leaveRoom', {username: user.username, id: user.id});
         try {
             this.gameMaster.removePlayer(user);
+            this.emits('leaveRoom', {username: user.username, id: user.id, game: this.gameMaster.game.serialize()});
             user.socket.leave(this.gameRoomKey);
         } catch (e) {
             console.error(e);

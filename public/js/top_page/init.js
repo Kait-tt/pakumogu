@@ -86,26 +86,38 @@ function enchantTopPage(){
         tb.placeholder = "Input username";
         
         var enterBt = new Button();
-        enterBt.font = "100px Arial, Helvetica, sans-serif";
-        enterBt.text = "Enter";
-        enterBt.moveTo(580, 440);
-        enterBt.width = 630;
-        enterBt.height = 190;
-        
+		enterBt.initialize = (((_initialize) => function () {
+			_initialize.call(this);
+			this.font = "100px Arial, Helvetica, sans-serif";
+			this.text = "Enter";
+			this.moveTo(580, 440);
+			this.width = 630;
+			this.height = 190;
+			this.addEventListener(Event.TOUCH_START, changeScreenToTitle2);
+		})(enterBt.initialize));
+
         var startBt = new Button();
-        startBt.font = "100px Arial, Helvetica, sans-serif";
-        startBt.text = "Start";
-        startBt.moveTo(410, 380);
-        startBt.width = 630;
-        startBt.height = 190;
-        
+		startBt.initialize = (((_initialize) => function () {
+			_initialize.call(this);
+			this.font = "100px Arial, Helvetica, sans-serif";
+			this.text = "Start";
+			this.moveTo(410, 380);
+			this.width = 630;
+			this.height = 190;
+			this.addEventListener(Event.TOUCH_START, startGame);
+		})(startBt.initialize));
+
         var backBt = new Button();
-        backBt.font = "30px Arial, Helvetica, sans-serif";
-        backBt.text = "Back";
-        backBt.moveTo(1110, 470);
-        backBt.width = 240;
-        backBt.height = 95;
-        
+		backBt.initialize = (((_initialize) => function () {
+			_initialize.call(this);
+			this.font = "30px Arial, Helvetica, sans-serif";
+			this.text = "Back";
+			this.moveTo(1110, 470);
+			this.width = 240;
+			this.height = 95;
+			this.addEventListener(Event.TOUCH_START, changeScreenToTitle1);
+		})(backBt.initialize));
+
         //sheep 560 * 316
         //position 235 * 680
         var sImg = new Sprite(560, 320);
@@ -124,65 +136,78 @@ function enchantTopPage(){
 		scene.addChild(bg);
 		scene.addChild(label);
 		scene.addChild(tb);
+		enterBt.initialize();
 		scene.addChild(enterBt);
 		scene.addChild(sImg);
 		scene.addChild(wImg);
 		
 		game.pushScene(scene);
 		//End top page one
-		
-		//enter button event change screen to Title 2 
-		enterBt.addEventListener(Event.TOUCH_START, function () {
-			game.assets[decisionSe].play();
-        	var username = tb.value;
-    		socket.join(username);    		
-    		//change screen to Title 2 after join
-    		//change to second background
-    		bg.image = game.assets[bg2Img];
-    		//remove label, textbox and enterButton
-    		scene.removeChild(label);
-    		scene.removeChild(tb);
-    		scene.removeChild(enterBt);
-    		
-    		//add new startButton
-    		scene.addChild(startBt);
-    		scene.addChild(backBt);
-    		scene.addChild(userList);
-        });
-		
-		//start button event start game
-		startBt.addEventListener(Event.TOUCH_START, function () {
-			game.assets[decisionSe].play();
-			game.assets[topPageBgm].stop();
-			
-			socket.initGame();
-		    socket.startGame();
-		});
-		
-		//back button event
-		backBt.addEventListener(Event.TOUCH_START, function () {
+
+		function changeScreenToTitle1 () {
 			//back button action
 			game.assets[decisionSe].play();
-			
-		});
+			socket.leave();
+			//change screen to Title 1 after leave
+			//change to first background
+			bg.image = game.assets[bgImg];
+			//remove nodes
+			scene.removeChild(startBt);
+			scene.removeChild(backBt);
+			scene.removeChild(userList);
+
+			//add nodes
+			scene.addChild(label);
+			scene.addChild(tb);
+			enterBt.initialize();
+			scene.addChild(enterBt);
+		}
+
+		function changeScreenToTitle2 () {
+			game.assets[decisionSe].play();
+			var username = tb.value;
+			socket.join(username);
+			//change screen to Title 2 after join
+			//change to second background
+			bg.image = game.assets[bg2Img];
+			//remove label, textbox and enterButton
+			scene.removeChild(label);
+			scene.removeChild(tb);
+			scene.removeChild(enterBt);
+
+			//add new startButton
+			startBt.initialize();
+			backBt.initialize();
+			scene.addChild(startBt);
+			scene.addChild(backBt);
+			scene.addChild(userList);
+		}
+
+		function startGame () {
+			game.assets[decisionSe].play();
+			game.assets[topPageBgm].stop();
+
+			socket.initGame();
+			socket.startGame();
+		}
 		
 		//prepare socket
 		socket.on('joinRoom', (req) => {
-	        console.log('on join room', req);
-	        updateUserList(req.game.players,userList);
-	        
+	        updateUserList(req.game.players, userList);
 	    });
+
+		socket.on('leaveRoom', (req) => {
+			updateUserList(req.game.players, userList);
+		});
 		
 		socket.on('yourInfo', (req) => {
 			myId = req.id;
 		});
 
 		socket.on('initGame', (req) => {
-			console.log('on init game', req);
 		});
 
 	    socket.on('startGame', (req) => {
-	        console.log('on start game', req);
 			initPlayScene(req.game.players, req.game.map, req.game.normalItems, req.game.powerItems,
 				req.game.timeLimit, req.game.score, game);
 	    });

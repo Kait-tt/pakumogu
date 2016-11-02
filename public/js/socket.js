@@ -44,25 +44,11 @@
 
         join (username) {
             this.username = username;
+            this.io.emit('joinRoom', {username});
+        }
 
-            let joined = false;
-            this.io.on('connect', () => {
-                if (!joined) {
-                    joined = true;
-                    this.io.emit('joinRoom', {username});
-                }
-            });
-
-            if (this.io.connected) {
-                if (!joined) {
-                    joined = true;
-                    this.io.emit('joinRoom', {username});
-                }
-            }
-
-            this.io.on('disconnect', () => {
-                joined = false;
-            });
+        leave () {
+            this.io.emit('leaveRoom', {});
         }
     }
 

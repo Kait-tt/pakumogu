@@ -240,12 +240,10 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
         isTimeLimit = req.isTimeLimit;
         game.assets[gameBgm].stop();
         game.assets[endSe].play();
-        console.log('end game');
         goToResultScene(game, req.game.score);
     });
 
     socket.on('updateScore', (scores) => {
-        console.log(scores);
         currentScoreTxt.text = "current score : " + ('00000' + scores.score).slice(-5);
     });
     
