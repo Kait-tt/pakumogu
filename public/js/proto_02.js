@@ -52,10 +52,27 @@ function initGame(userObj,mapObj) {
     	}
     	
     	
-    	console.log(character);
         socket.on('movePlayer', (req) => {
             const {x, y} = req.player.coordinate;
             var objId = req.player.id;
+            
+            //rotate head before change position
+            //rotate character
+            if(character[objId].x<x){ //right
+            	character[objId].scaleX  = -1;
+            	character[objId].rotation = 0;
+            }else if(character[objId].x>x){ // left
+            	character[objId].scaleX  = 1;
+            	character[objId].rotation = 0;
+            }else if(character[objId].y<y){ // down
+            	character[objId].scaleX  = -1;
+            	character[objId].rotation = 90;
+            }else if(character[objId].y>y){ // up
+            	character[objId].scaleX  = -1;
+            	character[objId].rotation = 270;
+            }
+            
+            //change position
             character[objId].x = x;
             character[objId].y = y;
 
@@ -69,14 +86,15 @@ function initGame(userObj,mapObj) {
             			//remove item after hit
             			game.rootScene.removeChild(itemList[i]);
             			
-            			//item take effect
+            			//item take effect - invincible
+
             		}
             	}
             }
         });
 
         socket.on('killSheep', (req) => {
-            game.rootScene.removeChild(character[sheepId]);
+        	game.rootScene.removeChild(character[sheepId]);
         });
         
         
@@ -130,7 +148,7 @@ function initPlayerMove(game, map, socket, character, userObj, mapObj) {
         // kill by sheepId
         if (myId === sheepId && myUserObj.isAlive) {
             if (userObj.filter(x => x.id !== myId && x.isAlive).some(x => character[x.id].intersect(myCharacter))) {
-                socket.killSheep();
+            		socket.killSheep();
             }
         }
 
