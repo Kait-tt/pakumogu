@@ -5,8 +5,8 @@ function initItem(game,initItemObj){
     item.image = game.assets[itemImg];
     
     //starting point
-    item.x = initItemObj.coordinate.x;
-    item.y = initItemObj.coordinate.y;
+    item.x = initItemObj.coordinate.x + gameOffSetX;
+    item.y = initItemObj.coordinate.y + gameOffSetY;
 
     item.frame = [2, 2];
     
