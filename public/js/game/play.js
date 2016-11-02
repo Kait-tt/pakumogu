@@ -140,9 +140,7 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, game) {
         sheep.isAlive = false;
         scene.removeChild(character[sheep.id]);
 
-        game.assets[gameBgm].stop();
     	game.assets[sheepDeathSe].play();
-    	game.assets[endSe].play();
     });
 
     socket.on('killWolf', (req) => {
@@ -186,6 +184,12 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, game) {
         
         game.assets[gameBgm].play();
         game.assets[powerup1Bgm].stop();
+    });
+
+    socket.on('endGame', () => {
+        game.assets[gameBgm].stop();
+        game.assets[endSe].play();
+        console.log('end game');
     });
     
     game.replaceScene(scene);
