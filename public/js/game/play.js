@@ -2,6 +2,7 @@
 var mySpeed = 8;
 var SHEEP_SPEED = 8;
 var WOLF_SPEED = 6;
+var MOVE_FRAME_COUNT_LIMIT = 3;
 var pixel = 64;
 var DIRS = ['up', 'right', 'down', 'left'];
 var DX   = [0, 1, 0, -1];
@@ -108,21 +109,7 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
 		var player = new Sprite(pixel, pixel);
 	    player.image = game.assets[charImg];
 	    
-	    //if enemy = wolf
-	    if(userObj[i].isEnemy){
-	        // wolf
-	        userObj[i].imageIndex = wolfImageIndex % 4 + 1;
-	        ++wolfImageIndex;
-	    }else{
-	        // sheep
-	        userObj[i].imageIndex = 0;
-	    }
-	
-	    let i1 = userObj[i].imageIndex * 3;
-	    let i2 = i1 + 1;
-	    player.frame = [i1, i1, i1, i1, i2, i2, i2, i2];
-	    
-	    deathFrame[objId] = i1+2;
+	    deathFrame[objId] = userObj[i].imageIndex * 3 + 2;
 	    
 	    //starting point
 	    player.scale(3);
@@ -139,15 +126,16 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
 	    }
 	    var usernameTag = new Label(nameTag);
 	    usernameTag.font = '36px Arial, Helvetica, sans-serif';
-	    usernameTag.moveTo(fixPosition[i][0] + 50 ,fixPosition[i][1]+120);
+	    usernameTag.moveTo(fixPosition[i][0] + 50 ,fixPosition[i][1] + 120);
 	    scene.addChild(usernameTag);
 	    //end right side profile
 	}
-	
+
     socket.on('movePlayer', (req) => {
     	game.assets[footStepsSe].play();
     	
         const {x, y} = req.player.coordinate;
+        var targetUser = userObj.find(x => x.id === req.player.id);
         var objId = req.player.id;
         
         //rotate head before change position
@@ -165,7 +153,18 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
         	character[objId].scaleX  = -1;
         	character[objId].rotation = 270;
         }
-        
+
+        const idx = targetUser.imageIndex * 3;
+
+        if (targetUser.isAI) {
+            character[objId].frame = character[objId].frame === idx ? idx + 1 : idx;
+        } else {
+            if (++targetUser.moveFrameCount > MOVE_FRAME_COUNT_LIMIT) {
+                targetUser.moveFrameCount = 0;
+                character[objId].frame = character[objId].frame === idx ? idx + 1 : idx;
+            }
+        }
+
         //change position
         character[objId].x = x;
         character[objId].y = y;
@@ -222,18 +221,16 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
 
     socket.on('startInvincible', () => {
         isInvincible = true;
-        // enable super mode
-        character[sheepId].frame = [0, 1];
-        
+        // TODO: enable super mode image
+
         game.assets[gameBgm].stop();
         game.assets[powerup1Bgm].play();
     });
 
     socket.on('endInvincible', () => {
         isInvincible = false;
-        // disable super mode
-        character[sheepId].frame = [0, 0, 0, 0, 1, 1, 1, 1];
-        
+        // TODO: disable super mode image
+
         game.assets[gameBgm].play();
         game.assets[powerup1Bgm].stop();
     });
@@ -254,11 +251,13 @@ function initPlayer(game,map,socket,userObj){
 	 // Player for now will be a pixel x pixel.
     var player = new Sprite(pixel, pixel);
     player.image = game.assets[charImg];
+
+    //count for change frame
+    userObj.moveFrameCount = 0;
     
     //starting point
     player.x = userObj.coordinate.x;
     player.y = userObj.coordinate.y;
-
     
     //if enemy = wolf
     if(userObj.isEnemy){
@@ -270,9 +269,7 @@ function initPlayer(game,map,socket,userObj){
         userObj.imageIndex = 0;
     }
 
-    let i1 = userObj.imageIndex * 3;
-    let i2 = i1 + 1;
-    player.frame = [i1, i1, i1, i1, i2, i2, i2, i2];
+    player.frame = userObj.imageIndex * 3;
     
     return player;
 }
