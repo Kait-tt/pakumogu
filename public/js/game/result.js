@@ -39,7 +39,8 @@ function goToResultScene(game, score){
 	backLabel.text = "back";
 	endScene.addChild(backLabel);
 	backLabel.addEventListener(Event.TOUCH_START, () => {
-
+		game.assets[decisionSe].play();
+		goToTopScene(game);
 	});
 
 	game.replaceScene(endScene);
