@@ -3,12 +3,12 @@ var mySpeed = 8;
 var SHEEP_SPEED = 8;
 var WOLF_SPEED = 6;
 var pixel = 64;
-var fps = 30;
 var DIRS = ['up', 'right', 'down', 'left'];
 var DX   = [0, 1, 0, -1];
 var DY   = [-1, 0, 1, 0];
 var sheepId;
 var isInvincible;
+var wolfImageIndex = 0;
 
 function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, game) {
     isInvincible = false;
@@ -185,10 +185,17 @@ function initPlayer(game,map,socket,userObj){
     
     //if enemy = wolf
     if(userObj.isEnemy){
-    	player.frame = [3, 3, 3, 3, 4, 4, 4, 4]; // wolf
+        // wolf
+        userObj.imageIndex = wolfImageIndex % 4 + 1;
+        ++wolfImageIndex;
     }else{
-    	player.frame = [0, 0, 0, 0, 1, 1, 1, 1]; // sheep
+        // sheep
+        userObj.imageIndex = 0;
     }
+
+    let i1 = userObj.imageIndex * 3;
+    let i2 = i1 + 1;
+    player.frame = [i1, i1, i1, i1, i2, i2, i2, i2];
     
     return player;
 }
