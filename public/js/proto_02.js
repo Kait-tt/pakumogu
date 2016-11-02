@@ -1,7 +1,7 @@
 var charImg = '/img/chara.png';
 var mySpeed = 8;
-var SHEEP_SPEED = 16;
-var WOLF_SPEED = 12;
+var SHEEP_SPEED = 8;
+var WOLF_SPEED = 6;
 var pixel = 64;
 var DIRS = ['up', 'right', 'down', 'left'];
 var DX   = [0, 1, 0, -1];
@@ -12,7 +12,7 @@ function initGame(userObj,mapObj) {
 	
 	enchant();
     var game = new Core(mapObj.width * pixel, mapObj.height * pixel); //game dimension
-    game.fps = 16;
+    game.fps = 30;
 
     game.preload(mapImg, charImg, itemImg);
     
@@ -116,9 +116,9 @@ function initPlayer(game,map,socket,userObj){
     
     //if enemy = wolf
     if(userObj.isEnemy){
-    	player.frame = [3, 3, 4, 4]; // wolf
+    	player.frame = [3, 3, 3, 3, 4, 4, 4, 4]; // wolf
     }else{
-    	player.frame = [0, 0, 1, 1]; // sheep
+    	player.frame = [0, 0, 0, 0, 1, 1, 1, 1]; // sheep
     }
     
     return player;
