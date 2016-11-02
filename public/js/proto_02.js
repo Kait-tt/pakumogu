@@ -31,7 +31,7 @@ function initGame(userObj,mapObj) {
     		}
     		character[objId] = initPlayer(game,map,socket,userObj[i]);
             if(myId == objId) {
-                initPlayerMove(game, map, socket, character[objId]);
+                initPlayerMove(game, map, socket, character, userObj);
             }
     		// Add elements to scene.
         	game.rootScene.addChild(character[objId]);
@@ -53,6 +53,10 @@ function initGame(userObj,mapObj) {
             if(sheepId!=objId && character[sheepId].intersect(character[objId])) {
             	game.rootScene.removeChild(character[sheepId]);
             }
+        });
+
+        socket.on('killSheep', (req) => {
+            game.rootScene.removeChild(character[sheepId]);
         });
         
         
@@ -80,14 +84,17 @@ function initPlayer(game,map,socket,userObj){
     return player;
 }
 
-function initPlayerMove(game, map, socket, player) {
+function initPlayerMove(game, map, socket, character, userObj) {
+    const myUserObj = userObj.find(x => x.id === myId);
+    const myCharacter = character[myId];
+
     // Let player move within bounds.
-    player.addEventListener(Event.ENTER_FRAME, function () {
+    myCharacter.addEventListener(Event.ENTER_FRAME, function () {
         // First move the player. If the player's new location has resulted
         // in the player being in a "hit" zone, then back the player up to
         // its original location. Tweak "hits" by "offset" pixels.
 
-        let {x, y} = player;
+        let {x, y} = myCharacter;
         DIRS.forEach((dir, i) => {
             if (!game.input[dir]) { return; }
             x += DX[i] * mySpeed;
@@ -96,6 +103,13 @@ function initPlayerMove(game, map, socket, player) {
 
         if (!myHitTest(map, x, y)) {
             socket.movePlayer({x, y});
+        }
+
+        // kill by sheepId
+        if (myId === sheepId && myUserObj.isAlive) {
+            if (userObj.filter(x => x.id !== myId && x.isAlive).some(x => character[x.id].intersect(myCharacter))) {
+                socket.killSheep();
+            }
         }
     });
 }
