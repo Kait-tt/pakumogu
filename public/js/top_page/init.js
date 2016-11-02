@@ -135,14 +135,12 @@ function enchantTopPage(){
 
 	    socket.on('startGame', (req) => {
 	        console.log('on start game', req);
-	        initPlayScene(req.game.players, req.game.map, req.game.normalItems, game);
+			initPlayScene(req.game.players, req.game.map, req.game.normalItems, req.game.powerItems, game);
 	    });
 	    //end prepare socket
 	};
-	
+
 	game.start();
-	/*
-	*/
 }
 
 function updateUserList(userObj,userList){
