@@ -215,7 +215,7 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, game) {
         game.assets[gameBgm].stop();
         game.assets[endSe].play();
         console.log('end game');
-        //goToResultScene(game);
+        goToResultScene(game);
     });
     
     game.replaceScene(scene);
