@@ -166,6 +166,7 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, game) {
         const wolf = userObj.find(x => x.id === req.player.id);
         wolf.isAlive = false;
         scene.removeChild(character[wolf.id]);
+        game.assets[wolfDeathSe].play();
     });
 
     socket.on('takeNormalItem', (req) => {
@@ -183,20 +184,25 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, game) {
 
         const item = powerItemList[targetItemObj.id];
         scene.removeChild(item);
+        game.assets[powerUpSe].play();
     });
 
     socket.on('startInvincible', () => {
         isInvincible = true;
-
         // enable super mode
         character[sheepId].frame = [0, 1];
+        
+        game.assets[gameBgm].stop();
+        game.assets[powerup1Bgm].play();
     });
 
     socket.on('endInvincible', () => {
         isInvincible = false;
-
         // disable super mode
         character[sheepId].frame = [0, 0, 0, 0, 1, 1, 1, 1];
+        
+        game.assets[gameBgm].play();
+        game.assets[powerup1Bgm].stop();
     });
     
     game.replaceScene(scene);

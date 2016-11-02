@@ -9,6 +9,7 @@ var charImg = '/img/chara.png';
 
 var gameBgm = '/bgm/game1.mp3';
 var topPageBgm = '/bgm/title_result.mp3';
+var powerup1Bgm = '/bgm/powerup1.mp3';
 
 var foodSe = '/se/Food.mp3';
 var sheepDeathSe = '/se/Sheep_death.mp3';
@@ -17,6 +18,8 @@ var footStepsSe = '/se/foot_steps.mp3';
 var decisionSe = '/se/Decision.mp3';
 var clearSe = '/se/Clear.mp3';
 var endSe = '/se/end.mp3';
+var powerUpSe = '/se/Power_Up.mp3';
+var wolfDeathSe = '/se/Wolf_Death.mp3';
 
 var socket;
 var myId;
@@ -33,8 +36,8 @@ function enchantTopPage(){
 	game.fps = 30;
 	game.preload( 
 			bgImg, bg2Img, gameImg, sheepImg, wolfImg, mapImg, charImg, itemImg, //img 
-			gameBgm,  topPageBgm, //bgm
-			foodSe, sheepDeathSe, startSe, footStepsSe, decisionSe, clearSe, endSe//se
+			gameBgm,  topPageBgm, powerup1Bgm,//bgm
+			foodSe, sheepDeathSe, startSe, footStepsSe, decisionSe, clearSe, endSe, powerUpSe, wolfDeathSe//se
 			);
 	game.onload = function () {
 		//start Top page 01
