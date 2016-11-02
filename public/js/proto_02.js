@@ -52,10 +52,8 @@ function initGame(userObj,mapObj) {
     	}
     	
     	
-    	console.log(character);
         socket.on('movePlayer', (req) => {
             const {x, y} = req.player.coordinate;
-            console.log(req.player);
             var objId = req.player.id;
             
             //rotate head before change position
