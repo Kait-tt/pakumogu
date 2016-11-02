@@ -8,10 +8,14 @@ var DX   = [0, 1, 0, -1];
 var DY   = [-1, 0, 1, 0];
 var sheepId;
 var isInvincible;
+var isEnded;
+var isTimeLimit;
 var wolfImageIndex = 0;
 
-function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, game) {
+function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, game) {
     isInvincible = false;
+    isEnded = false;
+    isTimeLimit = false;
     
     //start the music
 	game.assets[startSe].play();
@@ -32,11 +36,25 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, game) {
 	currentScoreTxt.font = '36px Arial, Helvetica, sans-serif';
 	currentScoreTxt.moveTo(60,350);
 	scene.addChild(currentScoreTxt);
-	var timeTxt = new Label("time :");
+
+	var timeTxt = new Label("time : " + timeLimit / 1000);
 	timeTxt.font = '36px Arial, Helvetica, sans-serif';
 	timeTxt.moveTo(60,530);
 	scene.addChild(timeTxt);
-	
+    var timeIntervalId = setInterval(() => {
+        if (isEnded) {
+            clearInterval(timeIntervalId);
+        }
+
+        if (isTimeLimit) {
+            timeLimit = 0;
+        } else if (!isEnded) {
+            timeLimit = Math.max(0, timeLimit - 1000);
+        }
+
+        timeTxt.text = "time : " + timeLimit / 1000;
+    }, 1000);
+
 	var map = initDynamicMap(game,mapObj);
 	scene.addChild(map);
 
@@ -220,7 +238,9 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, game) {
         game.assets[powerup1Bgm].stop();
     });
 
-    socket.on('endGame', () => {
+    socket.on('endGame', (req) => {
+        isEnded = true;
+        isTimeLimit = req.isTimeLimit;
         game.assets[gameBgm].stop();
         game.assets[endSe].play();
         console.log('end game');

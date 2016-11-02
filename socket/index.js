@@ -31,8 +31,8 @@ class SocketRouter {
             this.emits('endInvincible', {});
         });
 
-        this.gameMaster.on('endGame', ({game}) => {
-            this.emits('endGame', {});
+        this.gameMaster.on('endGame', ({game, isTimeLimit}) => {
+            this.emits('endGame', {game: game.serialize(), isTimeLimit});
         });
 
         this.io.sockets.on('connection', socket => {
