@@ -31,7 +31,7 @@ function initGame(userObj,mapObj) {
     		}
     		character[objId] = initPlayer(game,map,socket,userObj[i]);
             if(myId == objId) {
-                initPlayerMove(game, map, socket, character[objId]);
+                initPlayerMove(game, map, socket, character[objId], mapObj);
             }
     		// Add elements to scene.
         	game.rootScene.addChild(character[objId]);
@@ -61,7 +61,7 @@ function initGame(userObj,mapObj) {
 }
 
 function initPlayer(game,map,socket,userObj){
-	 // Player for now will be a 36x36.
+	 // Player for now will be a pixel x pixel.
     var player = new Sprite(pixel, pixel);
     player.image = game.assets[charImg];
     
@@ -70,7 +70,7 @@ function initPlayer(game,map,socket,userObj){
     player.y = userObj.coordinate.y * pixel;
 
     
-    //if enemy = brown
+    //if enemy = wolf
     if(userObj.isEnemy){
     	player.frame = [3, 3, 4, 4]; // wolf
     }else{
@@ -80,7 +80,7 @@ function initPlayer(game,map,socket,userObj){
     return player;
 }
 
-function initPlayerMove(game, map, socket, player) {
+function initPlayerMove(game, map, socket, player, mapObj) {
     // Let player move within bounds.
     player.addEventListener(Event.ENTER_FRAME, function () {
         // First move the player. If the player's new location has resulted
@@ -93,9 +93,11 @@ function initPlayerMove(game, map, socket, player) {
             x += DX[i] * mySpeed;
             y += DY[i] * mySpeed;
         });
-
+        
+        //check the wall
         if (!myHitTest(map, x, y)) {
-            socket.movePlayer({x, y});
+        	//check for warp portal at the border of map
+        	warpPortal(x, y, mapObj);
         }
     });
 }
@@ -105,4 +107,20 @@ function myHitTest (map, x, y) {
         map.hitTest(x + pixel - 1, y) ||
         map.hitTest(x, y + pixel - 1) ||
         map.hitTest(x + pixel - 1, y + pixel - 1);
+}
+
+
+function warpPortal(x, y, mapObj){
+	var mapXLimit = (mapObj.width * pixel)-(pixel/2);
+	var mapYLimit = (mapObj.height * pixel)-(pixel/2);
+	if(x>mapXLimit){
+		x = pixel/2;
+	}else if(x<pixel/2){
+		x = mapXLimit;
+	}else if(y>mapYLimit){
+		y = pixel/2;
+	}else if(y<pixel/2){
+		y = mapYLimit;
+	}
+	socket.movePlayer({x, y});
 }
