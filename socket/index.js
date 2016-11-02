@@ -109,6 +109,9 @@ class SocketRouter {
             this.gameMaster.removePlayer(user);
             this.emits('leaveRoom', {username: user.username, id: user.id, game: this.gameMaster.game.serialize()});
             user.socket.leave(this.gameRoomKey);
+            if (!this.gameMaster.game.players.filter(x => !x.isAI).length) {
+                this.gameMaster.reCreateGame();
+            }
         } catch (e) {
             console.error(e);
             user.socket.emit('operationError', {error: e, message: e.message});
