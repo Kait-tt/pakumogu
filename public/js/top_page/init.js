@@ -35,7 +35,7 @@ function initTopPage(){
     socket.on('startGame', (req) => {
         console.log('on start game', req);
         $('body').html("");
-	    initGame(req.game.players, req.game.map);
+	    initGame(req.game.players, req.game.map, req.game.normalItems);
 
 	    /*$('body').append("<div id='exit' style='position:absolute;padding-top: 50px'>Exit game</div>");
 	    $("#exit").click(function() {

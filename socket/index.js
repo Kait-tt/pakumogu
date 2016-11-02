@@ -56,6 +56,10 @@ class SocketRouter {
             socket.on('killSheep', () => {
                 this.killSheep(user);
             });
+
+            socket.on('takeNormalItem', ({itemId}) => {
+                this.takeNormalItem(user, itemId);
+            })
         });
     }
 
@@ -122,6 +126,19 @@ class SocketRouter {
         } catch (e) {
             console.error(e);
             user.socket.emit('operationError', {error: e, message: e.message});
+        }
+    }
+
+    takeNormalItem (user, itemId) {
+        let item = this.gameMaster.game.normalItems.find(x => x.id === itemId);
+        if (!item.enabled) { return; }
+
+        try {
+            item = this.gameMaster.takeNormalItem(itemId);
+            this.emits('takeNormalItem', {normalItem: item});
+        } catch (e) {
+            console.error(e);
+            user.socket.emit('takeNormalItem', {error: e, message: e.message});
         }
     }
 

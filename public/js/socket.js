@@ -30,6 +30,10 @@
             this.io.emit('killSheep', {});
         }
 
+        takeNormalItem ({itemId}) {
+            this.io.emit('takeNormalItem', {itemId})
+        }
+
         join (username) {
             this.username = username;
 
