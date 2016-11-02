@@ -3,16 +3,19 @@ var mySpeed = 8;
 var SHEEP_SPEED = 8;
 var WOLF_SPEED = 6;
 var pixel = 64;
+var fps = 30;
 var DIRS = ['up', 'right', 'down', 'left'];
 var DX   = [0, 1, 0, -1];
 var DY   = [-1, 0, 1, 0];
 var sheepId;
+var isInvincible;
 
-function initGame(userObj,mapObj,normalItemObj) {
+function initGame(userObj,mapObj,normalItemObj,powerItemObj) {
+    isInvincible = false;
 	
 	enchant();
     var game = new Core(mapObj.width * pixel, mapObj.height * pixel); //game dimension
-    game.fps = 30;
+    game.fps = fps;
 
     game.preload(mapImg, charImg, itemImg);
     
@@ -21,36 +24,43 @@ function initGame(userObj,mapObj,normalItemObj) {
     	var map = initDynamicMap(game,mapObj);
     	game.rootScene.addChild(map);
     	
-    	//init all character
-    	var character = {};
-    	for(let i=0;i<userObj.length;i++){
-    		var objId = userObj[i].id;
-    		if(myId == objId){
-    			//set speed every move
-                mySpeed = userObj[i].isEnemy ? WOLF_SPEED : SHEEP_SPEED;
-    		}
-    		character[objId] = initPlayer(game,map,socket,userObj[i]);
-            if(myId == objId) {
-            	initPlayerMove(game, map, socket, character, userObj, mapObj);
-            }
-    		// Add elements to scene.
-        	game.rootScene.addChild(character[objId]);
-        	
-        	//set sheep id for killing
-        	if(!userObj[i].isEnemy){
-    			sheepId = objId;
-    		}
-    	}
-    	
     	//init all item
     	var normalItemList = {};
     	for(let i=0;i<normalItemObj.length;i++){
     		//init item obj and assign to list for checking when sheep hit
-            const item = initItem(game,normalItemObj[i]);
+            const item = initNormalItem(game,normalItemObj[i]);
             normalItemList[normalItemObj[i].id] = item;
     		game.rootScene.addChild(item);
     	}
-    	
+
+    	var powerItemList = {};
+        for(let i=0;i<powerItemObj.length;i++){
+            //init item obj and assign to list for checking when sheep hit
+            const item = initPowerItem(game,powerItemObj[i]);
+            powerItemList[powerItemObj[i].id] = item;
+            game.rootScene.addChild(item);
+        }
+
+        //init all character
+        var character = {};
+        for(let i=0;i<userObj.length;i++){
+            var objId = userObj[i].id;
+            if(myId == objId){
+                //set speed every move
+                mySpeed = userObj[i].isEnemy ? WOLF_SPEED : SHEEP_SPEED;
+            }
+            character[objId] = initPlayer(game,map,socket,userObj[i]);
+            if(myId == objId) {
+                initPlayerMove(game, map, socket, character, userObj, mapObj, normalItemObj, normalItemList, powerItemObj, powerItemList);
+            }
+            // Add elements to scene.
+            game.rootScene.addChild(character[objId]);
+
+            //set sheep id for killing
+            if(!userObj[i].isEnemy){
+                sheepId = objId;
+            }
+        }
     	
         socket.on('movePlayer', (req) => {
             const {x, y} = req.player.coordinate;
@@ -75,37 +85,51 @@ function initGame(userObj,mapObj,normalItemObj) {
             //change position
             character[objId].x = x;
             character[objId].y = y;
-
-            //kill by sheepId
-            if(sheepId!=objId && character[sheepId].intersect(character[objId])) {
-            	game.rootScene.removeChild(character[sheepId]);
-            }else if(sheepId == objId){//the move object is sheep
-            	//check sheep intersect with item
-            	for(let i=0;i<normalItemObj.length;i++){
-                    if (!normalItemObj[i].enabled) { continue; }
-
-                    const item = normalItemList[normalItemObj[i].id];
-            		if(character[sheepId].intersect(item)){
-                        socket.takeNormalItem({itemId: normalItemObj[i].id});
-            		}
-            	}
-            }
         });
 
         socket.on('killSheep', (req) => {
-        	game.rootScene.removeChild(character[sheepId]);
+            const sheep = userObj.find(x => !x.isEnemy);
+            sheep.isAlive = false;
+            game.rootScene.removeChild(character[sheep.id]);
+        });
+
+        socket.on('killWolf', (req) => {
+            const wolf = userObj.find(x => x.id === req.player.id);
+            wolf.isAlive = false;
+            game.rootScene.removeChild(character[wolf.id]);
         });
         
         socket.on('takeNormalItem', (req) => {
             const targetItemObj = normalItemObj.find(x => x.id === req.normalItem.id);
-            if (!targetItemObj.enabled) { return; }
+            targetItemObj.enabled = false;
 
             const item = normalItemList[targetItemObj.id];
             game.rootScene.removeChild(item);
+        });
 
-            //item take effect - invincible
+        socket.on('takePowerItem', (req) => {
+            const targetItemObj = powerItemObj.find(x => x.id === req.powerItem.id);
+            targetItemObj.enabled = false;
 
-        })
+            const item = powerItemList[targetItemObj.id];
+            game.rootScene.removeChild(item);
+        });
+
+        socket.on('startInvincible', () => {
+            console.log('start invincible');
+            isInvincible = true;
+
+            // enable super mode
+            character[sheepId].frame = [0, 1];
+        });
+
+        socket.on('endInvincible', () => {
+            console.log('end invincible');
+            isInvincible = false;
+
+            // disable super mode
+            character[sheepId].frame = [0, 0, 0, 0, 1, 1, 1, 1];
+        });
     };
     game.start();
 }
@@ -130,7 +154,7 @@ function initPlayer(game,map,socket,userObj){
     return player;
 }
 
-function initPlayerMove(game, map, socket, character, userObj, mapObj) {
+function initPlayerMove(game, map, socket, character, userObj, mapObj, normalItemObj, normalItemList, powerItemObj, powerItemList) {
     const myUserObj = userObj.find(x => x.id === myId);
     const myCharacter = character[myId];
 
@@ -155,11 +179,44 @@ function initPlayerMove(game, map, socket, character, userObj, mapObj) {
 
         // kill by sheepId
         if (myId === sheepId && myUserObj.isAlive) {
-            if (userObj.filter(x => x.id !== myId && x.isAlive).some(x => character[x.id].intersect(myCharacter))) {
-            		socket.killSheep();
+            for (let i = 0; i < userObj.length; i++) {
+                if (userObj[i] === myUserObj) { continue; }
+                if (!userObj[i].isAlive) { continue; }
+                if (character[userObj[i].id].intersect(myCharacter)) {
+                    console.log(isInvincible);
+                    if (isInvincible) {
+                        socket.killWolf({wolfId: userObj[i].id});
+                        userObj[i].isAlive = false;
+                    } else {
+                        socket.killSheep();
+                        myUserObj.isAlive = false;
+                        break;
+                    }
+                }
+            }
+
+            //check sheep intersect with item
+            for(let i=0;i<normalItemObj.length;i++){
+                if (!normalItemObj[i].enabled) { continue; }
+
+                const item = normalItemList[normalItemObj[i].id];
+                if(myCharacter.intersect(item)){
+                    normalItemObj[i].enabled = false;
+                    socket.takeNormalItem({itemId: normalItemObj[i].id});
+                }
+            }
+
+            for(let i=0;i<powerItemObj.length;i++){
+                if (!powerItemObj[i].enabled) { continue; }
+
+                const item = powerItemList[powerItemObj[i].id];
+                if(myCharacter.intersect(item)){
+                    powerItemObj[i].enabled = false;
+                    console.log(`take ${powerItemObj[i].id}`);
+                    socket.takePowerItem({itemId: powerItemObj[i].id});
+                }
             }
         }
-
     });
 }
 

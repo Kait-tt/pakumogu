@@ -14,8 +14,17 @@ class SocketRouter {
         this.gameMaster = new GameMaster();
 
         this.gameMaster.createGame();
+
         this.gameMaster.on('moveAI', ({aiPlayer}) => {
             this.emits('movePlayer', {player: aiPlayer.serialize()});
+        });
+
+        this.gameMaster.on('startInvincible', () => {
+            this.emits('startInvincible', {});
+        });
+
+        this.gameMaster.on('endInvincible', () => {
+            this.emits('endInvincible', {});
         });
 
         this.io.sockets.on('connection', socket => {
@@ -57,9 +66,17 @@ class SocketRouter {
                 this.killSheep(user);
             });
 
+            socket.on('killWolf', ({wolfId}) => {
+                this.killWolf(user, wolfId);
+            });
+
             socket.on('takeNormalItem', ({itemId}) => {
                 this.takeNormalItem(user, itemId);
-            })
+            });
+
+            socket.on('takePowerItem', ({itemId}) => {
+                this.takePowerItem(user, itemId);
+            });
         });
     }
 
@@ -129,6 +146,19 @@ class SocketRouter {
         }
     }
 
+    killWolf (user, wolfId) {
+        const wolf = this.gameMaster.game.players.find(x => x.id === wolfId);
+        if (!wolf.isAlive) { return; }
+
+        try {
+            const wolf = this.gameMaster.killWolf(wolfId);
+            this.emits('killWolf', {player: wolf.serialize()});
+        } catch (e) {
+            console.error(e);
+            user.socket.emit('operationError', {error: e, message: e.message});
+        }
+    }
+
     takeNormalItem (user, itemId) {
         let item = this.gameMaster.game.normalItems.find(x => x.id === itemId);
         if (!item.enabled) { return; }
@@ -138,7 +168,20 @@ class SocketRouter {
             this.emits('takeNormalItem', {normalItem: item});
         } catch (e) {
             console.error(e);
-            user.socket.emit('takeNormalItem', {error: e, message: e.message});
+            user.socket.emit('operationError', {error: e, message: e.message});
+        }
+    }
+
+    takePowerItem (user, itemId) {
+        let item = this.gameMaster.game.powerItems.find(x => x.id === itemId);
+        if (!item.enabled) { return; }
+
+        try {
+            item = this.gameMaster.takePowerItem(itemId);
+            this.emits('takePowerItem', {powerItem: item});
+        } catch (e) {
+            console.error(e);
+            user.socket.emit('operationError', {error: e, message: e.message});
         }
     }
 
