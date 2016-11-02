@@ -8,7 +8,7 @@ var DX   = [0, 1, 0, -1];
 var DY   = [-1, 0, 1, 0];
 var sheepId;
 
-function initGame(userObj,mapObj) {
+function initGame(userObj,mapObj,normalItemObj) {
 	
 	enchant();
     var game = new Core(mapObj.width * pixel, mapObj.height * pixel); //game dimension
@@ -23,7 +23,7 @@ function initGame(userObj,mapObj) {
     	
     	//init all character
     	var character = {};
-    	for(var i=0;i<userObj.length;i++){
+    	for(let i=0;i<userObj.length;i++){
     		var objId = userObj[i].id;
     		if(myId == objId){
     			//set speed every move
@@ -42,13 +42,13 @@ function initGame(userObj,mapObj) {
     		}
     	}
     	
-    	//init item
-    	var itemPosition = [ [1,1], [1,4] ];
-    	var itemList = [];
-    	for(var i=0;i<itemPosition.length;i++){
+    	//init all item
+    	var normalItemList = {};
+    	for(let i=0;i<normalItemObj.length;i++){
     		//init item obj and assign to list for checking when sheep hit
-    		itemList[i] = initItem(game,itemPosition[i]);
-    		game.rootScene.addChild(itemList[i]);
+            const item = initItem(game,normalItemObj[i]);
+            normalItemList[normalItemObj[i].id] = item;
+    		game.rootScene.addChild(item);
     	}
     	
     	
@@ -81,13 +81,12 @@ function initGame(userObj,mapObj) {
             	game.rootScene.removeChild(character[sheepId]);
             }else if(sheepId == objId){//the move object is sheep
             	//check sheep intersect with item
-            	for(var i=0;i<itemList.length;i++){
-            		if(character[sheepId].intersect(itemList[i])){
-            			//remove item after hit
-            			game.rootScene.removeChild(itemList[i]);
-            			
-            			//item take effect - invincible
+            	for(let i=0;i<normalItemObj.length;i++){
+                    if (!normalItemObj[i].enabled) { continue; }
 
+                    const item = normalItemList[normalItemObj[i].id];
+            		if(character[sheepId].intersect(item)){
+                        socket.takeNormalItem({itemId: normalItemObj[i].id});
             		}
             	}
             }
@@ -97,7 +96,16 @@ function initGame(userObj,mapObj) {
         	game.rootScene.removeChild(character[sheepId]);
         });
         
-        
+        socket.on('takeNormalItem', (req) => {
+            const targetItemObj = normalItemObj.find(x => x.id === req.normalItem.id);
+            if (!targetItemObj.enabled) { return; }
+
+            const item = normalItemList[targetItemObj.id];
+            game.rootScene.removeChild(item);
+
+            //item take effect - invincible
+
+        })
     };
     game.start();
 }
