@@ -12,7 +12,7 @@ var isEnded;
 var isTimeLimit;
 var wolfImageIndex = 0;
 
-function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, game) {
+function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, initScore, game) {
     isInvincible = false;
     isEnded = false;
     isTimeLimit = false;
@@ -32,7 +32,7 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
 	hightScoreTxt.font = '36px Arial, Helvetica, sans-serif';
 	hightScoreTxt.moveTo(60,170);
 	scene.addChild(hightScoreTxt);
-	var currentScoreTxt = new Label("current score :");
+	var currentScoreTxt = new Label("current score : " + ('00000' + initScore).slice(-5));
 	currentScoreTxt.font = '36px Arial, Helvetica, sans-serif';
 	currentScoreTxt.moveTo(60,350);
 	scene.addChild(currentScoreTxt);
@@ -245,6 +245,11 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
         game.assets[endSe].play();
         console.log('end game');
         goToResultScene(game);
+    });
+
+    socket.on('updateScore', (scores) => {
+        console.log(scores);
+        currentScoreTxt.text = "current score : " + ('00000' + scores.score).slice(-5);
     });
     
     game.replaceScene(scene);
