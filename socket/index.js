@@ -14,6 +14,9 @@ class SocketRouter {
         this.gameMaster = new GameMaster();
 
         this.gameMaster.createGame();
+        this.gameMaster.on('moveAI', ({aiPlayer}) => {
+            this.emits('movePlayer', {player: aiPlayer.serialize()});
+        });
 
         this.io.sockets.on('connection', socket => {
             const user = new SocketUser(socket);

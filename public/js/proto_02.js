@@ -48,7 +48,7 @@ function initGame(userObj,mapObj) {
             var objId = req.player.id;
             character[objId].x = x;
             character[objId].y = y;
-            
+
             //kill by sheepId
             if(sheepId!=objId && character[sheepId].intersect(character[objId])) {
             	game.rootScene.removeChild(character[sheepId]);
@@ -66,8 +66,8 @@ function initPlayer(game,map,socket,userObj){
     player.image = game.assets[charImg];
     
     //starting point
-    player.x = userObj.coordinate.x * pixel;
-    player.y = userObj.coordinate.y * pixel;
+    player.x = userObj.coordinate.x;
+    player.y = userObj.coordinate.y;
 
     
     //if enemy = brown
