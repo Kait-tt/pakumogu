@@ -29,6 +29,27 @@ var myId;
 var gameOffSetX = 480;
 var gameOffSetY = 40;
 
+enchant.ui.assets = [
+	'enchant_assets/pad.png',
+	'enchant_assets/apad.png',
+	'enchant_assets/icon0.png',
+	'enchant_assets/font0.png'
+];
+
+enchant.widget.assets = [
+	'enchant_assets/listItemBg.png',
+	'enchant_assets/iconMenuBg.png',
+	'enchant_assets/button.png',
+	'enchant_assets/buttonPushed.png',
+	'enchant_assets/dialog.png',
+	'enchant_assets/navigationBar.png'
+];
+
+enchant.widget._env.font = '12px helvetica';
+enchant.widget._env.buttonFont = '12px helvetica';
+enchant.widget._env.navigationBarFont = '12px helvetica';
+enchant.widget._env.textareaFont = '12px helvetica';
+
 
 function enchantTopPage(){
 	socket = new Socket();
