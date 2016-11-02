@@ -133,22 +133,6 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, game) {
         //change position
         character[objId].x = x;
         character[objId].y = y;
-        
-        //kill by sheepId
-        if(sheepId!=objId && character[sheepId].intersect(character[objId])) {
-        	//scene.removeChild(character[sheepId]);
-        	socket.killSheep();
-        }else if(sheepId == objId){//the move object is sheep
-        	//check sheep intersect with item
-        	for(let i=0;i<normalItemObj.length;i++){
-                if (!normalItemObj[i].enabled) { continue; }
-
-                const item = normalItemList[normalItemObj[i].id];
-        		if(character[sheepId].intersect(item)){
-                    socket.takeNormalItem({itemId: normalItemObj[i].id});
-        		}
-        	}
-        }
     });
 
     socket.on('killSheep', (req) => {
