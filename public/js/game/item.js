@@ -1,6 +1,4 @@
-/**
- * http://usejsdoc.org/
- */
+var itemImg = '/img/map.png';
 function initItem(game,itemPosition){
 	 // Player for now will be a pixel x pixel.
     var item = new Sprite(pixel, pixel);
@@ -10,7 +8,7 @@ function initItem(game,itemPosition){
     item.x = itemPosition[0] * pixel;
     item.y = itemPosition[1] * pixel;
 
-    item.frame = [18, 18];
+    item.frame = [2, 2];
     
     return item;
 }

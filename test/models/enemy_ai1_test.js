@@ -37,7 +37,6 @@ const eAI1 = new EnemyAI1(2,map,mapMaxX,mapMaxY);
 //map[y][x]
 // players = [player1, player2, ...]
 // player = {id, x, y, isEnemy}
-// x:‰¡•,y:‚‚³([‚³)
 
 const player1 = { id: 1, x: p1x, y: p1y, isEnemy: false };
 const player2 = { id: 2, x: p2x, y: p2y, isEnemy: true };

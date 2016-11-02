@@ -26,6 +26,10 @@
             this.io.emit('movePlayer', {x, y});
         }
 
+        killSheep () {
+            this.io.emit('killSheep', {});
+        }
+
         join (username) {
             this.username = username;
 
