@@ -139,11 +139,10 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, game) {
         const sheep = userObj.find(x => !x.isEnemy);
         sheep.isAlive = false;
         scene.removeChild(character[sheep.id]);
-        
+
         game.assets[gameBgm].stop();
     	game.assets[sheepDeathSe].play();
     	game.assets[endSe].play();
-    	game.assets[clearSe].play();
     });
 
     socket.on('killWolf', (req) => {
