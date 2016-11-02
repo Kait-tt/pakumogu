@@ -150,6 +150,15 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, game) {
         game.assets[wolfDeathSe].play();
     });
 
+    socket.on('respawnWolf', (req) => {
+        const wolf = userObj.find(x => x.id === req.player.id);
+        wolf.isAlive = true;
+        wolf.coordinate = req.player.coordinate;
+        character[wolf.id].x = wolf.coordinate.x;
+        character[wolf.id].y = wolf.coordinate.y;
+        scene.addChild(character[wolf.id]);
+    });
+
     socket.on('takeNormalItem', (req) => {
         const targetItemObj = normalItemObj.find(x => x.id === req.normalItem.id);
         targetItemObj.enabled = false;
