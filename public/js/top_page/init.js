@@ -2,12 +2,16 @@ window.onload = enchantTopPage;
 
 var bgImg = '/img/title1.png';
 var bg2Img = '/img/title2.png';
+var gameImg = '/img/game.png';
 var sheepImg = '/img/sheep.png';
 var wolfImg = '/img/wolf.png';
 var charImg = '/img/chara.png';
 
 var socket;
 var myId;
+
+var gameOffSetX = 480;
+var gameOffSetY = 40;
 
 
 function enchantTopPage(){
@@ -16,7 +20,7 @@ function enchantTopPage(){
 	
 	var game = new Core(1920, 1080);
 	game.fps = 30;
-	game.preload(bgImg, bg2Img, sheepImg, wolfImg, mapImg, charImg, itemImg);
+	game.preload(bgImg, bg2Img, gameImg, sheepImg, wolfImg, mapImg, charImg, itemImg);
 	game.onload = function () {
 		//start Top page 01
 		var scene, label, bg;

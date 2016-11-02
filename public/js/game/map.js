@@ -7,6 +7,8 @@ var mapImg = '/img/map.png';
 function initDynamicMap(game,mapObj){
 	// Create a map with 32x32 tiles
     var map = new Map(pixel, pixel);
+    map.x = gameOffSetX;
+    map.y = gameOffSetY;
     
     // Associate a tilesheet with the map.
     map.image = game.assets[mapImg]; 

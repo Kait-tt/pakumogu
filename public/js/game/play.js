@@ -13,6 +13,24 @@ var isInvincible;
 function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, game) {
     isInvincible = false;
 	var scene = new Scene();
+	//add scene environment
+	var bg = new Sprite(1920, 1080);
+	bg.image = game.assets[gameImg];
+	scene.addChild(bg);
+	
+	//left side
+	var hightScoreTxt = new Label("Highest score :");
+	hightScoreTxt.font = '36px Arial, Helvetica, sans-serif';
+	hightScoreTxt.moveTo(60,170);
+	scene.addChild(hightScoreTxt);
+	var currentScoreTxt = new Label("current score :");
+	currentScoreTxt.font = '36px Arial, Helvetica, sans-serif';
+	currentScoreTxt.moveTo(60,350);
+	scene.addChild(currentScoreTxt);
+	var timeTxt = new Label("time :");
+	timeTxt.font = '36px Arial, Helvetica, sans-serif';
+	timeTxt.moveTo(60,530);
+	scene.addChild(timeTxt);
 	
 	var map = initDynamicMap(game,mapObj);
 	scene.addChild(map);
@@ -34,6 +52,9 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, game) {
         scene.addChild(item);
     }
 	
+	//set right side screen position
+	var fixPosition = [[1515,90], [1515,275],[1515,455],[1515,640],[1515,825]];
+	
 	//init all character
 	var character = {};
 	for(let i=0;i<userObj.length;i++){
@@ -53,6 +74,32 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, game) {
     	if(!userObj[i].isEnemy){
 			sheepId = objId;
 		}
+    	
+    	//set right side profile
+    	var player = new Sprite(pixel, pixel);
+        player.image = game.assets[charImg];
+        //if enemy = wolf
+        if(userObj[i].isEnemy){
+        	player.frame = [3, 3, 3, 3, 4, 4, 4, 4]; // wolf
+        }else{
+        	player.frame = [0, 0, 0, 0, 1, 1, 1, 1]; // sheep
+        }
+        
+        //starting point
+        player.scale(3);
+        player.x = fixPosition[i][0] + 50;
+        player.y = fixPosition[i][1] + 20;
+        
+        scene.addChild(player);
+        
+        var nameTag = "AI";
+        if(null!=userObj[i].user){
+        	nameTag = userObj[i].user.username;
+        }
+        var usernameTag = new Label(nameTag);
+        usernameTag.font = '36px Arial, Helvetica, sans-serif';
+        usernameTag.moveTo(fixPosition[i][0] + 50 ,fixPosition[i][1]+120);
+        scene.addChild(usernameTag);
 	}
 
 	
@@ -211,23 +258,24 @@ function initPlayerMove(game, map, socket, character, userObj, mapObj, normalIte
 }
 
 function myHitTest (map, x, y) {
+	x -= gameOffSetX;
+	y -= gameOffSetY;
     return map.hitTest(x, y) ||
         map.hitTest(x + pixel - 1, y) ||
         map.hitTest(x, y + pixel - 1) ||
         map.hitTest(x + pixel - 1, y + pixel - 1);
 }
 
-
 function warpPortal(x, y, mapObj){
-	var mapXLimit = (mapObj.width * pixel)-(pixel/2);
-	var mapYLimit = (mapObj.height * pixel)-(pixel/2);
+	var mapXLimit = (mapObj.width * pixel)-(pixel/2) + gameOffSetX;
+	var mapYLimit = (mapObj.height * pixel)-(pixel/2) + gameOffSetY;
 	if(x>mapXLimit){
-		x = pixel/2;
-	}else if(x<pixel/2){
+		x = pixel/2 + gameOffSetX;
+	}else if(x<pixel/2 + gameOffSetX){
 		x = mapXLimit;
 	}else if(y>mapYLimit){
-		y = pixel/2;
-	}else if(y<pixel/2){
+		y = pixel/2 + gameOffSetY;
+	}else if(y<pixel/2 + gameOffSetY){
 		y = mapYLimit;
 	}
 	socket.movePlayer({x, y});
