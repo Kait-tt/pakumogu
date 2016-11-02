@@ -79,34 +79,52 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, game) {
     	if(!userObj[i].isEnemy){
 			sheepId = objId;
 		}
-    	
-    	//set right side profile
-    	var player = new Sprite(pixel, pixel);
-        player.image = game.assets[charImg];
-        //if enemy = wolf
-        if(userObj[i].isEnemy){
-        	player.frame = [3, 3, 3, 3, 4, 4, 4, 4]; // wolf
-        }else{
-        	player.frame = [0, 0, 0, 0, 1, 1, 1, 1]; // sheep
-        }
-        
-        //starting point
-        player.scale(3);
-        player.x = fixPosition[i][0] + 50;
-        player.y = fixPosition[i][1] + 20;
-        
-        scene.addChild(player);
-        
-        var nameTag = "AI";
-        if(null!=userObj[i].user){
-        	nameTag = userObj[i].user.username;
-        }
-        var usernameTag = new Label(nameTag);
-        usernameTag.font = '36px Arial, Helvetica, sans-serif';
-        usernameTag.moveTo(fixPosition[i][0] + 50 ,fixPosition[i][1]+120);
-        scene.addChild(usernameTag);
 	}
-
+	
+	wolfImageIndex = 0;
+	var cProfile = {};
+	var deathFrame = {};
+	for(let i=0;i<userObj.length;i++){
+		var objId = userObj[i].id;
+		//set right side profile
+		var player = new Sprite(pixel, pixel);
+	    player.image = game.assets[charImg];
+	    
+	    //if enemy = wolf
+	    if(userObj[i].isEnemy){
+	        // wolf
+	        userObj[i].imageIndex = wolfImageIndex % 4 + 1;
+	        ++wolfImageIndex;
+	    }else{
+	        // sheep
+	        userObj[i].imageIndex = 0;
+	    }
+	
+	    let i1 = userObj[i].imageIndex * 3;
+	    let i2 = i1 + 1;
+	    player.frame = [i1, i1, i1, i1, i2, i2, i2, i2];
+	    
+	    deathFrame[objId] = i1+2;
+	    
+	    //starting point
+	    player.scale(3);
+	    player.x = fixPosition[i][0] + 52;
+	    player.y = fixPosition[i][1] + 25;
+	    
+	    cProfile[objId] = player;
+	    
+	    scene.addChild(cProfile[objId]);
+	    
+	    var nameTag = "AI";
+	    if(null!=userObj[i].user){
+	    	nameTag = userObj[i].user.username;
+	    }
+	    var usernameTag = new Label(nameTag);
+	    usernameTag.font = '36px Arial, Helvetica, sans-serif';
+	    usernameTag.moveTo(fixPosition[i][0] + 50 ,fixPosition[i][1]+120);
+	    scene.addChild(usernameTag);
+	    //end right side profile
+	}
 	
     socket.on('movePlayer', (req) => {
     	game.assets[footStepsSe].play();
@@ -141,6 +159,9 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, game) {
         scene.removeChild(character[sheep.id]);
 
     	game.assets[sheepDeathSe].play();
+
+    	addDeathOnProfile(game,scene,cProfile,sheep.id,deathFrame);
+    	
     });
 
     socket.on('killWolf', (req) => {
@@ -148,6 +169,10 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, game) {
         wolf.isAlive = false;
         scene.removeChild(character[wolf.id]);
         game.assets[wolfDeathSe].play();
+        
+        //gray profile by sprite overlay
+        //170 x 160
+        addDeathOnProfile(game,scene,cProfile,wolf.id,deathFrame);
     });
 
     socket.on('respawnWolf', (req) => {
@@ -199,6 +224,7 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, game) {
         game.assets[gameBgm].stop();
         game.assets[endSe].play();
         console.log('end game');
+        goToResultScene(game);
     });
     
     game.replaceScene(scene);
@@ -317,4 +343,13 @@ function warpPortal(x, y, mapObj){
 		y = mapYLimit;
 	}
 	socket.movePlayer({x, y});
+}
+
+function addDeathOnProfile(game,scene,cProfile,id,deathFrame){
+	var blackBox = new Sprite(180, 170);
+    blackBox.image = game.assets[blackImg];
+    cProfile[id].frame = deathFrame[id]; //profile position
+    blackBox.moveTo(cProfile[id].x-60,cProfile[id].y-30);
+    blackBox.opacity = 0.5;
+    scene.addChild(blackBox);
 }
