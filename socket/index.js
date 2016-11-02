@@ -19,6 +19,10 @@ class SocketRouter {
             this.emits('movePlayer', {player: aiPlayer.serialize()});
         });
 
+        this.gameMaster.on('respawnWolf', ({wolf}) => {
+            this.emits('respawnWolf', {player: wolf.serialize()});
+        });
+
         this.gameMaster.on('startInvincible', () => {
             this.emits('startInvincible', {});
         });
