@@ -32,5 +32,15 @@ function goToResultScene(game, score){
 	}
 	
 	endScene.addChild(resultList);
+
+	var backLabel = new Label();
+	backLabel.font = '24px Arial, Helvetica, sans-serif';
+	backLabel.moveTo(1380,1000);
+	backLabel.text = "back";
+	endScene.addChild(backLabel);
+	backLabel.addEventListener(Event.TOUCH_START, () => {
+
+	});
+
 	game.replaceScene(endScene);
 }
