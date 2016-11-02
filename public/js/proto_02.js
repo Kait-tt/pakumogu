@@ -1,6 +1,4 @@
-var mapImg = '/img/map.png';
 var charImg = '/img/chara.png';
-var itemImg = '/img/map64.png';
 var mySpeed = 8;
 var SHEEP_SPEED = 16;
 var WOLF_SPEED = 12;
@@ -33,7 +31,7 @@ function initGame(userObj,mapObj) {
     		}
     		character[objId] = initPlayer(game,map,socket,userObj[i]);
             if(myId == objId) {
-                initPlayerMove(game, map, socket, character[objId], mapObj);
+            	initPlayerMove(game, map, socket, character, userObj, mapObj);
             }
     		// Add elements to scene.
         	game.rootScene.addChild(character[objId]);
@@ -60,6 +58,7 @@ function initGame(userObj,mapObj) {
             var objId = req.player.id;
             character[objId].x = x;
             character[objId].y = y;
+
             //kill by sheepId
             if(sheepId!=objId && character[sheepId].intersect(character[objId])) {
             	game.rootScene.removeChild(character[sheepId]);
@@ -75,6 +74,10 @@ function initGame(userObj,mapObj) {
             	}
             }
         });
+
+        socket.on('killSheep', (req) => {
+            game.rootScene.removeChild(character[sheepId]);
+        });
         
         
     };
@@ -87,8 +90,8 @@ function initPlayer(game,map,socket,userObj){
     player.image = game.assets[charImg];
     
     //starting point
-    player.x = userObj.coordinate.x * pixel;
-    player.y = userObj.coordinate.y * pixel;
+    player.x = userObj.coordinate.x;
+    player.y = userObj.coordinate.y;
 
     
     //if enemy = wolf
@@ -101,14 +104,17 @@ function initPlayer(game,map,socket,userObj){
     return player;
 }
 
-function initPlayerMove(game, map, socket, player, mapObj) {
+function initPlayerMove(game, map, socket, character, userObj, mapObj) {
+    const myUserObj = userObj.find(x => x.id === myId);
+    const myCharacter = character[myId];
+
     // Let player move within bounds.
-    player.addEventListener(Event.ENTER_FRAME, function () {
+    myCharacter.addEventListener(Event.ENTER_FRAME, function () {
         // First move the player. If the player's new location has resulted
         // in the player being in a "hit" zone, then back the player up to
         // its original location. Tweak "hits" by "offset" pixels.
 
-        let {x, y} = player;
+        let {x, y} = myCharacter;
         DIRS.forEach((dir, i) => {
             if (!game.input[dir]) { return; }
             x += DX[i] * mySpeed;
@@ -120,8 +126,14 @@ function initPlayerMove(game, map, socket, player, mapObj) {
             	warpPortal(x, y, mapObj);
             }
         });
-        
-        
+
+        // kill by sheepId
+        if (myId === sheepId && myUserObj.isAlive) {
+            if (userObj.filter(x => x.id !== myId && x.isAlive).some(x => character[x.id].intersect(myCharacter))) {
+                socket.killSheep();
+            }
+        }
+
     });
 }
 
