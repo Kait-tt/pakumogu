@@ -1,59 +1,136 @@
-window.onload = initTopPage;
+window.onload = enchantTopPage;
+
+var bgImg = '/img/title1.png';
+var bg2Img = '/img/title2.png';
+var sheepImg = '/img/sheep.png';
+var wolfImg = '/img/wolf.png';
+var charImg = '/img/chara.png';
+
 var socket;
 var myId;
-var title1Img = "/img/title1.png";
-var title2Img = "/img/title2.png";
 
-function initTopPage(){
-	socket = new Socket(); //init socket when start client this is a global socket
-	console.log("init top page");
 
-	$("#enter").click(function() {
-		var username = $("#username").val();
-		socket.join(username);
+function enchantTopPage(){
+	socket = new Socket();
+	enchant();
+	
+	var game = new Core(1920, 1080);
+	game.fps = 30;
+	game.preload(bgImg, bg2Img, sheepImg, wolfImg, mapImg, charImg, itemImg);
+	game.onload = function () {
+		//start Top page 01
+		var scene, label, bg;
 		
+		scene = new Scene();
+
+		label = new Label("Username :");
+		label.scale(3);
+		label.moveTo(800, 340);
+		
+		bg = new Sprite(1920, 1080);
+		bg.image = game.assets[bgImg];
+		
+		var tb = new InputTextBox();
+		tb.scale(3);
+        tb.moveTo(1075, 340);
+        tb.width = 330;
+        tb.height = 24;
+        tb.placeholder = "Input username";
+        
+        var enterBt = new Button();
+        enterBt.font = "100px Arial, Helvetica, sans-serif";
+        enterBt.text = "Enter";
+        enterBt.moveTo(580, 440);
+        enterBt.width = 630;
+        enterBt.height = 190;
+        
+        var startBt = new Button();
+        startBt.font = "100px Arial, Helvetica, sans-serif";
+        startBt.text = "Start";
+        startBt.moveTo(410, 380);
+        startBt.width = 630;
+        startBt.height = 190;
+        
+        //sheep 560 * 316
+        //position 235 * 680
+        var sImg = new Sprite(560, 320);
+        sImg.image = game.assets[sheepImg];
+        sImg.moveTo(235, 680);
+        
+        //940 720
+        var wImg = new Sprite(560, 320);
+        wImg.image = game.assets[wolfImg];
+        wImg.moveTo(910, 680);
+        
+        var userList = new Label();
+        userList.font = '50px Arial, Helvetica, sans-serif';
+		userList.moveTo(1580,400);
+        
+		scene.addChild(bg);
+		scene.addChild(label);
+		scene.addChild(tb);
+		scene.addChild(enterBt);
+		scene.addChild(sImg);
+		scene.addChild(wImg);
+		
+		game.pushScene(scene);
+		//End top page one
+		
+		//enter button event change screen to Title 2 
+		enterBt.addEventListener(Event.TOUCH_START, function () {
+        	var username = tb.value;
+    		socket.join(username);    		
+    		//change screen to Title 2 after join
+    		//change to second background
+    		bg.image = game.assets[bg2Img];
+    		//remove label, textbox and enterButton
+    		scene.removeChild(label);
+    		scene.removeChild(tb);
+    		scene.removeChild(enterBt);
+    		
+    		//add new startButton
+    		scene.addChild(startBt);
+    		scene.addChild(userList);
+    		
+        });
+		
+		//start button event start game
+		startBt.addEventListener(Event.TOUCH_START, function () {
+			socket.initGame();
+		    socket.startGame();
+		});
+		
+		//prepare socket
 		socket.on('joinRoom', (req) => {
 	        console.log('on join room', req);
-	        updateUserList(req.game.players);
+	        updateUserList(req.game.players,userList);
+	        
 	    });
 		
 		socket.on('yourInfo', (req) => {
 			myId = req.id;
 		});
-		
-		//change ui to title2
-		$(document.body).css("background-image", "url("+title2Img+")");
-		$("#enter").hide();
-		$("#usernameDiv").hide();
-		
-		$("#start").show();
-		$("#back").show();
-		$("#userList").show();
-	});
-	
-	$("#start").click(function() { 
-		socket.initGame();
-	    socket.startGame();
-	});
-	
-	$("#back").click(function() { 
-		//remove user from join
-	});
-	
-	socket.on('initGame', (req) => {
-		console.log('on init game', req);
-	});
 
-    socket.on('startGame', (req) => {
-        console.log('on start game', req);
-        $('body').html("");
-        initGame(req.game.players, req.game.map, req.game.normalItems);
-    });
+		socket.on('initGame', (req) => {
+			console.log('on init game', req);
+		});
+
+	    socket.on('startGame', (req) => {
+	        console.log('on start game', req);
+	        initPlayScene(req.game.players, req.game.map, req.game.normalItems, game);
+	    });
+	    //end prepare socket
+	};
+	
+	game.start();
+	/*
+	*/
 }
 
-function updateUserList(userObj){
-	$("#userList").html("");
+function updateUserList(userObj,userList){
+	userList.text = "";
 	for(var i=0;i<userObj.length;i++){
-		$("#userList").append(userObj[i].user.username + "<br>");
+		//$("#userList").append(userObj[i].user.username + "<br>");
+		userList.text += userObj[i].user.username + "<br>";
 	}
 }
