@@ -1,3 +1,4 @@
+var beforeUsername = null;
 function goToTopScene(game) {
     //start Top page 01
     var scene, label, bg;
@@ -15,6 +16,7 @@ function goToTopScene(game) {
     bg.image = game.assets[bgImg];
 
     var tb = new InputTextBox();
+    tb.value = beforeUsername;
     tb.scale(3);
     tb.moveTo(1075, 340);
     tb.width = 330;
@@ -102,6 +104,7 @@ function goToTopScene(game) {
     function changeScreenToTitle2 () {
         game.assets[decisionSe].play();
         var username = tb.value;
+        beforeUsername = username;
         socket.join(username);
         //change screen to Title 2 after join
         //change to second background
