@@ -19,10 +19,10 @@ const map = [
 [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
 
 ];
-const p1x = 5;
-const p1y = 1;
+const p1x = 2;
+const p1y = 7;
 const p2x = 12;
-const p2y = 10;
+const p2y = 7;
 
 const mapMaxY = map.length;
 for (let i = 0 ; i < mapMaxY-1 ; i++) {
@@ -74,6 +74,7 @@ for (let i = 0; i < mapMaxY; i++) {
 
 
 while ([player1.x, player1.y].toString() != [player2.x, player2.y].toString()) {
+//while(count < 3){
     count++;
     testMap[player2.y][player2.x] = "x"
     console.time('nextMove');
@@ -84,9 +85,9 @@ while ([player1.x, player1.y].toString() != [player2.x, player2.y].toString()) {
     console.log("step" + count);
     testMap[player2.y][player2.x] = "X"
     
-    /*for (let i = 0; i < mapMaxY; i++) {
+    for (let i = 0; i < mapMaxY; i++) {
         console.log(testMap[i].join(','));
-    }       */
+    }    
 }
 
 console.log(count);
