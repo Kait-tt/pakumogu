@@ -35,6 +35,10 @@ class SocketRouter {
             this.emits('endGame', {game: game.serialize(), isTimeLimit});
         });
 
+        this.gameMaster.on('updateScore', ({score, remainingTime, killCount, takeNormalItemCount, takePowerItemCount}) => {
+            this.emits('updateScore', {score, remainingTime, killCount, takeNormalItemCount, takePowerItemCount});
+        });
+
         this.io.sockets.on('connection', socket => {
             const user = new SocketUser(socket);
 

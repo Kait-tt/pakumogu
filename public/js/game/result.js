@@ -1,4 +1,4 @@
-function goToResultScene(game){
+function goToResultScene(game, score){
 	//go to end screen
 	var endScene = new Scene();
 	//add scene environment
@@ -22,7 +22,7 @@ function goToResultScene(game){
 	resultList.width = 820;
 	resultList.height = 730;
 	
-	var endScore =[5,100,2000,30000];
+	var endScore =[score,100,2000,30000];
 	for(var i=0;i<endScore.length;i++){
 		//$("#userList").append(userObj[i].user.username + "<br>");
 		for(var j=5;j>(endScore[i].toString().length);j--){

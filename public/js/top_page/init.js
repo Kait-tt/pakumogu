@@ -183,7 +183,8 @@ function enchantTopPage(){
 
 	    socket.on('startGame', (req) => {
 	        console.log('on start game', req);
-			initPlayScene(req.game.players, req.game.map, req.game.normalItems, req.game.powerItems, req.game.timeLimit, game);
+			initPlayScene(req.game.players, req.game.map, req.game.normalItems, req.game.powerItems,
+				req.game.timeLimit, req.game.score, game);
 	    });
 	    //end prepare socket
 	};
