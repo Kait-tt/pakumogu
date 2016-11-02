@@ -2,7 +2,7 @@
  * http://usejsdoc.org/
  */
 
-var mapImg = '/img/map1.png';
+var mapImg = '/img/map.png';
 
 function initDynamicMap(game,mapObj){
 	// Create a map with 32x32 tiles
@@ -34,9 +34,9 @@ function collisionToBackGround(collisionData){
 		for(var j=0;j<collisionData[i].length;j++){
 			//0 = walkable
 			if(collisionData[i][j] == 0){
-				backgrondData[i][j] = 2; //sand
+				backgrondData[i][j] = 0; //sand
 			}else {
-				backgrondData[i][j] = 0;//grass
+				backgrondData[i][j] = 1;//grass
 			}
 		}
 	}

@@ -1,5 +1,6 @@
-var mapImg = '/img/map64.png';
+var mapImg = '/img/map.png';
 var charImg = '/img/chara.png';
+var itemImg = '/img/map64.png';
 var mySpeed = 8;
 var SHEEP_SPEED = 16;
 var WOLF_SPEED = 12;
@@ -15,13 +16,14 @@ function initGame(userObj,mapObj) {
     var game = new Core(mapObj.width * pixel, mapObj.height * pixel); //game dimension
     game.fps = 16;
 
-    game.preload(mapImg, charImg);
+    game.preload(mapImg, charImg, itemImg);
     
     game.onload = function () {
     	
     	var map = initDynamicMap(game,mapObj);
     	game.rootScene.addChild(map);
     	
+    	//init all character
     	var character = {};
     	for(var i=0;i<userObj.length;i++){
     		var objId = userObj[i].id;
@@ -42,16 +44,35 @@ function initGame(userObj,mapObj) {
     		}
     	}
     	
+    	//init item
+    	var itemPosition = [ [1,1], [1,4] ];
+    	var itemList = [];
+    	for(var i=0;i<itemPosition.length;i++){
+    		//init item obj and assign to list for checking when sheep hit
+    		itemList[i] = initItem(game,itemPosition[i]);
+    		game.rootScene.addChild(itemList[i]);
+    	}
+    	
+    	
     	console.log(character);
         socket.on('movePlayer', (req) => {
             const {x, y} = req.player.coordinate;
             var objId = req.player.id;
             character[objId].x = x;
             character[objId].y = y;
-            
             //kill by sheepId
             if(sheepId!=objId && character[sheepId].intersect(character[objId])) {
             	game.rootScene.removeChild(character[sheepId]);
+            }else if(sheepId == objId){//the move object is sheep
+            	//check sheep intersect with item
+            	for(var i=0;i<itemList.length;i++){
+            		if(character[sheepId].intersect(itemList[i])){
+            			//remove item after hit
+            			game.rootScene.removeChild(itemList[i]);
+            			
+            			//item take effect
+            		}
+            	}
             }
         });
         
@@ -92,13 +113,15 @@ function initPlayerMove(game, map, socket, player, mapObj) {
             if (!game.input[dir]) { return; }
             x += DX[i] * mySpeed;
             y += DY[i] * mySpeed;
+            
+            //check the wall
+            if (!myHitTest(map, x, y)) {
+            	//check for warp portal at the border of map
+            	warpPortal(x, y, mapObj);
+            }
         });
         
-        //check the wall
-        if (!myHitTest(map, x, y)) {
-        	//check for warp portal at the border of map
-        	warpPortal(x, y, mapObj);
-        }
+        
     });
 }
 
