@@ -9,6 +9,10 @@ var DY   = [-1, 0, 1, 0];
 var sheepId;
 
 function initPlayScene(userObj,mapObj,normalItemObj, game) {
+	//start the music
+	game.assets[startSe].play();
+	game.assets[gameBgm].play();
+	
 	var scene = new Scene();
 	//add scene environment
 	var bg = new Sprite(1920, 1080);
@@ -93,6 +97,8 @@ function initPlayScene(userObj,mapObj,normalItemObj, game) {
 
 	
     socket.on('movePlayer', (req) => {
+    	game.assets[footStepsSe].play();
+    	
         const {x, y} = req.player.coordinate;
         var objId = req.player.id;
         
@@ -118,7 +124,8 @@ function initPlayScene(userObj,mapObj,normalItemObj, game) {
 
         //kill by sheepId
         if(sheepId!=objId && character[sheepId].intersect(character[objId])) {
-        	scene.removeChild(character[sheepId]);
+        	//scene.removeChild(character[sheepId]);
+        	socket.killSheep();
         }else if(sheepId == objId){//the move object is sheep
         	//check sheep intersect with item
         	for(let i=0;i<normalItemObj.length;i++){
@@ -134,6 +141,11 @@ function initPlayScene(userObj,mapObj,normalItemObj, game) {
 
     socket.on('killSheep', (req) => {
     	scene.removeChild(character[sheepId]);
+    	
+    	game.assets[gameBgm].stop();
+    	game.assets[sheepDeathSe].play();
+    	game.assets[endSe].play();
+    	game.assets[clearSe].play();
     });
     
     socket.on('takeNormalItem', (req) => {
@@ -143,8 +155,7 @@ function initPlayScene(userObj,mapObj,normalItemObj, game) {
         const item = normalItemList[targetItemObj.id];
         scene.removeChild(item);
 
-        //item take effect - invincible
-
+        game.assets[foodSe].play();
     })
     
     console.log("push scene");

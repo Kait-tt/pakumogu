@@ -7,6 +7,17 @@ var sheepImg = '/img/sheep.png';
 var wolfImg = '/img/wolf.png';
 var charImg = '/img/chara.png';
 
+var gameBgm = '/bgm/game1.mp3';
+var topPageBgm = '/bgm/title_result.mp3';
+
+var foodSe = '/se/Food.mp3';
+var sheepDeathSe = '/se/Sheep_death.mp3';
+var startSe = '/se/Start.mp3';
+var footStepsSe = '/se/foot_steps.mp3';
+var decisionSe = '/se/Decision.mp3';
+var clearSe = '/se/Clear.mp3';
+var endSe = '/se/end.mp3';
+
 var socket;
 var myId;
 
@@ -20,11 +31,18 @@ function enchantTopPage(){
 	
 	var game = new Core(1920, 1080);
 	game.fps = 30;
-	game.preload(bgImg, bg2Img, gameImg, sheepImg, wolfImg, mapImg, charImg, itemImg);
+	game.preload( 
+			bgImg, bg2Img, gameImg, sheepImg, wolfImg, mapImg, charImg, itemImg, //img 
+			gameBgm,  topPageBgm, //bgm
+			foodSe, sheepDeathSe, startSe, footStepsSe, decisionSe, clearSe, endSe//se
+			);
 	game.onload = function () {
 		//start Top page 01
 		var scene, label, bg;
 		
+		//BGM top page
+		game.assets[topPageBgm].play();
+
 		scene = new Scene();
 
 		label = new Label("Username :");
@@ -89,6 +107,7 @@ function enchantTopPage(){
 		
 		//enter button event change screen to Title 2 
 		enterBt.addEventListener(Event.TOUCH_START, function () {
+			game.assets[decisionSe].play();
         	var username = tb.value;
     		socket.join(username);    		
     		//change screen to Title 2 after join
@@ -107,6 +126,9 @@ function enchantTopPage(){
 		
 		//start button event start game
 		startBt.addEventListener(Event.TOUCH_START, function () {
+			game.assets[decisionSe].play();
+			game.assets[topPageBgm].stop();
+			
 			socket.initGame();
 		    socket.startGame();
 		});
@@ -114,7 +136,7 @@ function enchantTopPage(){
 		//back button event
 		backBt.addEventListener(Event.TOUCH_START, function () {
 			//back button action
-			
+			game.assets[decisionSe].play();
 			
 		});
 		
