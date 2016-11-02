@@ -3,16 +3,20 @@ var mySpeed = 8;
 var SHEEP_SPEED = 8;
 var WOLF_SPEED = 6;
 var pixel = 64;
+var fps = 30;
 var DIRS = ['up', 'right', 'down', 'left'];
 var DX   = [0, 1, 0, -1];
 var DY   = [-1, 0, 1, 0];
 var sheepId;
+var isInvincible;
 
-function initPlayScene(userObj,mapObj,normalItemObj, game) {
-	//start the music
+function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, game) {
+    isInvincible = false;
+    
+    //start the music
 	game.assets[startSe].play();
 	game.assets[gameBgm].play();
-	
+    
 	var scene = new Scene();
 	//add scene environment
 	var bg = new Sprite(1920, 1080);
@@ -35,15 +39,23 @@ function initPlayScene(userObj,mapObj,normalItemObj, game) {
 	
 	var map = initDynamicMap(game,mapObj);
 	scene.addChild(map);
-	
-	//init all item before character
-	var normalItemList = {};
-	for(let i=0;i<normalItemObj.length;i++){
-		//init item obj and assign to list for checking when sheep hit
-        const item = initItem(game,normalItemObj[i]);
+
+    //init all item before character
+    var normalItemList = {};
+    for(let i=0;i<normalItemObj.length;i++){
+        //init item obj and assign to list for checking when sheep hit
+        const item = initNormalItem(game,normalItemObj[i]);
         normalItemList[normalItemObj[i].id] = item;
-		scene.addChild(item);
-	}
+        scene.addChild(item);
+    }
+
+    var powerItemList = {};
+    for(let i=0;i<powerItemObj.length;i++){
+        //init item obj and assign to list for checking when sheep hit
+        const item = initPowerItem(game,powerItemObj[i]);
+        powerItemList[powerItemObj[i].id] = item;
+        scene.addChild(item);
+    }
 	
 	//set right side screen position
 	var fixPosition = [[1515,90], [1515,275],[1515,455],[1515,640],[1515,825]];
@@ -58,7 +70,7 @@ function initPlayScene(userObj,mapObj,normalItemObj, game) {
 		}
 		character[objId] = initPlayer(game,map,socket,userObj[i]);
         if(myId == objId) {
-        	initPlayerMove(game, map, socket, character, userObj, mapObj);
+            initPlayerMove(game, map, socket, character, userObj, mapObj, normalItemObj, normalItemList, powerItemObj, powerItemList);
         }
 		// Add elements to scene.
     	scene.addChild(character[objId]);
@@ -121,7 +133,7 @@ function initPlayScene(userObj,mapObj,normalItemObj, game) {
         //change position
         character[objId].x = x;
         character[objId].y = y;
-
+        
         //kill by sheepId
         if(sheepId!=objId && character[sheepId].intersect(character[objId])) {
         	//scene.removeChild(character[sheepId]);
@@ -140,25 +152,53 @@ function initPlayScene(userObj,mapObj,normalItemObj, game) {
     });
 
     socket.on('killSheep', (req) => {
-    	scene.removeChild(character[sheepId]);
-    	
-    	game.assets[gameBgm].stop();
+        const sheep = userObj.find(x => !x.isEnemy);
+        sheep.isAlive = false;
+        scene.removeChild(character[sheep.id]);
+        
+        game.assets[gameBgm].stop();
     	game.assets[sheepDeathSe].play();
     	game.assets[endSe].play();
     	game.assets[clearSe].play();
     });
-    
+
+    socket.on('killWolf', (req) => {
+        const wolf = userObj.find(x => x.id === req.player.id);
+        wolf.isAlive = false;
+        scene.removeChild(character[wolf.id]);
+    });
+
     socket.on('takeNormalItem', (req) => {
         const targetItemObj = normalItemObj.find(x => x.id === req.normalItem.id);
-        if (!targetItemObj.enabled) { return; }
+        targetItemObj.enabled = false;
 
         const item = normalItemList[targetItemObj.id];
         scene.removeChild(item);
-
         game.assets[foodSe].play();
-    })
+    });
+
+    socket.on('takePowerItem', (req) => {
+        const targetItemObj = powerItemObj.find(x => x.id === req.powerItem.id);
+        targetItemObj.enabled = false;
+
+        const item = powerItemList[targetItemObj.id];
+        scene.removeChild(item);
+    });
+
+    socket.on('startInvincible', () => {
+        isInvincible = true;
+
+        // enable super mode
+        character[sheepId].frame = [0, 1];
+    });
+
+    socket.on('endInvincible', () => {
+        isInvincible = false;
+
+        // disable super mode
+        character[sheepId].frame = [0, 0, 0, 0, 1, 1, 1, 1];
+    });
     
-    console.log("push scene");
     game.replaceScene(scene);
 }
 
@@ -182,7 +222,7 @@ function initPlayer(game,map,socket,userObj){
     return player;
 }
 
-function initPlayerMove(game, map, socket, character, userObj, mapObj) {
+function initPlayerMove(game, map, socket, character, userObj, mapObj, normalItemObj, normalItemList, powerItemObj, powerItemList)  {
     const myUserObj = userObj.find(x => x.id === myId);
     const myCharacter = character[myId];
 
@@ -207,11 +247,42 @@ function initPlayerMove(game, map, socket, character, userObj, mapObj) {
 
         // kill by sheepId
         if (myId === sheepId && myUserObj.isAlive) {
-            if (userObj.filter(x => x.id !== myId && x.isAlive).some(x => character[x.id].intersect(myCharacter))) {
-            		socket.killSheep();
+            for (let i = 0; i < userObj.length; i++) {
+                if (userObj[i] === myUserObj) { continue; }
+                if (!userObj[i].isAlive) { continue; }
+                if (character[userObj[i].id].intersect(myCharacter)) {
+                    if (isInvincible) {
+                        socket.killWolf({wolfId: userObj[i].id});
+                        userObj[i].isAlive = false;
+                    } else {
+                        socket.killSheep();
+                        myUserObj.isAlive = false;
+                        break;
+                    }
+                }
+            }
+
+            //check sheep intersect with item
+            for(let i=0;i<normalItemObj.length;i++){
+                if (!normalItemObj[i].enabled) { continue; }
+
+                const item = normalItemList[normalItemObj[i].id];
+                if(myCharacter.intersect(item)){
+                    normalItemObj[i].enabled = false;
+                    socket.takeNormalItem({itemId: normalItemObj[i].id});
+                }
+            }
+
+            for(let i=0;i<powerItemObj.length;i++){
+                if (!powerItemObj[i].enabled) { continue; }
+
+                const item = powerItemList[powerItemObj[i].id];
+                if(myCharacter.intersect(item)){
+                    powerItemObj[i].enabled = false;
+                    socket.takePowerItem({itemId: powerItemObj[i].id});
+                }
             }
         }
-
     });
 }
 
