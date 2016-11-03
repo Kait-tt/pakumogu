@@ -94,8 +94,8 @@ class TopPage {
 
         socket.on('initGame', (req) => {
             // initPlayScene(this.game, req.game);
-            const playPage = new PlayPage(this.game, req.game);
-            playPage.init();
+            const playPage = new PlayPage(this.game);
+            playPage.init(req.game);
             this.enabled = false;
         });
     }

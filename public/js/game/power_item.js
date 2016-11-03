@@ -1,10 +1,7 @@
 var itemImg = '/img/map.png';
-function initPowerItem(game, initItemObj, type = 'power'){
+function initPowerItem(game, type = 'power'){
     var item = new Sprite(pixel, pixel);
     item.image = game.assets[itemImg];
-
-    item.x = initItemObj.coordinate.x;
-    item.y = initItemObj.coordinate.y;
 
     if (type === 'invincible' || type === 'power') {
         item.frame = 3;

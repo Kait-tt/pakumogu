@@ -1,19 +1,24 @@
 class PlayPage {
-    constructor (game, serverGame) {
+    constructor (game) {
         this.game = game;
 
-        this.normalItems = serverGame.normalItems;
-        this.powerItems = serverGame.powerItems;
-        this.players = serverGame.players;
-        this.timeLimit = serverGame.timeLimit;
+        this.normalItems = [];
+        this.powerItems = [];
+        this.players = [];
+        this.timeLimit = 0;
+        this.mapHeight = 0;
+        this.mapWidth = 0;
 
         this.isInvincible = false;
         this.isEnded = false;
         this.isTimeLimit = false;
         this.wolfImageIndex = 0;
         this.mySpeed = 0;
-
-        this.bgm = this.getMapBgm(serverGame.map);
+        this.myPlayer = null;
+        this.mySprite = null;
+        this.bgm = null;
+        this.sheep = null;
+        this.wolfs = [];
 
         this.scene = new Scene();
 
@@ -23,51 +28,33 @@ class PlayPage {
         this.scene.addChild(this.bg);
 
         // map
-        this.mapHeight = serverGame.map.height;
-        this.mapWidth = serverGame.map.width;
-        this.map = initDynamicMap(this.game, serverGame.map);
+        this.map = initDynamicMap(this.game);
         this.scene.addChild(this.map);
 
-        // init all normal item
+        // make normal item sprites
         this.normalItemSprites = {};
-        this.normalItems.forEach(item => {
-            const itemSprite = initNormalItem(this.game, item);
-            this.normalItemSprites[item.id] = itemSprite;
-            this.scene.addChild(itemSprite);
-        });
+        this.normalItemSpritesPool = [];
+        for (let i = 0; i < 150; i++) {
+            const itemSprite = initNormalItem(this.game);
+            this.normalItemSpritesPool.push(itemSprite);
+        }
 
-        // init all power items
+        // make power power item sprites
+        this.powerItemSpritesPool = [];
         this.powerItemSprites = {};
-        this.powerItems.forEach(item => {
-            // init item obj and assign to list for checking when sheep hit
-            const itemSprite = initPowerItem(this.game, item);
-            this.powerItemSprites[item.id] = itemSprite;
-            this.scene.addChild(itemSprite);
-        });
+        for (let i = 0; i < 5; i++) {
+            const itemSprite = initPowerItem(this.game);
+            this.powerItemSpritesPool.push(itemSprite);
+        }
 
-        // init all character
+        // make player sprites
+        this.playerSpritesPool = [];
         this.playerSprites = {};
-        this.players.forEach(player => {
-            const playerSprite = this.initPlayer(player);
-            this.playerSprites[player.id] = playerSprite;
-
-            if (myId === player.id) {
-                //set speed every move
-                this.mySpeed = player.isEnemy ? WOLF_SPEED : SHEEP_SPEED;
-            }
-
-            this.scene.addChild(playerSprite);
-        });
-
-        this.myPlayer = this.players.find(x => x.id === myId);
-        this.mySprite = this.playerSprites[myId];
-
-        // set move event
-        this.mySprite.on(Event.ENTER_FRAME, () => this.onMyPlayerEnterFrame());
-
-        // set sheep and wolfs
-        this.sheep = this.players.find(x => !x.isEnemy);
-        this.wolfs = this.players.filter(x => x.isEnemy);
+        for (let i = 0; i < 5; i++) {
+            const playerSprite = new Sprite(pixel, pixel);
+            playerSprite.image = this.game.assets[charImg];
+            this.playerSpritesPool.push(playerSprite);
+        }
 
         // left side
         const leftXMargin = 60;
@@ -85,13 +72,8 @@ class PlayPage {
         this.sideItemLabels = [];
         itemTypes.forEach((type, i) => {
             const [x, y] = [leftXMargin, leftYItemMargin + 70 * i];
-            let itemSprite;
-            if (i) {
-                itemSprite = initPowerItem(this.game, {coordinate: {x, y}}, type);
-            } else {
-                itemSprite = initNormalItem(this.game, {coordinate: {x, y}});
-            }
-
+            let itemSprite = i ? initPowerItem(this.game, type) : initNormalItem(this.game);
+            itemSprite.moveTo(x, y);
             this.scene.addChild(itemSprite);
 
             const itemLabel = new Label();
@@ -105,42 +87,39 @@ class PlayPage {
             this.scene.addChild(itemLabel);
         });
 
-        this.updateScores(serverGame);
-
         // init right side
         // set right side screen position
         const fixPositionRightSide = [[1515, 90], [1515, 275], [1515, 455], [1515, 640], [1515, 825]];
 
+        this.profileSpritesPool = [];
         this.profileSprites = {};
-        this.deathFrames = {};
         this.blackBoxes = {};
-        this.players.forEach((player, i) => {
+        for (let i = 0; i < 5; i++) {
             const profile = new Sprite(pixel, pixel);
             profile.image = this.game.assets[charImg];
-            profile.frame = player.imageIndex * 3;
-
-            this.deathFrames[player.id] = player.imageIndex * 3 + 2;
-
             profile.scale(3);
-            profile.x = fixPositionRightSide[i][0] + 52;
-            profile.y = fixPositionRightSide[i][1] + 25;
 
-            this.profileSprites[player.id] = profile;
-            this.scene.addChild(profile);
-
-            const playerName = player.user ? player.user.username : 'AI';
-
-            const profileTagLabel = new Label(`[${playerName}]`);
+            const profileTagLabel = new Label();
             profileTagLabel.font = `36px ${normalFont}`;
-            profileTagLabel.moveTo(fixPositionRightSide[i][0] + 50 ,fixPositionRightSide[i][1] + 120);
+
+            profile.initializeProfile = (player, idx) => {
+                profile.x = fixPositionRightSide[idx][0] + 52;
+                profile.y = fixPositionRightSide[idx][1] + 25;
+
+                const playerName = player.user ? player.user.username : 'AI';
+                profileTagLabel.text = `[${playerName}]`;
+                profileTagLabel.moveTo(fixPositionRightSide[i][0] + 50, fixPositionRightSide[i][1] + 120);
+            };
+
+            this.profileSpritesPool.push(profile);
+            this.scene.addChild(profile);
             this.scene.addChild(profileTagLabel);
-        });
+        }
 
         // time label
         this.timeLabel = new Label();
         this.timeLabel.font = `36px ${normalFont}`;
         this.timeLabel.moveTo(leftXMargin, 530);
-        this.updateTimeLabel();
         this.scene.addChild(this.timeLabel);
 
         // ready sprite
@@ -168,18 +147,93 @@ class PlayPage {
         socket.on('updateScore', (scores) => this.onUpdateScore(scores));
     }
 
-    init () {
+    init (serverGame) {
         // stop the music
         bgmController.stop();
 
-        this.ready();
+        this.normalItems = serverGame.normalItems;
+        this.powerItems = serverGame.powerItems;
+        this.players = serverGame.players;
+        this.timeLimit = serverGame.timeLimit;
+        this.mapHeight = serverGame.map.height;
+        this.mapWidth = serverGame.map.width;
+
+        this.isInvincible = false;
+        this.isEnded = false;
+        this.isTimeLimit = false;
+        this.wolfImageIndex = 0;
+        this.mySpeed = 0;
+
+        this.bgm = this.getMapBgm(serverGame.map);
+        this.map.initializeMap(serverGame.map);
+
+        // init normal items
+        this.normalItemSprites = {};
+        this.normalItems.forEach((item, i) => {
+            const itemSprite = this.normalItemSpritesPool[i];
+            itemSprite.x = item.coordinate.x;
+            itemSprite.y = item.coordinate.y;
+            this.normalItemSprites[item.id] = itemSprite;
+            this.scene.addChild(itemSprite);
+        });
+
+        // init all power items
+        this.powerItemSprites = {};
+        this.powerItems.forEach((item, i) => {
+            const itemSprite = this.powerItemSpritesPool[i];
+            this.powerItemSprites[item.id] = itemSprite;
+            itemSprite.x = item.coordinate.x;
+            itemSprite.y = item.coordinate.y;
+            this.scene.addChild(itemSprite);
+        });
+
+        // init players
+        this.playerSprites = {};
+        this.players.forEach((player, i) => {
+            const playerSprite = this.playerSpritesPool[i];
+            this.playerSprites[player.id] = playerSprite;
+
+            this.initPlayer(player, playerSprite);
+
+            if (myId === player.id) {
+                // set speed every move
+                this.mySpeed = player.isEnemy ? WOLF_SPEED : SHEEP_SPEED;
+            }
+
+            this.scene.addChild(playerSprite);
+        });
+
+        this.myPlayer = this.players.find(x => x.id === myId);
+        this.mySprite = this.playerSprites[myId];
+
+        // set move event
+        this.mySprite.on(Event.ENTER_FRAME, () => this.onMyPlayerEnterFrame());
+
+        // set sheep and wolfs
+        this.sheep = this.players.find(x => !x.isEnemy);
+        this.wolfs = this.players.filter(x => x.isEnemy);
+
+        // right side
+        Object.keys(this.blackBoxes).forEach(k => this.scene.removeChild(this.blackBoxes[k]));
+        this.profileSprites = {};
+        this.players.forEach((player, i) => {
+            console.log(i);
+            const profile = this.profileSpritesPool[i];
+            profile.frame = player.imageIndex * 3;
+            profile.initializeProfile(player, i);
+            this.profileSprites[player.id] = profile;
+        });
+
+        this.updateScores(serverGame);
+        this.updateTimeLabel();
+
         this.game.replaceScene(this.scene);
+
+        // ready
+        this.ready();
     }
 
-    initPlayer (player) {
-        const sprite = new Sprite(pixel, pixel);
-        sprite.image = this.game.assets[charImg];
-
+    initPlayer (player, sprite) {
         //count for change frame
         player.moveFrameCount = 0;
 
@@ -198,8 +252,6 @@ class PlayPage {
         }
 
         sprite.frame = player.imageIndex * 3;
-
-        return sprite;
     }
 
     ready () {
@@ -287,7 +339,7 @@ class PlayPage {
         this.addDeathOnProfile(sheep.id);
 
         const sprite = this.playerSprites[sheep.id];
-        this.playerSprites[sheep.id].frame = this.deathFrames[sheep.id];
+        this.playerSprites[sheep.id].frame = sheep.imageIndex * 3 + 2;
 
         // show corpse 3 sec
         setTimeout(() => {
@@ -304,7 +356,7 @@ class PlayPage {
         this.addDeathOnProfile(wolf.id);
 
         const sprite = this.playerSprites[wolf.id];
-        sprite.frame = this.deathFrames[wolf.id];
+        sprite.frame = wolf.imageIndex * 3 + 2;
 
         // show corpse 3 sec
         setTimeout(() => {
@@ -324,11 +376,11 @@ class PlayPage {
 
         sprite.x = wolf.coordinate.x;
         sprite.y = wolf.coordinate.y;
-        sprite.frame = this.deathFrames[wolf.id] - 2;
+        sprite.frame = wolf.imageIndex * 3;
         this.scene.addChild(sprite);
 
         // remove death profile
-        profile.frame = this.deathFrames[wolf.id] - 2;
+        profile.frame = wolf.imageIndex * 3;
         this.scene.removeChild(this.blackBoxes[wolf.id]);
 
         // beep character image
@@ -413,7 +465,7 @@ class PlayPage {
                 this.addDeathOnProfile(wolf.id);
 
                 const sprite = this.playerSprites[wolf.id];
-                sprite.frame = this.deathFrames[wolf.id];
+                sprite.frame = wolf.imageIndex * 3 + 2;
 
                 //show corpse 3 sec
                 setTimeout(() => {
@@ -628,7 +680,7 @@ class PlayPage {
         }
 
         this.scene.addChild(this.blackBoxes[id]);
-        profile.frame = this.deathFrames[id];
+        profile.frame = this.players.find(x => x.id === id).imageIndex * 3 + 2;
     }
 
     getMapBgm (serverMap) {
