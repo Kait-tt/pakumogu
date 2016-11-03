@@ -230,6 +230,7 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
     socket.on('respawnWolf', (req) => {
         const wolf = userObj.find(x => x.id === req.player.id);
         wolf.isAlive = true;
+        game.assets[respawnSe].play();
         wolf.coordinate = req.player.coordinate;
         character[wolf.id].x = wolf.coordinate.x;
         character[wolf.id].y = wolf.coordinate.y;
