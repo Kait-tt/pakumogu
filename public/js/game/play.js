@@ -28,15 +28,17 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
 	scene.addChild(bg);
 	
 	//left side
+	var leftXMargin = 60;
+	var leftYItemMargin = 656;
 	var hightScoreTxt = new Label("Highest score :");
 	hightScoreTxt.font = `36px ${normalFont}`;
-	hightScoreTxt.moveTo(60,170);
+	hightScoreTxt.moveTo(leftMargin,170);
 	scene.addChild(hightScoreTxt);
 	var currentScoreTxt = new Label("my score : " + ('00000' + initScore).slice(-5));
 	currentScoreTxt.font = `36px ${normalFont}`;
-	currentScoreTxt.moveTo(60,350);
+	currentScoreTxt.moveTo(leftMargin,350);
 	scene.addChild(currentScoreTxt);
-
+	
 	var map = initDynamicMap(game,mapObj);
 	scene.addChild(map);
 
@@ -56,6 +58,34 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
         powerItemList[powerItemObj[i].id] = item;
         scene.addChild(item);
     }
+    
+    //show item status on left side
+	var itemStatus = []
+	var itemType = {normal:0, power:1, bomb:2, slow:3};
+	var itemTxtList = [];
+	
+	itemStatus[itemType.normal] = normalItemObj.length;
+	itemStatus[itemType.power] = powerItemObj.length;
+	itemStatus[itemType.bomb] = 0;
+	itemStatus[itemType.slow] = 0;
+	
+	//all 4 item left side
+	for(var i=0;i<4;i++){
+		var tempItemObj ={coordinate:{x:leftMargin,y:leftYItemMargin}}
+		var itemIcon;
+		if(i == 0){
+			itemIcon = initNormalItem(game,tempItemObj);
+		}else{
+			itemIcon = initPowerItem(game,tempItemObj);
+		}
+		scene.addChild(itemIcon);
+		var itemTxt = new Label(itemStatus[i] + "/" + itemStatus[i]);
+		itemTxt.font = `36px ${normalFont}`;
+		itemTxt.moveTo(leftMargin+50,leftYItemMargin);
+		itemTxtList[0] = itemTxt;
+		scene.addChild(itemTxt);
+		leftYItemMargin += 50;
+	}
 	
 	//set right side screen position
 	var fixPosition = [[1515,90], [1515,275],[1515,455],[1515,640],[1515,825]];
@@ -122,7 +152,6 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
 	    //end right side profile
 	}
 	
-	
 	//add ready state
 	var readyTxt = new Sprite(480,272);
 	readyTxt.moveTo(1920/2-220, 1080/2-150);
@@ -146,7 +175,7 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
 			//count game time after start game
 			var timeTxt = new Label("time : " + timeLimit / 1000);
 			timeTxt.font = `36px ${normalFont}`;
-			timeTxt.moveTo(60,530);
+			timeTxt.moveTo(leftMargin,530);
 			scene.addChild(timeTxt);
 		    var timeIntervalId = setInterval(() => {
 		        if (isEnded) {
@@ -163,6 +192,11 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
 		    }, 1000);
 	    }, 500);
     }, 2000);
+	
+	//init bomb effect
+	var bombEffect = new Sprite(480,272);
+	bombEffect.moveTo(1920/2-220, 1080/2-150);
+	bombEffect.image = game.assets[bombImg];
 
     socket.on('movePlayer', (req) => {
     	game.assets[footStepsSe].play();
@@ -305,7 +339,12 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
     socket.on('bomb', () => {
         // bomb effect and kill all wolfs
     	game.assets[bombSe].play();
-    	console.log(userObj.length);
+    	
+    	scene.addChild(bombEffect);
+    	setTimeout(() => {
+        	scene.removeChild(bombEffect);
+		}, 2000);
+    	
     	for(let i=0;i<userObj.length;i++){
     		if(userObj[i].isEnemy){
     			const wolf = userObj.find(x => x.id === userObj[i].id);
