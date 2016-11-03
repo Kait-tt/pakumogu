@@ -115,38 +115,39 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
 	
 	
 	//add ready state
-	var readyTxt = new Label("Ready");
-	readyTxt.font = `90px ${normalFont}`;
-	readyTxt.moveTo(1920/2-150, 1080/2);
-	readyTxt.textAlign = "center";
+	var readyTxt = new Sprite(480,272);
+	readyTxt.moveTo(1920/2-300, 1080/2-200);
+	readyTxt.image = game.assets[readyImg];
 	scene.addChild(readyTxt);
 	setTimeout(() => {
 		game.assets[waitingSe].play();
-		readyTxt.text = 3;
 		setTimeout(() => {
 			game.assets[waitingSe].play();
-			readyTxt.text = 2;
 			setTimeout(() => {
-				scene.removeChild(readyTxt);
-				socket.startGame();
-				//count game time after start game
-				bgmController.play(gameBgm);
-				var timeTxt = new Label("time : " + timeLimit / 1000);
-				timeTxt.font = `36px ${normalFont}`;
-				timeTxt.moveTo(60,530);
-				scene.addChild(timeTxt);
-			    var timeIntervalId = setInterval(() => {
-			        if (isEnded) {
-			            clearInterval(timeIntervalId);
-			        }
-
-			        if (isTimeLimit) {
-			            timeLimit = 0;
-			        } else if (!isEnded) {
-			            timeLimit = Math.max(0, timeLimit - 1000);
-			        }
-
-			        timeTxt.text = "time : " + timeLimit / 1000;
+				game.assets[startSe].play();
+				readyTxt.image = game.assets[startImg];
+				setTimeout(() => {
+					scene.removeChild(readyTxt);
+					socket.startGame();
+					//count game time after start game
+					bgmController.play(gameBgm);
+					var timeTxt = new Label("time : " + timeLimit / 1000);
+					timeTxt.font = `36px ${normalFont}`;
+					timeTxt.moveTo(60,530);
+					scene.addChild(timeTxt);
+				    var timeIntervalId = setInterval(() => {
+				        if (isEnded) {
+				            clearInterval(timeIntervalId);
+				        }
+	
+				        if (isTimeLimit) {
+				            timeLimit = 0;
+				        } else if (!isEnded) {
+				            timeLimit = Math.max(0, timeLimit - 1000);
+				        }
+	
+				        timeTxt.text = "time : " + timeLimit / 1000;
+				    }, 500);
 			    }, 1000);
 	        }, 1000);
         }, 1000);
@@ -194,17 +195,25 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
     socket.on('killSheep', (req) => {
         const sheep = userObj.find(x => !x.isEnemy);
         sheep.isAlive = false;
-        scene.removeChild(character[sheep.id]);
-    	game.assets[sheepDeathSe].play();
-    	addDeathOnProfile(game,scene,cProfile,sheep.id,deathFrame);
+        game.assets[sheepDeathSe].play();
+        addDeathOnProfile(game,scene,cProfile,sheep.id,deathFrame);
+        character[sheep.id].frame = deathFrame[sheep.id];
+        //show corpse 3 sec
+        setTimeout(() => {
+        	scene.removeChild(character[sheep.id]);
+		}, 3000);
     });
 
     socket.on('killWolf', (req) => {
         const wolf = userObj.find(x => x.id === req.player.id);
         wolf.isAlive = false;
-        scene.removeChild(character[wolf.id]);
         game.assets[wolfDeathSe].play();
         addDeathOnProfile(game,scene,cProfile,wolf.id,deathFrame);
+        character[wolf.id].frame = deathFrame[wolf.id];
+        //show corpse 3 sec
+        setTimeout(() => {
+        	scene.removeChild(character[wolf.id]);
+		}, 3000);
     });
 
     socket.on('respawnWolf', (req) => {
@@ -214,6 +223,7 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
         character[wolf.id].x = wolf.coordinate.x;
         character[wolf.id].y = wolf.coordinate.y;
         scene.addChild(character[wolf.id]);
+        //remove death profile
     });
 
     socket.on('takeNormalItem', (req) => {

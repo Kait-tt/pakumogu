@@ -152,7 +152,7 @@ function goToTopScene(game) {
     });
 
     socket.on('startGame', (req) => {
-    	game.assets[startSe].play();
+    	
     });
     //end prepare socket
 }

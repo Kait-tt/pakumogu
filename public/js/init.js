@@ -10,6 +10,9 @@ var wolfImg = '/img/wolf.png';
 var charImg = '/img/chara.png';
 var resultImg = '/img/result.png';
 var blackImg = '/img/blackbox.png';
+var startImg = '/img/start.png';
+var readyImg = '/img/ready.png';
+var finishImg = '/img/finish.png';
 
 var gameBgm = '/bgm/game1.mp3';
 var topPageBgm = '/bgm/title.mp3';
@@ -65,7 +68,7 @@ function enchantTopPage(){
 	var game = new Core(1920, 1080);
 	game.fps = 30;
 	game.preload( 
-			bgImg, bg2Img, gameImg, sheepImg, wolfImg, mapImg, charImg, itemImg, resultImg, blackImg, //img 
+			bgImg, bg2Img, gameImg, sheepImg, wolfImg, mapImg, charImg, itemImg, resultImg, blackImg, startImg, readyImg, finishImg, //img 
 			gameBgm,  topPageBgm, powerup1Bgm, resultPageBgm,//bgm
 			foodSe, sheepDeathSe, readySe, startSe, waitingSe, footStepsSe, decisionSe, clearSe, endSe, powerUpSe, wolfDeathSe//se
 			);
