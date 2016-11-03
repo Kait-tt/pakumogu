@@ -165,7 +165,7 @@ class PlayPage {
         socket.on('startSlow', () => this.onStartSlow());
         socket.on('endSlow', () => this.onEndSlow());
         socket.on('endGame', (req) => this.onEndGame(req));
-        socket.on('updateScore', (scores) => this.onUpdateScore);
+        socket.on('updateScore', (scores) => this.onUpdateScore(scores));
     }
 
     init () {
@@ -472,7 +472,7 @@ class PlayPage {
     }
 
     onUpdateScore (scores) {
-        this.updateScores(scores.score);
+        this.updateScores(scores);
     }
 
     // First move the player. If the player's new location has resulted
