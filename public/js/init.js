@@ -12,7 +12,7 @@ var resultImg = '/img/result.png';
 var blackImg = '/img/blackbox.png';
 
 var gameBgm = '/bgm/game1.mp3';
-var topPageBgm = '/bgm/title_result.mp3';
+var topPageBgm = '/bgm/title.mp3';
 var powerup1Bgm = '/bgm/powerup1.mp3';
 var resultPageBgm = '/bgm/result.mp3';
 
@@ -75,4 +75,9 @@ function enchantTopPage(){
 	};
 
 	game.start();
+
+	// fix margin of main content
+	const mainEle = document.getElementById('enchant-stage');
+	mainEle.style.left = 0;
+	mainEle.style.top = 0;
 }
