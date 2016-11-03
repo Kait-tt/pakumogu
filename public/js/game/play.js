@@ -521,7 +521,7 @@ class PlayPage {
         this.scene.addChild(this.stateSprite);
         setTimeout(() => {
             this.scene.removeChild(this.stateSprite);
-            goToResultScene(this.game, req.game);
+            resultPage.init(req.game);
         }, 2000);
     }
 
