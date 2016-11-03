@@ -14,6 +14,10 @@
             this.io.emit(name, params);
         }
 
+        removeAllListeners () {
+            this.io.removeAllListeners();
+        }
+
         initGame () {
             this.io.emit('initGame');
         }
@@ -26,27 +30,29 @@
             this.io.emit('movePlayer', {x, y});
         }
 
+        killSheep () {
+            this.io.emit('killSheep', {});
+        }
+
+        killWolf ({wolfId}) {
+            this.io.emit('killWolf', {wolfId});
+        }
+
+        takeNormalItem ({itemId}) {
+            this.io.emit('takeNormalItem', {itemId})
+        }
+
+        takePowerItem ({itemId}) {
+            this.io.emit('takePowerItem', {itemId});
+        }
+
         join (username) {
             this.username = username;
+            this.io.emit('joinRoom', {username});
+        }
 
-            let joined = false;
-            this.io.on('connect', () => {
-                if (!joined) {
-                    joined = true;
-                    this.io.emit('joinRoom', {username});
-                }
-            });
-
-            if (this.io.connected) {
-                if (!joined) {
-                    joined = true;
-                    this.io.emit('joinRoom', {username});
-                }
-            }
-
-            this.io.on('disconnect', () => {
-                joined = false;
-            });
+        leave () {
+            this.io.emit('leaveRoom', {});
         }
     }
 
