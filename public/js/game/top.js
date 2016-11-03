@@ -4,7 +4,8 @@ function goToTopScene(game) {
     var scene, label, bg;
 
     //BGM top page
-    game.assets[topPageBgm].play();
+    bgmController.stop();
+    bgmController.play(topPageBgm);
 
     scene = new Scene();
 

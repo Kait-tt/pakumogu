@@ -1,4 +1,8 @@
 function goToResultScene(game, score){
+	// start the music
+	bgmController.stop();
+	bgmController.play(resultPageBgm);
+
 	//go to end screen
 	var endScene = new Scene();
 	//add scene environment

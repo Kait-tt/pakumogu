@@ -20,7 +20,8 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
     
     //start the music
 	game.assets[startSe].play();
-	game.assets[gameBgm].play();
+    bgmController.stop();
+    bgmController.play(gameBgm);
     
 	var scene = new Scene();
 	//add scene environment
@@ -220,19 +221,23 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
     });
 
     socket.on('startInvincible', () => {
+        if (isEnded) { return; }
+
         isInvincible = true;
         // TODO: enable super mode image
 
-        game.assets[gameBgm].stop();
-        game.assets[powerup1Bgm].play();
+        bgmController.stop();
+        bgmController.play(powerup1Bgm);
     });
 
     socket.on('endInvincible', () => {
+        if (isEnded) { return; }
+
         isInvincible = false;
         // TODO: disable super mode image
 
-        game.assets[gameBgm].play();
-        game.assets[powerup1Bgm].stop();
+        bgmController.stop();
+        bgmController.play(gameBgm);
     });
 
     socket.on('endGame', (req) => {
@@ -240,6 +245,7 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
         isTimeLimit = req.isTimeLimit;
         game.assets[gameBgm].stop();
         game.assets[endSe].play();
+
         goToResultScene(game, req.game.score);
     });
 
