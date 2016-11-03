@@ -200,7 +200,7 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
 
     socket.on('movePlayer', (req) => {
     	game.assets[footStepsSe].play();
-    	
+
         const {x, y} = req.player.coordinate;
         var targetUser = userObj.find(x => x.id === req.player.id);
         var objId = req.player.id;
@@ -450,6 +450,7 @@ function initPlayerMove(game, map, socket, character, userObj, mapObj, normalIte
         let {x, y} = myCharacter;
         DIRS.forEach((dir, i) => {
             if (!game.input[dir]) { return; }
+
             x += DX[i] * mySpeed;
             y += DY[i] * mySpeed;
             
@@ -459,6 +460,11 @@ function initPlayerMove(game, map, socket, character, userObj, mapObj, normalIte
             	warpPortal(x, y, mapObj);
             }else{
             	//smooth turn
+
+                //return to x old position
+                x -= DX[i] * mySpeed;
+                y -= DY[i] * mySpeed;
+
             	var autoMovePixcel = mySpeed;
             	var xGhost = x-gameOffSetX;
             	var yGhost = y-gameOffSetY;
@@ -469,17 +475,11 @@ function initPlayerMove(game, map, socket, character, userObj, mapObj, normalIte
             			}else{//user go up and down DY not zero change X
             				xGhost = x + (autoMovePixcel*j) - gameOffSetX; 
             			}
-	            		if(!(map.hitTest(xGhost, yGhost) ||
-	    	                    map.hitTest(xGhost + pixel - 1, yGhost) ||
-	    	                    map.hitTest(xGhost, yGhost + pixel - 1) ||
-	    	                    map.hitTest(xGhost + pixel - 1, yGhost + pixel - 1))){
-	            			
+            			if (!myHitTest(map, {x: xGhost, y: yGhost})) {
 	            			if(DX[i] != 0){
-	            				x -= DX[i] * mySpeed; //return to x old position
-	            				(j<0)?y -= 1 * mySpeed:y += 1 * mySpeed;
+                                y += j < 0 ? -mySpeed : mySpeed;
 	            			}else{
-	            				y -= DY[i] * mySpeed;
-	            				(j<0)?x -= 1 * mySpeed:x += 1 * mySpeed;
+                                x += j < 0 ? -mySpeed : mySpeed;
 	            			}
 	            			j = 5;
 		                	warpPortal(x, y, mapObj);
