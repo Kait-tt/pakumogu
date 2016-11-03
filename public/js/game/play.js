@@ -234,6 +234,7 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
         character[wolf.id].x = wolf.coordinate.x;
         character[wolf.id].y = wolf.coordinate.y;
         scene.addChild(character[wolf.id]);
+        game.assets[respawnSe].play();
         //remove death profile
         cProfile[wolf.id].frame = deathFrame[wolf.id]-2;
         scene.removeChild(blackBox[wolf.id]);
@@ -300,6 +301,21 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
 
     socket.on('bomb', () => {
         // bomb effect and kill all wolfs
+    	game.assets[bombSe].play();
+    	console.log(userObj.length);
+    	for(let i=0;i<userObj.length;i++){
+    		if(userObj[i].isEnemy){
+    			const wolf = userObj.find(x => x.id === userObj[i].id);
+    			wolf.isAlive = false;
+    	        game.assets[wolfDeathSe].play();
+    	        addDeathOnProfile(game,scene,cProfile,wolf.id,deathFrame,blackBox);
+    	        character[wolf.id].frame = deathFrame[wolf.id];
+    	        //show corpse 3 sec
+    	        setTimeout(() => {
+    	        	scene.removeChild(character[wolf.id]);
+    			}, 3000);
+    		}
+    	}
     });
 
     socket.on('startSlow', () => {
