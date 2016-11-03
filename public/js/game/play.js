@@ -84,6 +84,7 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
 	wolfImageIndex = 0;
 	var cProfile = {};
 	var deathFrame = {};
+	var blackBox = {};
 	for(let i=0;i<userObj.length;i++){
 		var objId = userObj[i].id;
 		//set right side profile
@@ -190,7 +191,7 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
         const sheep = userObj.find(x => !x.isEnemy);
         sheep.isAlive = false;
         game.assets[sheepDeathSe].play();
-        addDeathOnProfile(game,scene,cProfile,sheep.id,deathFrame);
+        addDeathOnProfile(game,scene,cProfile,sheep.id,deathFrame,blackBox);
         character[sheep.id].frame = deathFrame[sheep.id];
         //show corpse 3 sec
         setTimeout(() => {
@@ -202,7 +203,7 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
         const wolf = userObj.find(x => x.id === req.player.id);
         wolf.isAlive = false;
         game.assets[wolfDeathSe].play();
-        addDeathOnProfile(game,scene,cProfile,wolf.id,deathFrame);
+        addDeathOnProfile(game,scene,cProfile,wolf.id,deathFrame,blackBox);
         character[wolf.id].frame = deathFrame[wolf.id];
         //show corpse 3 sec
         setTimeout(() => {
@@ -218,6 +219,8 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
         character[wolf.id].y = wolf.coordinate.y;
         scene.addChild(character[wolf.id]);
         //remove death profile
+        cProfile[wolf.id].frame = deathFrame[wolf.id]-2;
+        scene.removeChild(blackBox[wolf.id]);
     });
 
     socket.on('takeNormalItem', (req) => {
@@ -433,11 +436,16 @@ function warpPortal(x, y, mapObj){
 	socket.movePlayer({x, y});
 }
 
-function addDeathOnProfile(game,scene,cProfile,id,deathFrame){
-	var blackBox = new Sprite(180, 170);
-    blackBox.image = game.assets[blackImg];
-    cProfile[id].frame = deathFrame[id]; //profile position
-    blackBox.moveTo(cProfile[id].x-60,cProfile[id].y-30);
-    blackBox.opacity = 0.5;
-    scene.addChild(blackBox);
+function addDeathOnProfile(game,scene,cProfile,id,deathFrame,blackBoxList){
+	if(null!= blackBoxList[id]){
+		scene.addChild(blackBoxList[id]);
+	}else{
+		var blackBox = new Sprite(180, 170);
+	    blackBox.image = game.assets[blackImg];
+	    cProfile[id].frame = deathFrame[id]; //profile position
+	    blackBox.moveTo(cProfile[id].x-60,cProfile[id].y-30);
+	    blackBox.opacity = 0.5;
+	    scene.addChild(blackBox);
+	    blackBoxList[id] = blackBox;
+	}
 }
