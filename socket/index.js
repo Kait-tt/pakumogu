@@ -32,6 +32,18 @@ class SocketRouter {
             this.emits('endInvincible', {});
         });
 
+        this.gameMaster.on('bomb', () => {
+            this.emits('bomb', {});
+        });
+
+        this.gameMaster.on('startSlow', () => {
+            this.emits('startSlow', {});
+        });
+
+        this.gameMaster.on('endSlow', () => {
+            this.emits('endSlow', {});
+        });
+
         this.gameMaster.on('endGame', ({game, isTimeLimit}) => {
             this.emits('endGame', {game: game.serialize(), isTimeLimit});
             this.gameMaster.reCreateGame();

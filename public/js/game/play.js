@@ -290,6 +290,18 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
         bgmController.play(gameBgm);
     });
 
+    socket.on('bomb', () => {
+        // bomb effect and kill all wolfs
+    });
+
+    socket.on('startSlow', () => {
+        // slow sheep speed
+    });
+
+    socket.on('endSlow', () => {
+        // restore slow
+    });
+
     socket.on('endGame', (req) => {
         isEnded = true;
         isTimeLimit = req.isTimeLimit;
