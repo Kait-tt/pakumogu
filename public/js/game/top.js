@@ -132,8 +132,6 @@ function goToTopScene(game) {
     }
 
     //prepare socket
-    socket.removeAllListeners();
-
     socket.on('joinRoom', (req) => {
         updateUserList(req.game.players, userList);
     });
@@ -163,6 +161,8 @@ function updateUserList(userObj,userList){
     userList.text = "";
     for(var i=0;i<userObj.length;i++){
         //$("#userList").append(userObj[i].user.username + "<br>");
-        userList.text += userObj[i].user.username + "<br>";
+        if (userObj[i].user) {
+            userList.text += userObj[i].user.username + "<br>";
+        }
     }
 }
