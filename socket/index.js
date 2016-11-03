@@ -1,6 +1,7 @@
 'use strict';
 const socketio = require('socket.io');
 const SocketUser = require('./user');
+const Game = require('../lib/models/game');
 const GameMaster = require('../lib/models/game_master');
 
 class SocketRouter {
@@ -31,8 +32,13 @@ class SocketRouter {
             this.emits('endInvincible', {});
         });
 
-        this.gameMaster.on('endGame', ({game}) => {
-            this.emits('endGame', {});
+        this.gameMaster.on('endGame', ({game, isTimeLimit}) => {
+            this.emits('endGame', {game: game.serialize(), isTimeLimit});
+            this.gameMaster.reCreateGame();
+        });
+
+        this.gameMaster.on('updateScore', ({score, remainingTime, killCount, takeNormalItemCount, takePowerItemCount}) => {
+            this.emits('updateScore', {score, remainingTime, killCount, takeNormalItemCount, takePowerItemCount});
         });
 
         this.io.sockets.on('connection', socket => {
@@ -101,10 +107,13 @@ class SocketRouter {
     }
 
     leaveRoom (user) {
-        this.emits('leaveRoom', {username: user.username, id: user.id});
         try {
             this.gameMaster.removePlayer(user);
+            this.emits('leaveRoom', {username: user.username, id: user.id, game: this.gameMaster.game.serialize()});
             user.socket.leave(this.gameRoomKey);
+            if (!this.gameMaster.game.players.filter(x => !x.isAI).length) {
+                this.gameMaster.reCreateGame();
+            }
         } catch (e) {
             console.error(e);
             user.socket.emit('operationError', {error: e, message: e.message});
@@ -132,6 +141,8 @@ class SocketRouter {
     }
 
     movePlayer (user, {x, y}) {
+        if (this.gameMaster.game.state !== Game.STATES.running) { return; }
+
         try {
             const player = this.gameMaster.movePlayer(user, {x, y});
             this.emits('movePlayer', {player: player.serialize()});
@@ -142,6 +153,8 @@ class SocketRouter {
     }
 
     killSheep (user) {
+        if (this.gameMaster.game.state !== Game.STATES.running) { return; }
+
         const sheep = this.gameMaster.game.players.find(x => !x.isEnemy);
         if (!sheep.isAlive) { return; }
 
@@ -155,6 +168,8 @@ class SocketRouter {
     }
 
     killWolf (user, wolfId) {
+        if (this.gameMaster.game.state !== Game.STATES.running) { return; }
+
         const wolf = this.gameMaster.game.players.find(x => x.id === wolfId);
         if (!wolf.isAlive) { return; }
 
@@ -168,6 +183,8 @@ class SocketRouter {
     }
 
     takeNormalItem (user, itemId) {
+        if (this.gameMaster.game.state !== Game.STATES.running) { return; }
+
         let item = this.gameMaster.game.normalItems.find(x => x.id === itemId);
         if (!item.enabled) { return; }
 
@@ -181,6 +198,8 @@ class SocketRouter {
     }
 
     takePowerItem (user, itemId) {
+        if (this.gameMaster.game.state !== Game.STATES.running) { return; }
+
         let item = this.gameMaster.game.powerItems.find(x => x.id === itemId);
         if (!item.enabled) { return; }
 

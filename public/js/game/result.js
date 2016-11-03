@@ -1,4 +1,8 @@
-function goToResultScene(game){
+function goToResultScene(game, score){
+	// start the music
+	bgmController.stop();
+	bgmController.play(resultPageBgm);
+
 	//go to end screen
 	var endScene = new Scene();
 	//add scene environment
@@ -22,7 +26,7 @@ function goToResultScene(game){
 	resultList.width = 820;
 	resultList.height = 730;
 	
-	var endScore =[5,100,2000,30000];
+	var endScore =[score,100,2000,30000];
 	for(var i=0;i<endScore.length;i++){
 		//$("#userList").append(userObj[i].user.username + "<br>");
 		for(var j=5;j>(endScore[i].toString().length);j--){
@@ -32,5 +36,16 @@ function goToResultScene(game){
 	}
 	
 	endScene.addChild(resultList);
+
+	var backLabel = new Label();
+	backLabel.font = '24px Arial, Helvetica, sans-serif';
+	backLabel.moveTo(1380,1000);
+	backLabel.text = "back";
+	endScene.addChild(backLabel);
+	backLabel.addEventListener(Event.TOUCH_START, () => {
+		game.assets[decisionSe].play();
+		goToTopScene(game);
+	});
+
 	game.replaceScene(endScene);
 }
