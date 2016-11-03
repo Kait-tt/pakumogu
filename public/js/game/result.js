@@ -1,5 +1,10 @@
-function goToResultScene(game, score){
-	resultObj.totalScore = score;
+function goToResultScene(game, gameResult){
+	resultObj.totalScore = gameResult.score;
+	resultObj.item = gameResult.takeNormalItemCount;
+	resultObj.powerItem = gameResult.takePowerItemCount;
+	resultObj.wolfKill = gameResult.killCount;
+	resultObj.timeLeft = gameResult.remainingTime / 1000;
+		
 	// start the music
 	bgmController.stop();
 	bgmController.play(resultPageBgm);

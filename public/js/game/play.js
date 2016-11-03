@@ -160,9 +160,6 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
 		        }
 
 		        timeTxt.text = "time : " + timeLimit / 1000;
-		        
-		        //time limit for result screen
-		        resultObj.timeLeft = timeLimit / 1000;
 		    }, 1000);
 	    }, 500);
     }, 2000);
@@ -228,9 +225,6 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
         setTimeout(() => {
         	scene.removeChild(character[wolf.id]);
 		}, 3000);
-        
-        //count wolf kill for result screen
-        resultObj.wolfKill++;
     });
 
     socket.on('respawnWolf', (req) => {
@@ -265,9 +259,6 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
         const item = normalItemList[targetItemObj.id];
         scene.removeChild(item);
         game.assets[foodSe].play();
-        
-        //count normal item for result screen
-        resultObj.item++;
     });
 
     socket.on('takePowerItem', (req) => {
@@ -277,9 +268,6 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
         const item = powerItemList[targetItemObj.id];
         scene.removeChild(item);
         game.assets[powerUpSe].play();
-        
-        //count power item for result screen
-        resultObj.powerItem++;
     });
 
     socket.on('startInvincible', () => {
@@ -320,7 +308,7 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
     	scene.addChild(readyTxt);
     	setTimeout(() => {
     		scene.removeChild(readyTxt);
-    		goToResultScene(game, req.game.score);
+    		goToResultScene(game, req.game);
     	}, 2000);
     });
 
