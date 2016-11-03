@@ -1,6 +1,7 @@
 window.onload = enchantTopPage;
 
 var normalFont = 'Kazesawa, Arial, Helvetica, sans-serif';
+var resultFont = 'ArcadeClassic';
 
 var bgImg = '/img/title1.png';
 var bg2Img = '/img/title2.png';
@@ -32,6 +33,7 @@ var clearSe = '/se/clear.mp3';
 var endSe = '/se/end.mp3';
 var powerUpSe = '/se/power_up.mp3';
 var wolfDeathSe = '/se/wolf_death.mp3';
+var bombSe = '/se/bomb.mp3';
 var respawnSe = '/se/respawn.mp3';
 
 var socket;
@@ -39,6 +41,17 @@ var myId;
 
 var gameOffSetX = 480;
 var gameOffSetY = 40;
+
+var resultObj = {
+		item : 0,
+		powerItem : 0,
+		wolfKill : 0,
+		timeLeft : 0,
+		totalScore : 0,
+		sheepName : "",
+		wolfName : []
+};
+
 
 var bgmController;
 
@@ -75,7 +88,7 @@ function enchantTopPage(){
 	game.preload( 
 			bgImg, bg2Img, gameImg, sheepImg, wolfImg, mapImg, charImg, itemImg, resultImg, blackImg, startImg, readyImg, finishImg, //img 
 			gameBgm, game2Bgm, game3Bgm, topPageBgm, powerup1Bgm, resultPageBgm,//bgm
-			foodSe, sheepDeathSe, readySe, startSe, waitingSe, footStepsSe, decisionSe, clearSe, endSe, powerUpSe, wolfDeathSe, respawnSe//se
+			foodSe, sheepDeathSe, readySe, startSe, waitingSe, footStepsSe, decisionSe, clearSe, endSe, powerUpSe, wolfDeathSe, bombSe, respawnSe//se
 			);
 
 	bgmController = new BGMController(game);

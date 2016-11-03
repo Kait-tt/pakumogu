@@ -107,6 +107,14 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
 	    if(null!=userObj[i].user){
 	    	nameTag = userObj[i].user.username;
 	    }
+	    
+	    //init username for result page
+	    if(!userObj[i].isEnemy){
+	    	resultObj.sheepName = nameTag;
+		}else{
+			resultObj.wolfName.push(nameTag);
+		}
+	    
 	    var usernameTag = new Label(nameTag);
 	    usernameTag.font = `36px ${normalFont}`;
 	    usernameTag.moveTo(fixPosition[i][0] + 50 ,fixPosition[i][1] + 120);
@@ -227,6 +235,7 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
         character[wolf.id].x = wolf.coordinate.x;
         character[wolf.id].y = wolf.coordinate.y;
         scene.addChild(character[wolf.id]);
+        game.assets[respawnSe].play();
         //remove death profile
         cProfile[wolf.id].frame = deathFrame[wolf.id]-2;
         scene.removeChild(blackBox[wolf.id]);
@@ -295,6 +304,23 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
 
     socket.on('bomb', () => {
         // bomb effect and kill all wolfs
+    	game.assets[bombSe].play();
+    	console.log(userObj.length);
+    	for(let i=0;i<userObj.length;i++){
+    		if(userObj[i].isEnemy){
+    			const wolf = userObj.find(x => x.id === userObj[i].id);
+    			if(wolf.isAlive){
+	    			wolf.isAlive = false;
+	    	        game.assets[wolfDeathSe].play();
+	    	        addDeathOnProfile(game,scene,cProfile,wolf.id,deathFrame,blackBox);
+	    	        character[wolf.id].frame = deathFrame[wolf.id];
+	    	        //show corpse 3 sec
+	    	        setTimeout(() => {
+	    	        	scene.removeChild(character[wolf.id]);
+	    			}, 3000);
+    			}
+    		}
+    	}
     });
 
     socket.on('startSlow', () => {
@@ -317,7 +343,7 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
     	scene.addChild(readyTxt);
     	setTimeout(() => {
     		scene.removeChild(readyTxt);
-    		goToResultScene(game, req.game.score);
+    		goToResultScene(game, req.game);
     	}, 2000);
     });
 

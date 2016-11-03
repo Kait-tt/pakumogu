@@ -1,4 +1,10 @@
-function goToResultScene(game, score){
+function goToResultScene(game, gameResult){
+	resultObj.totalScore = gameResult.score;
+	resultObj.item = gameResult.takeNormalItemCount;
+	resultObj.powerItem = gameResult.takePowerItemCount;
+	resultObj.wolfKill = gameResult.killCount;
+	resultObj.timeLeft = gameResult.remainingTime / 1000;
+		
 	// start the music
 	bgmController.stop();
 	bgmController.play(resultPageBgm);
@@ -12,31 +18,41 @@ function goToResultScene(game, score){
 	
 	//560,330
 	var labelList = new Label();
-	labelList.font = `100px ${normalFont}`;
-	labelList.moveTo(560,330);
-	labelList.text = "Score <br>1<br>2<br>3<br>";
-	labelList.width = 480;
+	labelList.font = `42px ${resultFont}`;
+	labelList.color = "#9f2077";
+	labelList.textAlign  = "right";
+	labelList.moveTo(560,300);
+	labelList.text =  "Item : <br>"+
+					  "Power item : <br>"+
+					  "Wolf kill : <br>"+
+					  "Time left : <br>" +
+					  "Total Score : <br>" +
+					  "Sheep : <br>"+
+					  "Wolf : <br>";
+	labelList.width = 400;
 	labelList.height = 730;
 	endScene.addChild(labelList);
-	var resultList = new Label();
-	resultList.font = `100px ${normalFont}`;
-	resultList.moveTo(560,330);
-	resultList.textAlign  = "right";
-	resultList.text = "";
-	resultList.width = 820;
-	resultList.height = 730;
 	
-	var endScore =[score,100,2000,30000];
-	for(var i=0;i<endScore.length;i++){
-		//$("#userList").append(userObj[i].user.username + "<br>");
-		for(var j=5;j>(endScore[i].toString().length);j--){
-			resultList.text += "0";
-		}
-		resultList.text += endScore[i] + "<br>";
+	var resultList = new Label();
+	resultList.font = `42px ${resultFont}`;
+	resultList.color = "#9f2077";
+	resultList.moveTo(970,300);
+	resultList.textAlign  = "left";
+	resultList.text = resultObj.item+"<br>"+
+					  resultObj.powerItem+"<br>"+
+					  resultObj.wolfKill+"<br>"+
+					  resultObj.timeLeft+"<br>"+
+					  resultObj.totalScore+"<br>"+
+					  resultObj.sheepName+"<br>";
+	
+	for(var i=0;i<resultObj.wolfName.length;i++){
+		resultList.text +=resultObj.wolfName[i]+"<br>";
 	}
 	
+	resultList.width = 400;
+	resultList.height = 730;
 	endScene.addChild(resultList);
-
+	
 	var backBt = new Button();
     backBt.initialize = (((_initialize) => function () {
         _initialize.call(this);
