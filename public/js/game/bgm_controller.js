@@ -1,16 +1,6 @@
-// enable only DOMSound
 enchant.ENV.USE_WEBAUDIO = false;
 enchant.Sound = window.AudioContext && enchant.ENV.USE_WEBAUDIO ? enchant.WebAudioSound : enchant.DOMSound;
 
-// enable loop play
-enchant.DOMSound.prototype.play = function() {
-    if (this._element) {
-        this.stop();
-        this._element.play();
-    }
-};
-
-// only support for DOMSound
 class BGMController {
     constructor (game) {
         this.bgm = null;
