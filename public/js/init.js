@@ -1,13 +1,10 @@
 window.onload = enchantTopPage;
 
 var normalFont = 'Kazesawa, Arial, Helvetica, sans-serif';
-var resultFont = 'ArcadeClassic';
 
 var bgImg = '/img/title1.png';
 var bg2Img = '/img/title2.png';
 var gameImg = '/img/game.png';
-var sheepImg = '/img/sheep.png';
-var wolfImg = '/img/wolf.png';
 var charImg = '/img/chara.png';
 var resultImg = '/img/result.png';
 var blackImg = '/img/blackbox.png';
@@ -40,21 +37,20 @@ var respawnSe = '/se/respawn.mp3';
 var socket;
 var myId;
 
+var pixel = 64;
 var gameOffSetX = 480;
 var gameOffSetY = 40;
 
-var resultObj = {
-		item : 0,
-		powerItem : 0,
-		wolfKill : 0,
-		timeLeft : 0,
-		totalScore : 0,
-		sheepName : "",
-		wolfName : []
-};
-
-
 var bgmController;
+
+// must sync lib/modules/config.js
+// for result page
+var scoreBasePoints = {
+	scoreTimePoint: 1,
+	scoreNormalItemPoint: 50,
+	scorePowerItemPoint: 500,
+	scoreKillPoint: 200
+};
 
 enchant.ui.assets = [
 	'enchant_assets/pad.png',
@@ -86,8 +82,8 @@ function enchantTopPage(){
 	
 	var game = new Core(1920, 1080);
 	game.fps = 30;
-	game.preload( 
-			bgImg, bg2Img, gameImg, sheepImg, wolfImg, mapImg, charImg, itemImg, resultImg, blackImg, startImg, readyImg, finishImg, bombImg, //img 
+	game.preload(
+			bgImg, bg2Img, gameImg, mapImg, charImg, itemImg, resultImg, blackImg, startImg, readyImg, finishImg, bombImg, //img
 			gameBgm, game2Bgm, game3Bgm, topPageBgm, powerup1Bgm, resultPageBgm,//bgm
 			foodSe, sheepDeathSe, readySe, startSe, waitingSe, footStepsSe, decisionSe, clearSe, endSe, powerUpSe, wolfDeathSe, bombSe, respawnSe//se
 			);

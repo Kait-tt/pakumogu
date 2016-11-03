@@ -3,7 +3,6 @@ var mySpeed = 8;
 var SHEEP_SPEED = 8;
 var WOLF_SPEED = 4;
 var MOVE_FRAME_COUNT_LIMIT = 3;
-var pixel = 64;
 var DIRS = ['up', 'right', 'down', 'left'];
 var DX   = [0, 1, 0, -1];
 var DY   = [-1, 0, 1, 0];
@@ -144,13 +143,6 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
 	    if(null!=userObj[i].user){
 	    	nameTag = userObj[i].user.username;
 	    }
-	    
-	    //init username for result page
-	    if(!userObj[i].isEnemy){
-	    	resultObj.sheepName = nameTag;
-		}else{
-			resultObj.wolfName.push(nameTag);
-		}
 	    
 	    var usernameTag = new Label(nameTag);
 	    usernameTag.font = `36px ${normalFont}`;

@@ -1,16 +1,5 @@
 var beforeUsername = null;
 function goToTopScene(game) {
-	//reset resultObj;
-	resultObj = {
-			item : 0,
-			powerItem : 0,
-			wolfKill : 0,
-			timeLeft : 0,
-			totalScore : 0,
-			sheepName : "",
-			wolfName : []
-	};
-	
     //start Top page 01
     var scene, label, bg;
 
@@ -76,17 +65,6 @@ function goToTopScene(game) {
         });
     })(backBt.initialize));
 
-    //sheep 560 * 316
-    //position 235 * 680
-    var sImg = new Sprite(560, 320);
-    sImg.image = game.assets[sheepImg];
-    sImg.moveTo(235, 680);
-
-    //940 720
-    var wImg = new Sprite(560, 320);
-    wImg.image = game.assets[wolfImg];
-    wImg.moveTo(910, 680);
-
     var userList = new Label();
     userList.font = `50px ${normalFont}`;
     userList.moveTo(1580,400);
@@ -96,8 +74,6 @@ function goToTopScene(game) {
     scene.addChild(tb);
     enterBt.initialize();
     scene.addChild(enterBt);
-    scene.addChild(sImg);
-    scene.addChild(wImg);
 
     game.pushScene(scene);
     //End top page one
@@ -163,10 +139,6 @@ function goToTopScene(game) {
     	game.assets[readySe].play();
     	initPlayScene(req.game.players, req.game.map, req.game.normalItems, req.game.powerItems,
                 req.game.timeLimit, req.game.score, game);
-    });
-
-    socket.on('startGame', (req) => {
-    	
     });
     //end prepare socket
 }
