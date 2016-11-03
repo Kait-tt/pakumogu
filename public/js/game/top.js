@@ -106,8 +106,7 @@ function goToTopScene(game) {
         //back button action
         game.assets[decisionSe].play();
         //change screen to Title 1 after leave
-        //change to first background
-        bg.image = game.assets[bgImg];
+
         //remove nodes
         scene.removeChild(startBt);
         scene.removeChild(backBt);
@@ -123,8 +122,7 @@ function goToTopScene(game) {
     function changeScreenToTitle2 () {
         game.assets[decisionSe].play();
         //change screen to Title 2 after join
-        //change to second background
-        bg.image = game.assets[bg2Img];
+
         //remove label, textbox and enterButton
         scene.removeChild(label);
         scene.removeChild(tb);
