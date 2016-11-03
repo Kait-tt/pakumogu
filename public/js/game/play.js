@@ -134,15 +134,7 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
 		setTimeout(() => {
 			scene.removeChild(readyTxt);
 			socket.startGame();
-			//change bgm by map data from server
-			switch(mapObj.bgm){
-				case 1: bgmController.play(gameBgm);
-				break;
-				case 2: bgmController.play(game2Bgm);
-				break;
-				case 3: bgmController.play(game3Bgm);
-				break;
-			}
+            bgmController.play(getMapBgm(mapObj));
 			//count game time after start game
 			var timeTxt = new Label("time : " + timeLimit / 1000);
 			timeTxt.font = `36px ${normalFont}`;
@@ -299,7 +291,7 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
         character[sheepId].frame = 0;
 
         bgmController.stop();
-        bgmController.play(gameBgm);
+        bgmController.play(getMapBgm(mapObj));
     });
 
     socket.on('bomb', () => {
@@ -510,4 +502,15 @@ function addDeathOnProfile(game,scene,cProfile,id,deathFrame,blackBoxList){
 	}
     scene.addChild(blackBoxList[id]);
     cProfile[id].frame = deathFrame[id]; //profile position
+}
+
+function getMapBgm(mapObj) {
+    switch(mapObj.bgm){
+        case 1: bgmController.play(gameBgm);
+            break;
+        case 2: bgmController.play(game2Bgm);
+            break;
+        case 3: bgmController.play(game3Bgm);
+            break;
+    }
 }
