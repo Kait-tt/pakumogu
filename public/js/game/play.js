@@ -217,7 +217,6 @@ class PlayPage {
         Object.keys(this.blackBoxes).forEach(k => this.scene.removeChild(this.blackBoxes[k]));
         this.profileSprites = {};
         this.players.forEach((player, i) => {
-            console.log(i);
             const profile = this.profileSpritesPool[i];
             profile.frame = player.imageIndex * 3;
             profile.initializeProfile(player, i);
@@ -506,8 +505,6 @@ class PlayPage {
     }
 
     onEndGame (req) {
-        socket.removeAllListeners(); // TODO: remove this line
-
         this.game.assets[gameBgm].stop();
         this.game.assets[endSe].play();
 

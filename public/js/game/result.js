@@ -160,7 +160,8 @@ function goToResultScene(game, gameResult){
 	backBt.y = 1000;
 	backBt.addEventListener(Event.TOUCH_START, function(){
 		game.assets[decisionSe].play();
-		goToTopScene(game);
+		// goToTopScene(game);
+		topPage.init();
 	});
 	endScene.addChild(backBt);
 

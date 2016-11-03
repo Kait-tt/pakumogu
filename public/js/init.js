@@ -48,6 +48,7 @@ const DX   = [0, 1, 0, -1];
 const DY   = [-1, 0, 1, 0];
 let bgmController;
 let topPage;
+let playPage;
 let socket;
 let myId;
 
@@ -97,6 +98,7 @@ function enchantInit(){
 
 	game.onload = function () {
 		topPage = new TopPage(game);
+		playPage = new PlayPage(game);
 		topPage.init();
 	};
 

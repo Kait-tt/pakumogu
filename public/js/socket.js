@@ -14,10 +14,6 @@
             this.io.emit(name, params);
         }
 
-        removeAllListeners () {
-            this.io.removeAllListeners();
-        }
-
         initGame () {
             this.io.emit('initGame');
         }
