@@ -303,6 +303,36 @@ function initPlayerMove(game, map, socket, character, userObj, mapObj, normalIte
             if (!myHitTest(map, x, y)) {
             	//check for warp portal at the border of map
             	warpPortal(x, y, mapObj);
+            }else{
+            	//smooth turn
+            	var autoMovePixcel = mySpeed;
+            	var xGhost = x-gameOffSetX;
+            	var yGhost = y-gameOffSetY;
+            	for(var j=(pixel/(-2*autoMovePixcel));(j*autoMovePixcel)<(pixel/2);j++){
+            		if(j!=0){
+            			if(DX[i] != 0){ //user go right or left
+            				yGhost = y + (autoMovePixcel*j) - gameOffSetY; //DX not zero change Y
+            			}else{//user go up and down DY not zero change X
+            				xGhost = x + (autoMovePixcel*j) - gameOffSetX; 
+            			}
+	            		if(!(map.hitTest(xGhost, yGhost) ||
+	    	                    map.hitTest(xGhost + pixel - 1, yGhost) ||
+	    	                    map.hitTest(xGhost, yGhost + pixel - 1) ||
+	    	                    map.hitTest(xGhost + pixel - 1, yGhost + pixel - 1))){
+	            			
+	            			if(DX[i] != 0){
+	            				x -= DX[i] * mySpeed; //return to x old position
+	            				(j<0)?y -= 1 * mySpeed:y += 1 * mySpeed;
+	            			}else{
+	            				y -= DY[i] * mySpeed;
+	            				(j<0)?x -= 1 * mySpeed:x += 1 * mySpeed;
+	            			}
+	            			j = 5;
+		                	warpPortal(x, y, mapObj);
+	            		}
+            		}
+            	}
+            	//end smooth turn
             }
         });
 
@@ -316,9 +346,10 @@ function initPlayerMove(game, map, socket, character, userObj, mapObj, normalIte
                         socket.killWolf({wolfId: userObj[i].id});
                         userObj[i].isAlive = false;
                     } else {
-                        socket.killSheep();
+                    	//sheep invincible for test
+                        /*socket.killSheep();
                         myUserObj.isAlive = false;
-                        break;
+                        break;*/
                     }
                 }
             }
