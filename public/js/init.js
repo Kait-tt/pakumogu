@@ -75,4 +75,9 @@ function enchantTopPage(){
 	};
 
 	game.start();
+
+	// fix margin of main content
+	const mainEle = document.getElementById('enchant-stage');
+	mainEle.style.left = 0;
+	mainEle.style.top = 0;
 }
