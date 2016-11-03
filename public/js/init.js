@@ -32,6 +32,7 @@ var clearSe = '/se/clear.mp3';
 var endSe = '/se/end.mp3';
 var powerUpSe = '/se/power_up.mp3';
 var wolfDeathSe = '/se/wolf_death.mp3';
+var respawnSe = '/se/respawn.mp3';
 
 var socket;
 var myId;
@@ -74,7 +75,7 @@ function enchantTopPage(){
 	game.preload( 
 			bgImg, bg2Img, gameImg, sheepImg, wolfImg, mapImg, charImg, itemImg, resultImg, blackImg, startImg, readyImg, finishImg, //img 
 			gameBgm, game2Bgm, game3Bgm, topPageBgm, powerup1Bgm, resultPageBgm,//bgm
-			foodSe, sheepDeathSe, readySe, startSe, waitingSe, footStepsSe, decisionSe, clearSe, endSe, powerUpSe, wolfDeathSe//se
+			foodSe, sheepDeathSe, readySe, startSe, waitingSe, footStepsSe, decisionSe, clearSe, endSe, powerUpSe, wolfDeathSe, respawnSe//se
 			);
 
 	bgmController = new BGMController(game);
