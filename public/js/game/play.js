@@ -67,7 +67,7 @@ class PlayPage {
         this.scene.addChild(this.scoreLabel);
 
         // item status on left side
-        const itemPointMax = [this.normalItems.length, 3, 1, 1];
+        const itemPointMax = [0, 3, 1, 1];
         const itemTypes = ['normal', 'invincible', 'bomb', 'slow'];
         this.sideItemLabels = [];
         itemTypes.forEach((type, i) => {
@@ -79,8 +79,13 @@ class PlayPage {
             const itemLabel = new Label();
             itemLabel.font = `36px ${normalFont}`;
             itemLabel.moveTo(x + 100, y);
-            itemLabel.updateText = function (value) {
-                this.text = `${itemTypes[i]} : ${value}/${itemPointMax[i]}`;
+            itemLabel.updateText = (value) => {
+                if (type === 'normal') {
+                    const max = this.normalItems.length;
+                    itemLabel.text = `${itemTypes[i]} : ${value}/${max}`;
+                } else {
+                    itemLabel.text = `${itemTypes[i]} : ${value}/${itemPointMax[i]}`;
+                }
             };
 
             this.sideItemLabels.push(itemLabel);
