@@ -33,7 +33,11 @@ function goToTopScene(game) {
         this.moveTo(580, 440);
         this.width = 630;
         this.height = 190;
-        this.addEventListener(Event.TOUCH_START, changeScreenToTitle2);
+        this.addEventListener(Event.TOUCH_START, () => {
+            var username = tb.value;
+            beforeUsername = username;
+            socket.join(username);
+        });
     })(enterBt.initialize));
 
     var startBt = new Button();
@@ -55,7 +59,10 @@ function goToTopScene(game) {
         this.moveTo(1110, 470);
         this.width = 240;
         this.height = 95;
-        this.addEventListener(Event.TOUCH_START, changeScreenToTitle1);
+        this.addEventListener(Event.TOUCH_START, () => {
+            socket.leave();
+            changeScreenToTitle1();
+        });
     })(backBt.initialize));
 
     //sheep 560 * 316
@@ -87,7 +94,6 @@ function goToTopScene(game) {
     function changeScreenToTitle1 () {
         //back button action
         game.assets[decisionSe].play();
-        socket.leave();
         //change screen to Title 1 after leave
         //change to first background
         bg.image = game.assets[bgImg];
@@ -105,9 +111,6 @@ function goToTopScene(game) {
 
     function changeScreenToTitle2 () {
         game.assets[decisionSe].play();
-        var username = tb.value;
-        beforeUsername = username;
-        socket.join(username);
         //change screen to Title 2 after join
         //change to second background
         bg.image = game.assets[bg2Img];
@@ -142,6 +145,7 @@ function goToTopScene(game) {
 
     socket.on('yourInfo', (req) => {
         myId = req.id;
+        changeScreenToTitle2();
     });
 
     socket.on('initGame', (req) => {
