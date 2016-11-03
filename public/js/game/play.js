@@ -18,11 +18,9 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
     isEnded = false;
     isTimeLimit = false;
     
-    //start the music
-	game.assets[startSe].play();
+    //stop the music
     bgmController.stop();
-    bgmController.play(gameBgm);
-    
+   
 	var scene = new Scene();
 	//add scene environment
 	var bg = new Sprite(1920, 1080);
@@ -34,29 +32,11 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
 	hightScoreTxt.font = `36px ${normalFont}`;
 	hightScoreTxt.moveTo(60,170);
 	scene.addChild(hightScoreTxt);
-	var currentScoreTxt = new Label("current score : " + ('00000' + initScore).slice(-5));
+	var currentScoreTxt = new Label("my score : " + ('00000' + initScore).slice(-5));
 	currentScoreTxt.font = `36px ${normalFont}`;
 	currentScoreTxt.moveTo(60,350);
 	scene.addChild(currentScoreTxt);
-
-	var timeTxt = new Label("time : " + timeLimit / 1000);
-	timeTxt.font = `36px ${normalFont}`;
-	timeTxt.moveTo(60,530);
-	scene.addChild(timeTxt);
-    var timeIntervalId = setInterval(() => {
-        if (isEnded) {
-            clearInterval(timeIntervalId);
-        }
-
-        if (isTimeLimit) {
-            timeLimit = 0;
-        } else if (!isEnded) {
-            timeLimit = Math.max(0, timeLimit - 1000);
-        }
-
-        timeTxt.text = "time : " + timeLimit / 1000;
-    }, 1000);
-
+	console.log(mapObj);
 	var map = initDynamicMap(game,mapObj);
 	scene.addChild(map);
 
@@ -104,6 +84,7 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
 	wolfImageIndex = 0;
 	var cProfile = {};
 	var deathFrame = {};
+	var blackBox = {};
 	for(let i=0;i<userObj.length;i++){
 		var objId = userObj[i].id;
 		//set right side profile
@@ -132,6 +113,40 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
 	    scene.addChild(usernameTag);
 	    //end right side profile
 	}
+	
+	
+	//add ready state
+	var readyTxt = new Sprite(480,272);
+	readyTxt.moveTo(1920/2-220, 1080/2-150);
+	readyTxt.image = game.assets[readyImg];
+	scene.addChild(readyTxt);
+	setTimeout(() => {
+		game.assets[startSe].play();
+		readyTxt.image = game.assets[startImg];
+		setTimeout(() => {
+			scene.removeChild(readyTxt);
+			socket.startGame();
+			//count game time after start game
+			bgmController.play(gameBgm);
+			var timeTxt = new Label("time : " + timeLimit / 1000);
+			timeTxt.font = `36px ${normalFont}`;
+			timeTxt.moveTo(60,530);
+			scene.addChild(timeTxt);
+		    var timeIntervalId = setInterval(() => {
+		        if (isEnded) {
+		            clearInterval(timeIntervalId);
+		        }
+
+		        if (isTimeLimit) {
+		            timeLimit = 0;
+		        } else if (!isEnded) {
+		            timeLimit = Math.max(0, timeLimit - 1000);
+		        }
+
+		        timeTxt.text = "time : " + timeLimit / 1000;
+		    }, 1000);
+	    }, 500);
+    }, 2000);
 
     socket.on('movePlayer', (req) => {
     	game.assets[footStepsSe].play();
@@ -175,22 +190,25 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
     socket.on('killSheep', (req) => {
         const sheep = userObj.find(x => !x.isEnemy);
         sheep.isAlive = false;
-        scene.removeChild(character[sheep.id]);
-
-    	game.assets[sheepDeathSe].play();
-
-    	addDeathOnProfile(game,scene,cProfile,sheep.id,deathFrame);
+        game.assets[sheepDeathSe].play();
+        addDeathOnProfile(game,scene,cProfile,sheep.id,deathFrame,blackBox);
+        character[sheep.id].frame = deathFrame[sheep.id];
+        //show corpse 3 sec
+        setTimeout(() => {
+        	scene.removeChild(character[sheep.id]);
+		}, 3000);
     });
 
     socket.on('killWolf', (req) => {
         const wolf = userObj.find(x => x.id === req.player.id);
         wolf.isAlive = false;
-        scene.removeChild(character[wolf.id]);
         game.assets[wolfDeathSe].play();
-        
-        //gray profile by sprite overlay
-        //170 x 160
-        addDeathOnProfile(game,scene,cProfile,wolf.id,deathFrame);
+        addDeathOnProfile(game,scene,cProfile,wolf.id,deathFrame,blackBox);
+        character[wolf.id].frame = deathFrame[wolf.id];
+        //show corpse 3 sec
+        setTimeout(() => {
+        	scene.removeChild(character[wolf.id]);
+		}, 3000);
     });
 
     socket.on('respawnWolf', (req) => {
@@ -200,6 +218,9 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
         character[wolf.id].x = wolf.coordinate.x;
         character[wolf.id].y = wolf.coordinate.y;
         scene.addChild(character[wolf.id]);
+        //remove death profile
+        cProfile[wolf.id].frame = deathFrame[wolf.id]-2;
+        scene.removeChild(blackBox[wolf.id]);
     });
 
     socket.on('takeNormalItem', (req) => {
@@ -253,8 +274,13 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
         isTimeLimit = req.isTimeLimit;
         game.assets[gameBgm].stop();
         game.assets[endSe].play();
-
-        goToResultScene(game, req.game.score);
+        
+    	readyTxt.image = game.assets[finishImg];
+    	scene.addChild(readyTxt);
+    	setTimeout(() => {
+    		scene.removeChild(readyTxt);
+    		goToResultScene(game, req.game.score);
+    	}, 2000);
     });
 
     socket.on('updateScore', (scores) => {
@@ -410,11 +436,16 @@ function warpPortal(x, y, mapObj){
 	socket.movePlayer({x, y});
 }
 
-function addDeathOnProfile(game,scene,cProfile,id,deathFrame){
-	var blackBox = new Sprite(180, 170);
-    blackBox.image = game.assets[blackImg];
-    cProfile[id].frame = deathFrame[id]; //profile position
-    blackBox.moveTo(cProfile[id].x-60,cProfile[id].y-30);
-    blackBox.opacity = 0.5;
-    scene.addChild(blackBox);
+function addDeathOnProfile(game,scene,cProfile,id,deathFrame,blackBoxList){
+	if(null!= blackBoxList[id]){
+		scene.addChild(blackBoxList[id]);
+	}else{
+		var blackBox = new Sprite(180, 170);
+	    blackBox.image = game.assets[blackImg];
+	    cProfile[id].frame = deathFrame[id]; //profile position
+	    blackBox.moveTo(cProfile[id].x-60,cProfile[id].y-30);
+	    blackBox.opacity = 0.5;
+	    scene.addChild(blackBox);
+	    blackBoxList[id] = blackBox;
+	}
 }
