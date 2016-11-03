@@ -298,6 +298,18 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
         bgmController.play(gameBgm);
     });
 
+    socket.on('bomb', () => {
+        // bomb effect and kill all wolfs
+    });
+
+    socket.on('startSlow', () => {
+        // slow sheep speed
+    });
+
+    socket.on('endSlow', () => {
+        // restore slow
+    });
+
     socket.on('endGame', (req) => {
         isEnded = true;
         isTimeLimit = req.isTimeLimit;
@@ -466,15 +478,13 @@ function warpPortal(x, y, mapObj){
 }
 
 function addDeathOnProfile(game,scene,cProfile,id,deathFrame,blackBoxList){
-	if(null!= blackBoxList[id]){
-		scene.addChild(blackBoxList[id]);
-	}else{
+	if(!blackBoxList[id]){
 		var blackBox = new Sprite(180, 170);
 	    blackBox.image = game.assets[blackImg];
-	    cProfile[id].frame = deathFrame[id]; //profile position
 	    blackBox.moveTo(cProfile[id].x-60,cProfile[id].y-30);
 	    blackBox.opacity = 0.5;
-	    scene.addChild(blackBox);
 	    blackBoxList[id] = blackBox;
 	}
+    scene.addChild(blackBoxList[id]);
+    cProfile[id].frame = deathFrame[id]; //profile position
 }
