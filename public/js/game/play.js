@@ -309,14 +309,16 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
     	for(let i=0;i<userObj.length;i++){
     		if(userObj[i].isEnemy){
     			const wolf = userObj.find(x => x.id === userObj[i].id);
-    			wolf.isAlive = false;
-    	        game.assets[wolfDeathSe].play();
-    	        addDeathOnProfile(game,scene,cProfile,wolf.id,deathFrame,blackBox);
-    	        character[wolf.id].frame = deathFrame[wolf.id];
-    	        //show corpse 3 sec
-    	        setTimeout(() => {
-    	        	scene.removeChild(character[wolf.id]);
-    			}, 3000);
+    			if(wolf.isAlive){
+	    			wolf.isAlive = false;
+	    	        game.assets[wolfDeathSe].play();
+	    	        addDeathOnProfile(game,scene,cProfile,wolf.id,deathFrame,blackBox);
+	    	        character[wolf.id].frame = deathFrame[wolf.id];
+	    	        //show corpse 3 sec
+	    	        setTimeout(() => {
+	    	        	scene.removeChild(character[wolf.id]);
+	    			}, 3000);
+    			}
     		}
     	}
     });
