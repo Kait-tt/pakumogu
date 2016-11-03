@@ -480,6 +480,7 @@ class PlayPage {
     }
 
     onStartSlow () {
+        this.isSlow = true;
         this.playerSprites[this.sheep.id].scale(0.5, 0.5);
 
         if (myId === this.sheep.id){
@@ -488,6 +489,7 @@ class PlayPage {
     }
 
     onEndSlow () {
+        this.isSlow = false;
         const sheep = this.sheep;
         const sprite = this.playerSprites[sheep.id];
 
@@ -515,6 +517,10 @@ class PlayPage {
 
         this.isEnded = true;
         this.isTimeLimit = req.isTimeLimit;
+
+        if (this.isSlow) {
+            this.playerSprites[this.sheep.id].scale(2,2);
+        }
 
         this.stateSprite.image = this.game.assets[finishImg];
 
