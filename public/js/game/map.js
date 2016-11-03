@@ -1,30 +1,26 @@
-/**
- * http://usejsdoc.org/
- */
-
 var mapImg = '/img/map.png';
 
-function initDynamicMap(game,mapObj){
+function initDynamicMap(game, mapObj){
 	// Create a map with 32x32 tiles
-    var map = new Map(pixel, pixel);
-    map.x = gameOffSetX;
-    map.y = gameOffSetY;
-    
-    // Associate a tilesheet with the map.
-    map.image = game.assets[mapImg]; 
-    
-    //recieve from server
-    var collisionData = mapObj.tiles;
-    
-    // Tell the map which tiles should be where.
-    map.loadData(collisionToBackGround(collisionData));
+	var map = new Map(pixel, pixel);
+	map.x = GAME_OFFSET_X;
+	map.y = GAME_OFFSET_Y;
 
-    // A Map's collisionData sets whether a tile corresponds to a
-    // "hit" zone (1) or if it is "free" (0). "Hit" zones will be areas where
-    // the player cannot go.
-    map.collisionData = collisionData;
-    
-    return map;
+	// Associate a tilesheet with the map.
+	map.image = game.assets[mapImg];
+
+	//recieve from server
+	var collisionData = mapObj.tiles;
+
+	// Tell the map which tiles should be where.
+	map.loadData(collisionToBackGround(collisionData));
+
+	// A Map's collisionData sets whether a tile corresponds to a
+	// "hit" zone (1) or if it is "free" (0). "Hit" zones will be areas where
+	// the player cannot go.
+	map.collisionData = collisionData;
+
+	return map;
 }
 
 function collisionToBackGround(collisionData){

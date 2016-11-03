@@ -4,30 +4,6 @@ class TopPage {
         this.scene = new Scene();
         this.enabled = false;
 
-        // add socket event
-        socket.on('joinRoom', (req) => {
-            if (!this.enabled) { return; }
-            this.updateUserList(req.game.players);
-        });
-
-        socket.on('leaveRoom', (req) => {
-            if (!this.enabled) { return; }
-            this.updateUserList(req.game.players);
-        });
-
-        socket.on('yourInfo', (req) => {
-            if (!this.enabled) { return; }
-            myId = req.id;
-            this.changeScreenToTop2();
-        });
-
-        socket.on('initGame', (req) => {
-            this.game.assets[readySe].play();
-            initPlayScene(req.game.players, req.game.map, req.game.normalItems, req.game.powerItems,
-                req.game.timeLimit, req.game.score, this.game);
-            this.enabled = false;
-        });
-
         // background image
         this.bg = new Sprite(1920, 1080);
         this.bg.image = this.game.assets[bgImg];
@@ -98,6 +74,30 @@ class TopPage {
                 this.changeScreenToTop1();
             });
         })(this.backButton.initialize));
+
+        // set socket events
+        socket.on('joinRoom', (req) => {
+            if (!this.enabled) { return; }
+            this.updateUserList(req.game.players);
+        });
+
+        socket.on('leaveRoom', (req) => {
+            if (!this.enabled) { return; }
+            this.updateUserList(req.game.players);
+        });
+
+        socket.on('yourInfo', (req) => {
+            if (!this.enabled) { return; }
+            myId = req.id;
+            this.changeScreenToTop2();
+        });
+
+        socket.on('initGame', (req) => {
+            // initPlayScene(this.game, req.game);
+            const playPage = new PlayPage(this.game, req.game);
+            playPage.init();
+            this.enabled = false;
+        });
     }
 
     init () {

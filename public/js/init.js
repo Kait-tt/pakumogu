@@ -1,51 +1,59 @@
 window.onload = enchantInit;
 
-var normalFont = 'Kazesawa, Arial, Helvetica, sans-serif';
+const normalFont = 'Kazesawa, Arial, Helvetica, sans-serif';
 
-var bgImg = '/img/title.png';
-var gameImg = '/img/game.png';
-var charImg = '/img/chara.png';
-var resultImg = '/img/result.png';
-var blackImg = '/img/blackbox.png';
-var startImg = '/img/start.png';
-var readyImg = '/img/ready.png';
-var finishImg = '/img/finish.png';
-var bombImg = '/img/bomb.png';
+const bgImg = '/img/title.png';
+const gameImg = '/img/game.png';
+const charImg = '/img/chara.png';
+const resultImg = '/img/result.png';
+const blackImg = '/img/blackbox.png';
+const startImg = '/img/start.png';
+const readyImg = '/img/ready.png';
+const finishImg = '/img/finish.png';
+const bombImg = '/img/bomb.png';
 
-var gameBgm = '/bgm/game1.mp3';
-var game2Bgm = '/bgm/game2.mp3';
-var game3Bgm = '/bgm/game3.mp3';
-var topPageBgm = '/bgm/title.mp3';
-var powerup1Bgm = '/bgm/powerup1.mp3';
-var resultPageBgm = '/bgm/result.mp3';
+const gameBgm = '/bgm/game1.mp3';
+const game2Bgm = '/bgm/game2.mp3';
+const game3Bgm = '/bgm/game3.mp3';
+const topPageBgm = '/bgm/title.mp3';
+const powerup1Bgm = '/bgm/powerup1.mp3';
+const resultPageBgm = '/bgm/result.mp3';
 
-var foodSe = '/se/food.mp3';
-var sheepDeathSe = '/se/sheep_death.mp3';
-var readySe = '/se/ready.mp3';
-var startSe = '/se/start.mp3';
-var waitingSe = '/se/choise.mp3';
-var footStepsSe = '/se/foot_steps.mp3';
-var decisionSe = '/se/decision.mp3';
-var clearSe = '/se/clear.mp3';
-var endSe = '/se/end.mp3';
-var powerUpSe = '/se/power_up.mp3';
-var wolfDeathSe = '/se/wolf_death.mp3';
-var bombSe = '/se/bomb.mp3';
-var respawnSe = '/se/respawn.mp3';
+const foodSe = '/se/food.mp3';
+const sheepDeathSe = '/se/sheep_death.mp3';
+const readySe = '/se/ready.mp3';
+const startSe = '/se/start.mp3';
+const waitingSe = '/se/choise.mp3';
+const footStepsSe = '/se/foot_steps.mp3';
+const decisionSe = '/se/decision.mp3';
+const clearSe = '/se/clear.mp3';
+const endSe = '/se/end.mp3';
+const powerUpSe = '/se/power_up.mp3';
+const wolfDeathSe = '/se/wolf_death.mp3';
+const bombSe = '/se/bomb.mp3';
+const respawnSe = '/se/respawn.mp3';
 
-var socket;
-var myId;
+// config
+const pixel = 64;
+const GAME_OFFSET_X = 480;
+const GAME_OFFSET_Y = 40;
+const SHEEP_SPEED = 8;
+const WOLF_SPEED = 4;
+const SLOW_SPEED = 2;
+const MOVE_FRAME_COUNT_LIMIT = 3;
 
-var pixel = 64;
-var gameOffSetX = 480;
-var gameOffSetY = 40;
+// global
+const DIRS = ['up', 'right', 'down', 'left'];
+const DX   = [0, 1, 0, -1];
+const DY   = [-1, 0, 1, 0];
+let bgmController;
+let topPage;
+let socket;
+let myId;
 
-var bgmController;
-var topPage;
-
-// must sync lib/modules/config.js
+// must sync with lib/modules/config.js
 // for result page
-var scoreBasePoints = {
+const scoreBasePoints = {
 	scoreTimePoint: 1,
 	scoreNormalItemPoint: 50,
 	scorePowerItemPoint: 500,
