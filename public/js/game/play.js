@@ -379,6 +379,8 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
             ny -= (ny - gameOffSetY) % SHEEP_SPEED;
 
             if (nx !== character[sheep.id].x || ny !== character[sheep.id].y) {
+                character[sheep.id].x = nx;
+                character[sheep.id].y = ny;
                 socket.movePlayer({x: nx, y: ny});
             }
         }
