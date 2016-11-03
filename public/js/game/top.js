@@ -27,7 +27,7 @@ function goToTopScene(game) {
     var enterBt = new Button();
     enterBt.initialize = (((_initialize) => function () {
         _initialize.call(this);
-        this.font = "100px Arial, Helvetica, sans-serif";
+        this.font = `100px ${normalFont}`;
         this.text = "Enter";
         this.moveTo(580, 440);
         this.width = 630;
@@ -38,7 +38,7 @@ function goToTopScene(game) {
     var startBt = new Button();
     startBt.initialize = (((_initialize) => function () {
         _initialize.call(this);
-        this.font = "100px Arial, Helvetica, sans-serif";
+        this.font = `100px ${normalFont}`;
         this.text = "Start";
         this.moveTo(410, 380);
         this.width = 630;
@@ -49,7 +49,7 @@ function goToTopScene(game) {
     var backBt = new Button();
     backBt.initialize = (((_initialize) => function () {
         _initialize.call(this);
-        this.font = "30px Arial, Helvetica, sans-serif";
+        this.font = `30px ${normalFont}`;
         this.text = "Back";
         this.moveTo(1110, 470);
         this.width = 240;
@@ -69,7 +69,7 @@ function goToTopScene(game) {
     wImg.moveTo(910, 680);
 
     var userList = new Label();
-    userList.font = '50px Arial, Helvetica, sans-serif';
+    userList.font = `50px ${normalFont}`;
     userList.moveTo(1580,400);
 
     scene.addChild(bg);

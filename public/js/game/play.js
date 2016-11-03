@@ -31,16 +31,16 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
 	
 	//left side
 	var hightScoreTxt = new Label("Highest score :");
-	hightScoreTxt.font = '36px Arial, Helvetica, sans-serif';
+	hightScoreTxt.font = `36px ${normalFont}`;
 	hightScoreTxt.moveTo(60,170);
 	scene.addChild(hightScoreTxt);
 	var currentScoreTxt = new Label("current score : " + ('00000' + initScore).slice(-5));
-	currentScoreTxt.font = '36px Arial, Helvetica, sans-serif';
+	currentScoreTxt.font = `36px ${normalFont}`;
 	currentScoreTxt.moveTo(60,350);
 	scene.addChild(currentScoreTxt);
 
 	var timeTxt = new Label("time : " + timeLimit / 1000);
-	timeTxt.font = '36px Arial, Helvetica, sans-serif';
+	timeTxt.font = `36px ${normalFont}`;
 	timeTxt.moveTo(60,530);
 	scene.addChild(timeTxt);
     var timeIntervalId = setInterval(() => {
@@ -127,7 +127,7 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
 	    	nameTag = userObj[i].user.username;
 	    }
 	    var usernameTag = new Label(nameTag);
-	    usernameTag.font = '36px Arial, Helvetica, sans-serif';
+	    usernameTag.font = `36px ${normalFont}`;
 	    usernameTag.moveTo(fixPosition[i][0] + 50 ,fixPosition[i][1] + 120);
 	    scene.addChild(usernameTag);
 	    //end right side profile

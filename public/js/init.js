@@ -1,5 +1,7 @@
 window.onload = enchantTopPage;
 
+var normalFont = 'Arial, Helvetica, sans-serif';
+
 var bgImg = '/img/title1.png';
 var bg2Img = '/img/title2.png';
 var gameImg = '/img/game.png';
@@ -48,10 +50,10 @@ enchant.widget.assets = [
 	'enchant_assets/navigationBar.png'
 ];
 
-enchant.widget._env.font = '12px helvetica';
-enchant.widget._env.buttonFont = '12px helvetica';
-enchant.widget._env.navigationBarFont = '12px helvetica';
-enchant.widget._env.textareaFont = '12px helvetica';
+enchant.widget._env.font = `12px ${normalFont}`;
+enchant.widget._env.buttonFont = `12px ${normalFont}`;
+enchant.widget._env.navigationBarFont = `12px ${normalFont}`;
+enchant.widget._env.textareaFont = `12px ${normalFont}`;
 
 
 function enchantTopPage(){
