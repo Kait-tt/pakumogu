@@ -183,7 +183,7 @@ class ResultPage {
 	}
 
 	updateScores (scores) {
-		const points = [scores.takeNormalItemCount, scores.takePowerItemCount, scores.killCount, scores.remainingTime];
+		const points = [scores.takeNormalItemCount, scores.takePowerItemCount, scores.killCount, scores.remainingTime / 1000];
 
 		this.detailPointLabel.text = points.join('<br>');
 		this.detailScoreLabel.text = this.scoreDetails.map((a, i) => points[i] * a.base + 'pt').join('<br>');

@@ -512,7 +512,7 @@ class PlayPage {
     }
 
     onEndGame (req) {
-        this.game.assets[gameBgm].stop();
+        bgmController.stop();
         this.game.assets[endSe].play();
 
         this.isEnded = true;
