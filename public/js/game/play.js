@@ -36,7 +36,7 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
 	currentScoreTxt.font = `36px ${normalFont}`;
 	currentScoreTxt.moveTo(60,350);
 	scene.addChild(currentScoreTxt);
-	console.log(mapObj);
+
 	var map = initDynamicMap(game,mapObj);
 	scene.addChild(map);
 
@@ -126,8 +126,16 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
 		setTimeout(() => {
 			scene.removeChild(readyTxt);
 			socket.startGame();
+			//change bgm by map data from server
+			switch(mapObj.bgm){
+				case 1: bgmController.play(gameBgm);
+				break;
+				case 2: bgmController.play(game2Bgm);
+				break;
+				case 3: bgmController.play(game3Bgm);
+				break;
+			}
 			//count game time after start game
-			bgmController.play(gameBgm);
 			var timeTxt = new Label("time : " + timeLimit / 1000);
 			timeTxt.font = `36px ${normalFont}`;
 			timeTxt.moveTo(60,530);
