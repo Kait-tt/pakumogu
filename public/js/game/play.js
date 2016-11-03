@@ -224,7 +224,11 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
         if (isEnded) { return; }
 
         isInvincible = true;
-        // TODO: enable super mode image
+
+        const sheep = userObj.find(x => x.id === sheepId);
+        sheep.imageIndex = 5;
+        sheep.moveFrameCount = 0;
+        cProfile[sheepId].frame = 3 * 5;
 
         bgmController.stop();
         bgmController.play(powerup1Bgm);
@@ -234,7 +238,11 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
         if (isEnded) { return; }
 
         isInvincible = false;
-        // TODO: disable super mode image
+
+        const sheep = userObj.find(x => x.id === sheepId);
+        sheep.imageIndex = 0;
+        sheep.moveFrameCount = 0;
+        cProfile[sheepId].frame = 0;
 
         bgmController.stop();
         bgmController.play(gameBgm);
