@@ -37,13 +37,6 @@ function goToResultScene(game, score){
 	
 	endScene.addChild(resultList);
 
-	var finishTxt = new Sprite(480,272);
-	finishTxt.moveTo(1920/2-300, 1080/2-200);
-	finishTxt.image = game.assets[finishImg];
-	endScene.addChild(finishTxt);
-	setTimeout(() => {
-		endScene.removeChild(finishTxt);
-	}, 1000);
 	var backBt = new Button();
     backBt.initialize = (((_initialize) => function () {
         _initialize.call(this);

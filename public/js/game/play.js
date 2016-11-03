@@ -36,7 +36,7 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
 	currentScoreTxt.font = `36px ${normalFont}`;
 	currentScoreTxt.moveTo(60,350);
 	scene.addChild(currentScoreTxt);
-
+	console.log(mapObj);
 	var map = initDynamicMap(game,mapObj);
 	scene.addChild(map);
 
@@ -116,42 +116,36 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
 	
 	//add ready state
 	var readyTxt = new Sprite(480,272);
-	readyTxt.moveTo(1920/2-300, 1080/2-200);
+	readyTxt.moveTo(1920/2-220, 1080/2-150);
 	readyTxt.image = game.assets[readyImg];
 	scene.addChild(readyTxt);
 	setTimeout(() => {
-		game.assets[waitingSe].play();
+		game.assets[startSe].play();
+		readyTxt.image = game.assets[startImg];
 		setTimeout(() => {
-			game.assets[waitingSe].play();
-			setTimeout(() => {
-				game.assets[startSe].play();
-				readyTxt.image = game.assets[startImg];
-				setTimeout(() => {
-					scene.removeChild(readyTxt);
-					socket.startGame();
-					//count game time after start game
-					bgmController.play(gameBgm);
-					var timeTxt = new Label("time : " + timeLimit / 1000);
-					timeTxt.font = `36px ${normalFont}`;
-					timeTxt.moveTo(60,530);
-					scene.addChild(timeTxt);
-				    var timeIntervalId = setInterval(() => {
-				        if (isEnded) {
-				            clearInterval(timeIntervalId);
-				        }
-	
-				        if (isTimeLimit) {
-				            timeLimit = 0;
-				        } else if (!isEnded) {
-				            timeLimit = Math.max(0, timeLimit - 1000);
-				        }
-	
-				        timeTxt.text = "time : " + timeLimit / 1000;
-				    }, 500);
-			    }, 1000);
-	        }, 1000);
-        }, 1000);
-    }, 1000);
+			scene.removeChild(readyTxt);
+			socket.startGame();
+			//count game time after start game
+			bgmController.play(gameBgm);
+			var timeTxt = new Label("time : " + timeLimit / 1000);
+			timeTxt.font = `36px ${normalFont}`;
+			timeTxt.moveTo(60,530);
+			scene.addChild(timeTxt);
+		    var timeIntervalId = setInterval(() => {
+		        if (isEnded) {
+		            clearInterval(timeIntervalId);
+		        }
+
+		        if (isTimeLimit) {
+		            timeLimit = 0;
+		        } else if (!isEnded) {
+		            timeLimit = Math.max(0, timeLimit - 1000);
+		        }
+
+		        timeTxt.text = "time : " + timeLimit / 1000;
+		    }, 1000);
+	    }, 500);
+    }, 2000);
 
     socket.on('movePlayer', (req) => {
     	game.assets[footStepsSe].play();
@@ -277,8 +271,13 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
         isTimeLimit = req.isTimeLimit;
         game.assets[gameBgm].stop();
         game.assets[endSe].play();
-
-        goToResultScene(game, req.game.score);
+        
+    	readyTxt.image = game.assets[finishImg];
+    	scene.addChild(readyTxt);
+    	setTimeout(() => {
+    		scene.removeChild(readyTxt);
+    		goToResultScene(game, req.game.score);
+    	}, 2000);
     });
 
     socket.on('updateScore', (scores) => {
