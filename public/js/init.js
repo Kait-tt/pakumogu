@@ -1,6 +1,7 @@
 window.onload = enchantTopPage;
 
 var normalFont = 'Kazesawa, Arial, Helvetica, sans-serif';
+var resultFont = 'ArcadeClassic';
 
 var bgImg = '/img/title1.png';
 var bg2Img = '/img/title2.png';

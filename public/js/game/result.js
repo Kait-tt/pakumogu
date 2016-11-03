@@ -18,7 +18,8 @@ function goToResultScene(game, gameResult){
 	
 	//560,330
 	var labelList = new Label();
-	labelList.font = `36px ${normalFont}`;
+	labelList.font = `42px ${resultFont}`;
+	labelList.color = "#9f2077";
 	labelList.textAlign  = "right";
 	labelList.moveTo(560,300);
 	labelList.text =  "Item : <br>"+
@@ -33,8 +34,9 @@ function goToResultScene(game, gameResult){
 	endScene.addChild(labelList);
 	
 	var resultList = new Label();
-	resultList.font = `36px ${normalFont}`;
-	resultList.moveTo(960,300);
+	resultList.font = `42px ${resultFont}`;
+	resultList.color = "#9f2077";
+	resultList.moveTo(970,300);
 	resultList.textAlign  = "left";
 	resultList.text = resultObj.item+"<br>"+
 					  resultObj.powerItem+"<br>"+
@@ -42,9 +44,11 @@ function goToResultScene(game, gameResult){
 					  resultObj.timeLeft+"<br>"+
 					  resultObj.totalScore+"<br>"+
 					  resultObj.sheepName+"<br>";
+	
 	for(var i=0;i<resultObj.wolfName.length;i++){
 		resultList.text +=resultObj.wolfName[i]+"<br>";
 	}
+	
 	resultList.width = 400;
 	resultList.height = 730;
 	endScene.addChild(resultList);
