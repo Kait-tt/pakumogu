@@ -1,4 +1,4 @@
-window.onload = enchantTopPage;
+window.onload = enchantInit;
 
 var normalFont = 'Kazesawa, Arial, Helvetica, sans-serif';
 
@@ -41,6 +41,7 @@ var gameOffSetX = 480;
 var gameOffSetY = 40;
 
 var bgmController;
+var topPage;
 
 // must sync lib/modules/config.js
 // for result page
@@ -72,10 +73,7 @@ enchant.widget._env.buttonFont = `12px ${normalFont}`;
 enchant.widget._env.navigationBarFont = `12px ${normalFont}`;
 enchant.widget._env.textareaFont = `12px ${normalFont}`;
 
-
-
-
-function enchantTopPage(){
+function enchantInit(){
 	socket = new Socket();
 	enchant();
 	
@@ -90,7 +88,8 @@ function enchantTopPage(){
 	bgmController = new BGMController(game);
 
 	game.onload = function () {
-		goToTopScene(game);
+		topPage = new TopPage(game);
+		topPage.init();
 	};
 
 	game.start();
