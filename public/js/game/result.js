@@ -12,14 +12,14 @@ function goToResultScene(game, score){
 	
 	//560,330
 	var labelList = new Label();
-	labelList.font = '100px Arial, Helvetica, sans-serif';
+	labelList.font = `100px ${normalFont}`;
 	labelList.moveTo(560,330);
 	labelList.text = "Score <br>1<br>2<br>3<br>";
 	labelList.width = 480;
 	labelList.height = 730;
 	endScene.addChild(labelList);
 	var resultList = new Label();
-	resultList.font = '100px Arial, Helvetica, sans-serif';
+	resultList.font = `100px ${normalFont}`;
 	resultList.moveTo(560,330);
 	resultList.textAlign  = "right";
 	resultList.text = "";
@@ -38,7 +38,7 @@ function goToResultScene(game, score){
 	endScene.addChild(resultList);
 
 	var backLabel = new Label();
-	backLabel.font = '24px Arial, Helvetica, sans-serif';
+	backLabel.font = `24px ${normalFont}`;
 	backLabel.moveTo(1380,1000);
 	backLabel.text = "back";
 	endScene.addChild(backLabel);
