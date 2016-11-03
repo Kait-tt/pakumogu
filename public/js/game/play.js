@@ -347,9 +347,9 @@ function initPlayerMove(game, map, socket, character, userObj, mapObj, normalIte
                         userObj[i].isAlive = false;
                     } else {
                     	//sheep invincible for test
-                        /*socket.killSheep();
+                        socket.killSheep();
                         myUserObj.isAlive = false;
-                        break;*/
+                        break;
                     }
                 }
             }
