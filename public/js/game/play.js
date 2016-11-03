@@ -229,6 +229,19 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
         //remove death profile
         cProfile[wolf.id].frame = deathFrame[wolf.id]-2;
         scene.removeChild(blackBox[wolf.id]);
+        
+        //beep character image
+        var respawnIntervalId = setInterval(() => {
+        	cProfile[wolf.id].opacity = (cProfile[wolf.id].opacity==0)? 1:0;    
+        	character[wolf.id].opacity = (character[wolf.id].opacity==0)? 1:0;
+	    }, 200);
+        
+        setTimeout(() => {
+        	clearInterval(respawnIntervalId);
+        	cProfile[wolf.id].opacity = 1;    
+	        character[wolf.id].opacity = 1;
+		}, 2000);
+        //end beep
     });
 
     socket.on('takeNormalItem', (req) => {
