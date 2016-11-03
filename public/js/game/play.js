@@ -281,6 +281,7 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
         sheep.imageIndex = 5;
         sheep.moveFrameCount = 0;
         cProfile[sheepId].frame = 3 * 5;
+        character[sheepId].frame = 3 * 5;
 
         bgmController.stop();
         bgmController.play(powerup1Bgm);
@@ -295,6 +296,7 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
         sheep.imageIndex = 0;
         sheep.moveFrameCount = 0;
         cProfile[sheepId].frame = 0;
+        character[sheepId].frame = 0;
 
         bgmController.stop();
         bgmController.play(gameBgm);
