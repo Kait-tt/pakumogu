@@ -311,6 +311,8 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
     });
 
     socket.on('endGame', (req) => {
+        socket.removeAllListeners();
+
         isEnded = true;
         isTimeLimit = req.isTimeLimit;
         game.assets[gameBgm].stop();
