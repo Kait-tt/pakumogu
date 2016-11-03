@@ -49,8 +49,8 @@ class SocketRouter {
             this.gameMaster.reCreateGame();
         });
 
-        this.gameMaster.on('updateScore', ({score, remainingTime, killCount, takeNormalItemCount, takePowerItemCount}) => {
-            this.emits('updateScore', {score, remainingTime, killCount, takeNormalItemCount, takePowerItemCount});
+        this.gameMaster.on('updateScore', (scores) => {
+            this.emits('updateScore', scores);
         });
 
         this.io.sockets.on('connection', socket => {
