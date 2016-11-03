@@ -2,6 +2,7 @@
 var mySpeed = 8;
 var SHEEP_SPEED = 8;
 var WOLF_SPEED = 4;
+var SLOW_SPEED = 2;
 var MOVE_FRAME_COUNT_LIMIT = 3;
 var DIRS = ['up', 'right', 'down', 'left'];
 var DX   = [0, 1, 0, -1];
@@ -355,10 +356,32 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
 
     socket.on('startSlow', () => {
         // slow sheep speed
+    	const sheep = userObj.find(x => !x.isEnemy);
+        character[sheep.id].scale(0.5,0.5);
+        if(myId == sheep.id){
+        	mySpeed = SLOW_SPEED;
+        }
+    	
     });
 
     socket.on('endSlow', () => {
         // restore slow
+    	//const sheep = userObj.find(x => !x.isEnemy);
+    	const sheep = userObj.find(x => !x.isEnemy);
+        character[sheep.id].scale(2,2);
+        if(myId == sheep.id){
+        	mySpeed = SHEEP_SPEED;
+
+        	//adjust incase pixel
+            var nx = character[sheep.id].x;
+            var ny = character[sheep.id].y;
+            nx -= (nx - gameOffSetX) % SHEEP_SPEED;
+            ny -= (ny - gameOffSetY) % SHEEP_SPEED;
+
+            if (nx !== character[sheep.id].x || ny !== character[sheep.id].y) {
+                socket.movePlayer({x: nx, y: ny});
+            }
+        }
     });
 
     socket.on('endGame', (req) => {
