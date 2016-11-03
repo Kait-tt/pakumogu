@@ -151,19 +151,18 @@ function goToResultScene(game, gameResult){
 		wolfLabel.y = wolf.y + 15;
 		endScene.addChild(wolfLabel);
 	});
-	
-	var backBt = new Button('Back', 'dark');
-	backBt.font = `30px ${normalFont}`;
+
+	var backBt = new Label('Back', 'dark');
+	backBt.font = `34px ${normalFont}`;
 	backBt.text = 'Back';
-	backBt.x = 1280;
+	backBt.color = '#19199e';
+	backBt.x = 1330;
 	backBt.y = 1000;
-	backBt.width = 140;
-	backBt.height = 55;
 	backBt.addEventListener(Event.TOUCH_START, function(){
 		game.assets[decisionSe].play();
 		goToTopScene(game);
 	});
-    endScene.addChild(backBt);
+	endScene.addChild(backBt);
 
 	game.replaceScene(endScene);
 }
