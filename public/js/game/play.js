@@ -1,7 +1,7 @@
 
 var mySpeed = 8;
 var SHEEP_SPEED = 8;
-var WOLF_SPEED = 6;
+var WOLF_SPEED = 4;
 var MOVE_FRAME_COUNT_LIMIT = 3;
 var pixel = 64;
 var DIRS = ['up', 'right', 'down', 'left'];
