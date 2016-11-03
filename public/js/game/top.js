@@ -10,6 +10,7 @@ function goToTopScene(game) {
     scene = new Scene();
 
     label = new Label("Username :");
+    label.font = `12px ${normalFont}`;
     label.scale(3);
     label.moveTo(800, 340);
 
