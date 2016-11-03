@@ -18,11 +18,9 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
     isEnded = false;
     isTimeLimit = false;
     
-    //start the music
-	game.assets[startSe].play();
+    //stop the music
     bgmController.stop();
-    bgmController.play(gameBgm);
-    
+   
 	var scene = new Scene();
 	//add scene environment
 	var bg = new Sprite(1920, 1080);
@@ -34,28 +32,10 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
 	hightScoreTxt.font = `36px ${normalFont}`;
 	hightScoreTxt.moveTo(60,170);
 	scene.addChild(hightScoreTxt);
-	var currentScoreTxt = new Label("current score : " + ('00000' + initScore).slice(-5));
+	var currentScoreTxt = new Label("my score : " + ('00000' + initScore).slice(-5));
 	currentScoreTxt.font = `36px ${normalFont}`;
 	currentScoreTxt.moveTo(60,350);
 	scene.addChild(currentScoreTxt);
-
-	var timeTxt = new Label("time : " + timeLimit / 1000);
-	timeTxt.font = `36px ${normalFont}`;
-	timeTxt.moveTo(60,530);
-	scene.addChild(timeTxt);
-    var timeIntervalId = setInterval(() => {
-        if (isEnded) {
-            clearInterval(timeIntervalId);
-        }
-
-        if (isTimeLimit) {
-            timeLimit = 0;
-        } else if (!isEnded) {
-            timeLimit = Math.max(0, timeLimit - 1000);
-        }
-
-        timeTxt.text = "time : " + timeLimit / 1000;
-    }, 1000);
 
 	var map = initDynamicMap(game,mapObj);
 	scene.addChild(map);
@@ -132,6 +112,45 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
 	    scene.addChild(usernameTag);
 	    //end right side profile
 	}
+	
+	
+	//add ready state
+	var readyTxt = new Label("Ready");
+	readyTxt.font = `90px ${normalFont}`;
+	readyTxt.moveTo(1920/2-150, 1080/2);
+	readyTxt.textAlign = "center";
+	scene.addChild(readyTxt);
+	setTimeout(() => {
+		game.assets[waitingSe].play();
+		readyTxt.text = 3;
+		setTimeout(() => {
+			game.assets[waitingSe].play();
+			readyTxt.text = 2;
+			setTimeout(() => {
+				scene.removeChild(readyTxt);
+				socket.startGame();
+				//count game time after start game
+				bgmController.play(gameBgm);
+				var timeTxt = new Label("time : " + timeLimit / 1000);
+				timeTxt.font = `36px ${normalFont}`;
+				timeTxt.moveTo(60,530);
+				scene.addChild(timeTxt);
+			    var timeIntervalId = setInterval(() => {
+			        if (isEnded) {
+			            clearInterval(timeIntervalId);
+			        }
+
+			        if (isTimeLimit) {
+			            timeLimit = 0;
+			        } else if (!isEnded) {
+			            timeLimit = Math.max(0, timeLimit - 1000);
+			        }
+
+			        timeTxt.text = "time : " + timeLimit / 1000;
+			    }, 1000);
+	        }, 1000);
+        }, 1000);
+    }, 1000);
 
     socket.on('movePlayer', (req) => {
     	game.assets[footStepsSe].play();
@@ -176,9 +195,7 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
         const sheep = userObj.find(x => !x.isEnemy);
         sheep.isAlive = false;
         scene.removeChild(character[sheep.id]);
-
     	game.assets[sheepDeathSe].play();
-
     	addDeathOnProfile(game,scene,cProfile,sheep.id,deathFrame);
     });
 
@@ -187,9 +204,6 @@ function initPlayScene(userObj, mapObj, normalItemObj, powerItemObj, timeLimit, 
         wolf.isAlive = false;
         scene.removeChild(character[wolf.id]);
         game.assets[wolfDeathSe].play();
-        
-        //gray profile by sprite overlay
-        //170 x 160
         addDeathOnProfile(game,scene,cProfile,wolf.id,deathFrame);
     });
 

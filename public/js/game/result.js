@@ -37,7 +37,7 @@ function goToResultScene(game, score){
 	
 	endScene.addChild(resultList);
 
-	var backLabel = new Label();
+	/*var backLabel = new Label();
 	backLabel.font = `24px ${normalFont}`;
 	backLabel.moveTo(1380,1000);
 	backLabel.text = "back";
@@ -45,7 +45,23 @@ function goToResultScene(game, score){
 	backLabel.addEventListener(Event.TOUCH_START, () => {
 		game.assets[decisionSe].play();
 		goToTopScene(game);
-	});
-
+	});*/
+	
+	var backBt = new Button();
+    backBt.initialize = (((_initialize) => function () {
+        _initialize.call(this);
+        this.font = `30px ${normalFont}`;
+        this.text = "Back";
+        this.moveTo(1100, 800);
+        this.width = 240;
+        this.height = 95;
+        this.addEventListener(Event.TOUCH_START, function(){
+        	game.assets[decisionSe].play();
+    		goToTopScene(game);
+        });
+    })(backBt.initialize));
+    backBt.initialize();
+    endScene.addChild(backBt);
+    
 	game.replaceScene(endScene);
 }

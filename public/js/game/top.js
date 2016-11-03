@@ -128,7 +128,6 @@ function goToTopScene(game) {
         game.assets[topPageBgm].stop();
 
         socket.initGame();
-        socket.startGame();
     }
 
     //prepare socket
@@ -147,11 +146,13 @@ function goToTopScene(game) {
     });
 
     socket.on('initGame', (req) => {
+    	game.assets[readySe].play();
+    	initPlayScene(req.game.players, req.game.map, req.game.normalItems, req.game.powerItems,
+                req.game.timeLimit, req.game.score, game);
     });
 
     socket.on('startGame', (req) => {
-        initPlayScene(req.game.players, req.game.map, req.game.normalItems, req.game.powerItems,
-            req.game.timeLimit, req.game.score, game);
+    	game.assets[startSe].play();
     });
     //end prepare socket
 }
