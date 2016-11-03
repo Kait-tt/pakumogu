@@ -1,5 +1,16 @@
 var beforeUsername = null;
 function goToTopScene(game) {
+	//reset resultObj;
+	resultObj = {
+			item : 0,
+			powerItem : 0,
+			wolfKill : 0,
+			timeLeft : 0,
+			totalScore : 0,
+			sheepName : "",
+			wolfName : []
+	};
+	
     //start Top page 01
     var scene, label, bg;
 

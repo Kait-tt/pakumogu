@@ -39,6 +39,17 @@ var myId;
 var gameOffSetX = 480;
 var gameOffSetY = 40;
 
+var resultObj = {
+		item : 0,
+		powerItem : 0,
+		wolfKill : 0,
+		timeLeft : 0,
+		totalScore : 0,
+		sheepName : "",
+		wolfName : []
+};
+
+
 var bgmController;
 
 enchant.ui.assets = [
