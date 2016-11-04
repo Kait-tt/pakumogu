@@ -49,7 +49,7 @@ class TopPage {
         	wImg.image = game.assets[charImg];
     	    
     	    ++this.wolfImageIndex;
-    	    const fIndex = (this.wolfImageIndex % 4 + 1) * 3;
+    	    const fIndex = (this.wolfImageIndex % 4 + 1) * 5;
     	    wImg.frame = [fIndex,fIndex,fIndex,fIndex+1,fIndex+1,fIndex+1];
     	    wImg.scale(-2,2);
     	    const timeOffSet = (i*5);
