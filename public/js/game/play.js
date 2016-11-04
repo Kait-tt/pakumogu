@@ -693,6 +693,14 @@ class PlayPage {
         
         
         const sprite = this.playerSprites[id];
+        
+        const killSprite = new Sprite(pixel, pixel);
+        killSprite.image = this.game.assets[mapImg];
+        killSprite.frame = [6];
+        killSprite.moveTo(sprite.x,sprite.y);
+        
+        this.scene.addChild(killSprite);
+        
         //add death animate
     	sprite.tl.moveBy(0, -10, 5).moveBy(0, 10, 5)
         .moveBy(0, -10, 5).moveBy(0, 10, 5)
@@ -702,12 +710,15 @@ class PlayPage {
         const respawnIntervalId = setInterval(() => {
             profile.opacity = profile.opacity ? 0 : 1;
             sprite.opacity = sprite.opacity ? 0 : 1;
+            killSprite.opacity = killSprite.opacity ? 0.5 : 0.8;
         }, 200);
         
         setTimeout(() => {
             clearInterval(respawnIntervalId);
             profile.opacity = 1;
             sprite.opacity = 1;
+            killSprite.opacity = 0;
+            this.scene.removeChild(killSprite);
         }, 2000);
     }
     
