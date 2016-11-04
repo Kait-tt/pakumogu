@@ -120,10 +120,10 @@ class ResultPage {
 		totalScoreLabel.font = `90px ${normalFont}`;
 		totalScoreLabel.color = fontColor;
 		totalScoreLabel.textAlign  = 'center';
-		totalScoreLabel.x = 610;
-		totalScoreLabel.y = 480;
-		totalScoreLabel.width = 700;
+		totalScoreLabel.width = 900;
 		totalScoreLabel.height = 100;
+		totalScoreLabel.x = (1920 - 900) / 2;
+		totalScoreLabel.y = 480;
 		this.scene.addChild(totalScoreLabel);
 		this.totalScoreLabel = totalScoreLabel;
 
