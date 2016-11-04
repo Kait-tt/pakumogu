@@ -170,6 +170,14 @@ class ResultPage {
 			this.scene.addChild(wolfLabel);
 		}
 
+		const backUnderbarBt = new Label('Back', 'dark');
+		backUnderbarBt.font = `34px ${normalFont}`;
+		backUnderbarBt.text = '____';
+		backUnderbarBt.color = linkFontColor;
+		backUnderbarBt.x = 1332;
+		backUnderbarBt.y = 1000;
+		this.scene.addChild(backUnderbarBt);
+
 		const backBt = new Label('Back', 'dark');
 		backBt.font = `34px ${normalFont}`;
 		backBt.text = 'Back<br>';
@@ -181,14 +189,6 @@ class ResultPage {
 			topPage.init({entered: true});
 		});
 		this.scene.addChild(backBt);
-
-		const backUnderbarBt = new Label('Back', 'dark');
-		backUnderbarBt.font = `34px ${normalFont}`;
-		backUnderbarBt.text = '____';
-		backUnderbarBt.color = linkFontColor;
-		backUnderbarBt.x = 1332;
-		backUnderbarBt.y = 1000;
-		this.scene.addChild(backUnderbarBt);
 	}
 
 	init (serverGame) {
