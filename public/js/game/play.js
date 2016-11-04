@@ -98,6 +98,7 @@ class PlayPage {
 
         this.profileSpritesPool = [];
         this.profileSprites = {};
+        this.blackBoxesPool = [];
         this.blackBoxes = {};
         for (let i = 0; i < 5; i++) {
             const profile = new Sprite(pixel, pixel);
@@ -107,6 +108,11 @@ class PlayPage {
             const profileTagLabel = new Label();
             profileTagLabel.font = `36px ${normalFont}`;
 
+            const blackBox = new Sprite(180, 170);
+            blackBox.image = this.game.assets[blackImg];
+            blackBox.opacity = 0.5;
+            this.blackBoxesPool.push(blackBox);
+
             profile.initializeProfile = (player, idx) => {
                 profile.x = fixPositionRightSide[idx][0] + 52;
                 profile.y = fixPositionRightSide[idx][1] + 25;
@@ -114,6 +120,10 @@ class PlayPage {
                 const playerName = player.user ? player.user.username : 'AI';
                 profileTagLabel.text = `[${playerName}]`;
                 profileTagLabel.moveTo(fixPositionRightSide[i][0] + 50, fixPositionRightSide[i][1] + 120);
+
+                const blackBox = this.blackBoxesPool[idx];
+                blackBox.moveTo(profile.x - 60,profile.y - 30);
+                this.blackBoxes[player.id] = blackBox;
             };
 
             this.profileSpritesPool.push(profile);
@@ -489,6 +499,8 @@ class PlayPage {
     }
 
     onEndSlow () {
+        if (this.isEnded || !this.isSlow) { return; }
+
         this.isSlow = false;
         const sheep = this.sheep;
         const sprite = this.playerSprites[sheep.id];
@@ -680,11 +692,6 @@ class PlayPage {
         const profile = this.profileSprites[id];
 
         if (!this.blackBoxes[id]){
-            const blackBox = new Sprite(180, 170);
-            blackBox.image = this.game.assets[blackImg];
-            blackBox.moveTo(profile.x - 60,profile.y - 30);
-            blackBox.opacity = 0.5;
-            this.blackBoxes[id] = blackBox;
         }
 
         this.scene.addChild(this.blackBoxes[id]);
