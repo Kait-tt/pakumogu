@@ -13,12 +13,12 @@ class TopPage {
         this.usernameLabel = new Label('Username :');
         this.usernameLabel.font = `12px ${normalFont}`;
         this.usernameLabel.scale(3);
-        this.usernameLabel.moveTo(910, 340);
+        this.usernameLabel.moveTo(910, 420);
 
         // input text for username
         this.usernameInputBox = new InputTextBox();
         this.usernameInputBox.scale(3);
-        this.usernameInputBox.moveTo(985, 340);
+        this.usernameInputBox.moveTo(985, 420);
         this.usernameInputBox.width = 160;
         this.usernameInputBox.height = 24;
         this.usernameInputBox.placeholder = 'Input your name';
@@ -30,7 +30,7 @@ class TopPage {
         this.sImg.image = game.assets[charImg];
         this.sImg.frame = [0,0,0,1,1,1];
         this.sImg.scale(-2,2);
-        this.sImg.moveTo(235, 800);
+        this.sImg.moveTo(235, 900);
 
         this.sImg.tl.moveBy(300, 0, 90)
             .scaleTo(2, 2, 10)
@@ -58,14 +58,14 @@ class TopPage {
             .scaleTo(-2, 2, 10)
             .loop();
     	    
-    	    wImg.moveTo(800 + (i*150), 800);
+    	    wImg.moveTo(800 + (i*150), 900);
     	    this.wImgList[i] = wImg;
         }
 
         // enter button
         this.enterButton = new Sprite(480, 272);
         this.enterButton.image = game.assets[enterButtonImg];
-        this.enterButton.moveTo(720, 440);
+        this.enterButton.moveTo((1920 - 480) / 2, 520);
         this.enterButton.on(Event.TOUCH_START, () => {
             this.game.assets[decisionSe].play();
             const username = this.usernameInputBox.value;
@@ -77,7 +77,7 @@ class TopPage {
         // start button
         this.startButton = new Sprite(480, 272);
         this.startButton.image = game.assets[startButtonImg];
-        this.startButton.moveTo(420, 440);
+        this.startButton.moveTo(350, 490);
         this.startButton.on(Event.TOUCH_START, () => {
             this.game.assets[decisionSe].play();
             socket.initGame();
@@ -86,7 +86,7 @@ class TopPage {
         // back button
         this.backButton = new Sprite(480, 272);
         this.backButton.image = game.assets[backButtonImg];
-        this.backButton.moveTo(870, 490);
+        this.backButton.moveTo(820, 540);
         this.backButton.on(Event.TOUCH_START, () => {
             this.game.assets[decisionSe].play();
             socket.leave();
@@ -107,9 +107,9 @@ class TopPage {
 
         // joined user list label
         this.userList = new Label();
-        this.userList.font = `40px ${normalFont}`;
-        this.userList.moveTo(1420, 500);
-        this.userList.width = 330;
+        this.userList.font = `38px ${normalFont}`;
+        this.userList.moveTo(1420, 520);
+        this.userList.width = 340;
 
         // set socket events
         socket.on('joinRoom', (req) => {
@@ -189,6 +189,6 @@ class TopPage {
     }
 
     updateUserList (players) {
-        this.userList.text = players.filter(player => player.user).map(player => '・' + player.user.username).join('<br>');
+        this.userList.text = players.filter(player => player.user).map(player => '・' + player.user.username).join('<br> <br>');
     }
 }
