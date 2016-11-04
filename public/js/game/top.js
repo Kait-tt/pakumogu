@@ -22,6 +22,7 @@ class TopPage {
         this.usernameInputBox.width = 330;
         this.usernameInputBox.height = 24;
         this.usernameInputBox.placeholder = 'Input your name';
+        this.usernameInputBox._input.setAttribute('maxLength', '8');
         
         // sprite animate
         const pixel = 64;
@@ -108,6 +109,7 @@ class TopPage {
         this.userList = new Label();
         this.userList.font = `40px ${normalFont}`;
         this.userList.moveTo(1420, 500);
+        this.userList.width = 330;
 
         // set socket events
         socket.on('joinRoom', (req) => {
@@ -187,6 +189,6 @@ class TopPage {
     }
 
     updateUserList (players) {
-        this.userList.text = players.filter(player => player.user).map(player => '・ ' + player.user.username).join('<br>');
+        this.userList.text = players.filter(player => player.user).map(player => '・' + player.user.username).join('<br>');
     }
 }
