@@ -144,7 +144,7 @@ class ResultPage {
 		for (let i = 0; i < 4; i++) {
 			const wolf = new Sprite(pixel, pixel);
 			wolf.image = game.assets[charImg];
-			const i1  = 3 * (i + 1);
+			const i1  = (i + 1) * 5;
 			const i2  = i1 + 1;
 			wolf.frame = [i1, i1, i1, i1, i2, i2, i2, i2];
 			wolf.x = [1023, 1014, 1049, 1023][i];

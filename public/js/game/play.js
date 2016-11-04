@@ -233,7 +233,7 @@ class PlayPage {
         this.profileSprites = {};
         this.players.forEach((player, i) => {
             const profile = this.profileSpritesPool[i];
-            profile.frame = player.imageIndex * 3;
+            profile.frame = player.imageIndex * 5;
             profile.initializeProfile(player, i);
             this.profileSprites[player.id] = profile;
         });
@@ -266,7 +266,7 @@ class PlayPage {
             player.imageIndex = 0;
         }
 
-        sprite.frame = player.imageIndex * 3;
+        sprite.frame = player.imageIndex * 5;
     }
 
     ready () {
@@ -329,7 +329,7 @@ class PlayPage {
 
         this.rotateHeadPlayer(sprite, {x, y});
 
-        const idx = player.imageIndex * 3;
+        const idx = player.imageIndex * 5;
 
         if (player.isAI) {
             sprite.frame = sprite.frame === idx ? idx + 1 : idx;
@@ -354,7 +354,7 @@ class PlayPage {
         this.addDeathOnProfile(sheep.id);
 
         const sprite = this.playerSprites[sheep.id];
-        this.playerSprites[sheep.id].frame = sheep.imageIndex * 3 + 2;
+        this.playerSprites[sheep.id].frame = sheep.imageIndex * 5 + 2;
         
         // show corpse 3 sec
         setTimeout(() => {
@@ -371,7 +371,7 @@ class PlayPage {
         this.addDeathOnProfile(wolf.id);
 
         const sprite = this.playerSprites[wolf.id];
-        sprite.frame = wolf.imageIndex * 3 + 2;
+        sprite.frame = wolf.imageIndex * 5 + 2;
         
         // show corpse 3 sec
         setTimeout(() => {
@@ -391,11 +391,11 @@ class PlayPage {
 
         sprite.x = wolf.coordinate.x;
         sprite.y = wolf.coordinate.y;
-        sprite.frame = wolf.imageIndex * 3;
+        sprite.frame = wolf.imageIndex * 5;
         this.scene.addChild(sprite);
 
         // remove death profile
-        profile.frame = wolf.imageIndex * 3;
+        profile.frame = wolf.imageIndex * 5;
         this.scene.removeChild(this.blackBoxes[wolf.id]);
 
         // beep character image
@@ -444,8 +444,8 @@ class PlayPage {
         const sprite = this.playerSprites[sheep.id];
         const profile = this.profileSprites[sheep.id];
         
-        sprite.frame = 3 * 5;
-        profile.frame = 3 * 5;
+        sprite.frame = 5 * 5;
+        profile.frame = 5 * 5;
 
         bgmController.stop();
         bgmController.play(powerup1Bgm);
@@ -466,8 +466,8 @@ class PlayPage {
         	const fadeInvincIntervalId = setInterval(() => {
         		if(sprite.frame == 0){
         			//dragon
-        			sprite.frame = 3 * 5;
-        			profile.frame = 3 * 5;
+        			sprite.frame = 5 * 5;
+        			profile.frame = 5 * 5;
         		}else{
         			//sheep
         			sprite.frame = 0;
@@ -514,7 +514,7 @@ class PlayPage {
                 this.addDeathOnProfile(wolf.id);
 
                 const sprite = this.playerSprites[wolf.id];
-                sprite.frame = wolf.imageIndex * 3 + 2;
+                sprite.frame = wolf.imageIndex * 5 + 2;
                               
                 //show corpse 3 sec
                 setTimeout(() => {
@@ -723,7 +723,7 @@ class PlayPage {
         }
 
         this.scene.addChild(this.blackBoxes[id]);
-        profile.frame = this.players.find(x => x.id === id).imageIndex * 3 + 2;
+        profile.frame = this.players.find(x => x.id === id).imageIndex * 5 + 2;
         
         
         const sprite = this.playerSprites[id];
