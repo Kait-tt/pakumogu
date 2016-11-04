@@ -526,6 +526,12 @@ class PlayPage {
                     profile.updateFrame(0);
         		}
             }, 200);
+
+            setTimeout(() => {
+                clearInterval(this.fadeInvincIntervalId);
+                this.playerSprites[sheep.id].frame = 0;
+                this.profileSprites[sheep.id].updateFrame(0);
+            }, 1000);
         }, 4000);
     }
 
@@ -537,8 +543,6 @@ class PlayPage {
         const sheep = this.sheep;
         sheep.imageIndex = 0;
         sheep.moveFrameCount = 0;
-
-        clearInterval(this.fadeInvincIntervalId);
         this.playerSprites[sheep.id].frame = 0;
         this.profileSprites[sheep.id].updateFrame(0);
         
