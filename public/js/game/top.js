@@ -93,7 +93,6 @@ class TopPage {
         });
 
         socket.on('initGame', (req) => {
-            // initPlayScene(this.game, req.game);
             playPage.init(req.game);
             this.enabled = false;
         });
@@ -108,6 +107,9 @@ class TopPage {
         this.game.replaceScene(this.scene);
 
         if (entered) {
+            this.changeScreenToTop1();
+            const username = this.usernameInputBox.value;
+            socket.join(username);
             this.changeScreenToTop2();
         } else {
             this.changeScreenToTop1();
