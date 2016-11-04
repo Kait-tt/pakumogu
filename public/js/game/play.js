@@ -440,12 +440,46 @@ class PlayPage {
         const sheep = this.sheep;
         sheep.imageIndex = 5;
         sheep.moveFrameCount = 0;
-
-        this.playerSprites[sheep.id].frame = 3 * 5;
-        this.profileSprites[sheep.id].frame = 3 * 5;
+        
+        const sprite = this.playerSprites[sheep.id];
+        const profile = this.profileSprites[sheep.id];
+        
+        sprite.frame = 3 * 5;
+        profile.frame = 3 * 5;
 
         bgmController.stop();
         bgmController.play(powerup1Bgm);
+        //switch between sheep and dragon then up-down-size
+        sprite.tl.scaleTo(5, 5)
+        		 .scaleTo(1, 5)
+        		 .scaleTo(5, 5)
+        		 .scaleTo(1, 5)
+        		 .scaleTo(5, 5)
+        		 .scaleTo(1, 5);
+        sprite.tl.scaleTo(1, 1);
+        
+        //invincible duration is 5
+        //switch between sheep and dragon on last sec
+        clearTimeout(this.endInvinsibleEffectTimeoutId);
+        this.endInvinsibleEffectTimeoutId = setTimeout(() => {
+        	//after 4 sec start switching
+        	const fadeInvincIntervalId = setInterval(() => {
+        		if(sprite.frame == 0){
+        			//dragon
+        			sprite.frame = 3 * 5;
+        			profile.frame = 3 * 5;
+        		}else{
+        			//sheep
+        			sprite.frame = 0;
+        			profile.frame = 0;
+        		}
+            }, 200);
+        	
+        	setTimeout(() => {
+                clearInterval(fadeInvincIntervalId);
+            }, 1000);
+        }, 4000);
+        
     }
 
     onEndInvincible () {
@@ -459,7 +493,7 @@ class PlayPage {
 
         this.playerSprites[sheep.id].frame = 0;
         this.profileSprites[sheep.id].frame = 0;
-
+        
         bgmController.stop();
         bgmController.play(this.bgm);
     }
@@ -492,7 +526,7 @@ class PlayPage {
 
     onStartSlow () {
         this.isSlow = true;
-        this.playerSprites[this.sheep.id].scale(0.5, 0.5);
+        this.playerSprites[this.sheep.id].scale(0.75, 0.75);
 
         if (myId === this.sheep.id){
             this.mySpeed = SLOW_SPEED;
@@ -641,16 +675,16 @@ class PlayPage {
 
     rotateHeadPlayer (playerSprite, {x, y}) {
         if (playerSprite.x < x) { //right
-            playerSprite.scaleX  = -1;
+            playerSprite.scaleX  = playerSprite.scaleX < 0?playerSprite.scaleX:-playerSprite.scaleX;
             playerSprite.rotation = 0;
         } else if (playerSprite.x > x){ // left
-            playerSprite.scaleX  = 1;
+            playerSprite.scaleX  = playerSprite.scaleX > 0?playerSprite.scaleX:-playerSprite.scaleX;
             playerSprite.rotation = 0;
         } else if (playerSprite.y < y){ // down
-            playerSprite.scaleX  = -1;
+            playerSprite.scaleX  = playerSprite.scaleX < 0?playerSprite.scaleX:-playerSprite.scaleX;
             playerSprite.rotation = 90;
         } else if (playerSprite.y > y){ // up
-            playerSprite.scaleX  = -1;
+            playerSprite.scaleX  = playerSprite.scaleX < 0?playerSprite.scaleX:-playerSprite.scaleX;
             playerSprite.rotation = 270;
         }
     }
