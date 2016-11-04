@@ -395,8 +395,17 @@ class PlayPage {
     }
 
     updateTimeLabel () {
-        const timeText = this.timeLimit / 1000;
-        this.timeLabel.text = `${timeText}`;
+        const sec = Math.floor(this.timeLimit / 1000);
+
+        this.timeLabel.text = `${sec}`;
+        if (sec <= 10) {
+            this.timeLabel.color = '#ff391c';
+            this.timeLabel.tl
+                .scaleTo(1.2, 4, enchant.Easing.QUAD_EASEOUT)
+                .scaleTo(1, 4, enchant.Easing.QUAD_EASEINOUT)
+        } else {
+            this.timeLabel.color = '#000000';
+        }
     }
 
     onMovePlayer (req) {
