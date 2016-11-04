@@ -41,7 +41,7 @@ class PlayPage {
         this.normalItemSprites = {};
         this.normalItemSpritesPool = [];
         for (let i = 0; i < 180; i++) {
-            const itemSprite = initNormalItem(this.game);
+            const itemSprite = initNormalItem(this.game, {stable: false});
             this.normalItemSpritesPool.push(itemSprite);
         }
 

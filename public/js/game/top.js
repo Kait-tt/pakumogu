@@ -1,6 +1,5 @@
 class TopPage {
     constructor (game) {
-        console.log(game);
         this.game = game;
         this.scene = new Scene();
         this.enabled = false;
