@@ -8,6 +8,7 @@ class PlayPage {
         this.timeLimit = 0;
         this.mapHeight = 0;
         this.mapWidth = 0;
+        this.beforeScore = 0;
 
         this.isInvincible = false;
         this.isEnded = true;
@@ -203,6 +204,8 @@ class PlayPage {
         // stop the music
         bgmController.stop();
 
+        this.beforeScore = 0;
+
         this.bg.visible = true;
         this.bg2.visible = false;
 
@@ -373,6 +376,17 @@ class PlayPage {
         const scoreText = ('00000' + scores.score).slice(-5);
         this.scoreLabel.text = `${scoreText}`;
 
+        if (scores.score > 1000 &&
+            scores.score > this.beforeScore &&
+            Math.floor(scores.score / 1000) !== Math.floor(this.beforeScore / 1000)
+            ) {
+            this.scoreLabel.tl
+                .scaleTo(1.2, 4, enchant.Easing.QUAD_EASEOUT)
+                .scaleTo(1, 4, enchant.Easing.QUAD_EASEINOUT);
+        }
+
+        this.beforeScore = scores.score;
+
         ['takeNormalItemCount', 'takeInvincibleItemCount', 'takeBombItemCount', 'takeSlowItemCount'].forEach((key, i) => {
             this.sideItemLabels[i].updateText(scores[key]);
         });
@@ -402,7 +416,7 @@ class PlayPage {
             this.timeLabel.color = '#ff391c';
             this.timeLabel.tl
                 .scaleTo(1.2, 4, enchant.Easing.QUAD_EASEOUT)
-                .scaleTo(1, 4, enchant.Easing.QUAD_EASEINOUT)
+                .scaleTo(1, 4, enchant.Easing.QUAD_EASEINOUT);
         } else {
             this.timeLabel.color = '#000000';
         }
