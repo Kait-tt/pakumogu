@@ -187,7 +187,7 @@ class ResultPage {
 
 		this.detailPointLabel.text = points.join('<br>');
 		this.detailScoreLabel.text = this.scoreDetails.map((a, i) => points[i] * a.base + 'pt').join('<br>');
-		this.totalScoreLabel.text = `Total  :  ${scores.score} pt`;
+		this.totalScoreLabel.text = `TOTAL  :  ${scores.score} pt`;
 	}
 
 	updateUsernames (players) {
