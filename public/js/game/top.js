@@ -1,181 +1,143 @@
-var beforeUsername = null;
-function goToTopScene(game) {
-	//reset resultObj;
-	resultObj = {
-			item : 0,
-			powerItem : 0,
-			wolfKill : 0,
-			timeLeft : 0,
-			totalScore : 0,
-			sheepName : "",
-			wolfName : []
-	};
-	
-    //start Top page 01
-    var scene, label, bg;
+class TopPage {
+    constructor (game) {
+        this.game = game;
+        this.scene = new Scene();
+        this.enabled = false;
 
-    //BGM top page
-    bgmController.stop();
-    bgmController.play(topPageBgm);
+        // background image
+        this.bg = new Sprite(1920, 1080);
+        this.bg.image = this.game.assets[bgImg];
+        this.scene.addChild(this.bg);
 
-    scene = new Scene();
+        // username label
+        this.usernameLabel = new Label('Username :');
+        this.usernameLabel.font = `12px ${normalFont}`;
+        this.usernameLabel.scale(3);
+        this.usernameLabel.moveTo(800, 340);
 
-    label = new Label("Username :");
-    label.font = `12px ${normalFont}`;
-    label.scale(3);
-    label.moveTo(800, 340);
+        // input text for username
+        this.usernameInputBox = new InputTextBox();
+        this.usernameInputBox.scale(3);
+        this.usernameInputBox.moveTo(1075, 340);
+        this.usernameInputBox.width = 330;
+        this.usernameInputBox.height = 24;
+        this.usernameInputBox.placeholder = 'Input your name';
 
-    bg = new Sprite(1920, 1080);
-    bg.image = game.assets[bgImg];
+        // joined user list label
+        this.userList = new Label();
+        this.userList.font = `50px ${normalFont}`;
+        this.userList.moveTo(1580,400);
 
-    var tb = new InputTextBox();
-    tb.value = beforeUsername;
-    tb.scale(3);
-    tb.moveTo(1075, 340);
-    tb.width = 330;
-    tb.height = 24;
-    tb.placeholder = "Input username";
+        // enter button
+        this.enterButton = new Button();
+        this.enterButton.initialize = (((_initialize) => () => {
+            _initialize.call(this.enterButton);
+            this.enterButton.font = `100px ${normalFont}`;
+            this.enterButton.text = 'Enter';
+            this.enterButton.moveTo(580, 440);
+            this.enterButton.width = 630;
+            this.enterButton.height = 190;
+            this.enterButton.on(Event.TOUCH_START, () => {
+                this.game.assets[decisionSe].play();
+                const username = this.usernameInputBox.value;
+                socket.join(username);
+            });
+        })(this.enterButton.initialize));
 
-    var enterBt = new Button();
-    enterBt.initialize = (((_initialize) => function () {
-        _initialize.call(this);
-        this.font = `100px ${normalFont}`;
-        this.text = "Enter";
-        this.moveTo(580, 440);
-        this.width = 630;
-        this.height = 190;
-        this.addEventListener(Event.TOUCH_START, () => {
-            var username = tb.value;
-            beforeUsername = username;
-            socket.join(username);
+        // start button
+        this.startButton = new Button();
+        this.startButton.initialize = (((_initialize) => () => {
+            _initialize.call(this.startButton);
+            this.startButton.font = `100px ${normalFont}`;
+            this.startButton.text = 'Start';
+            this.startButton.moveTo(410, 380);
+            this.startButton.width = 630;
+            this.startButton.height = 190;
+            this.startButton.on(Event.TOUCH_START, () => {
+                this.game.assets[decisionSe].play();
+                socket.initGame();
+            });
+        })(this.startButton.initialize));
+
+        // back button
+        this.backButton = new Button();
+        this.backButton.initialize = (((_initialize) => () => {
+            _initialize.call(this.backButton);
+            this.backButton.font = `30px ${normalFont}`;
+            this.backButton.text = 'Back';
+            this.backButton.moveTo(1110, 470);
+            this.backButton.width = 240;
+            this.backButton.height = 95;
+            this.backButton.on(Event.TOUCH_START, () => {
+                this.game.assets[decisionSe].play();
+                socket.leave();
+                this.changeScreenToTop1();
+            });
+        })(this.backButton.initialize));
+
+        // set socket events
+        socket.on('joinRoom', (req) => {
+            if (!this.enabled) { return; }
+            this.updateUserList(req.game.players);
         });
-    })(enterBt.initialize));
 
-    var startBt = new Button();
-    startBt.initialize = (((_initialize) => function () {
-        _initialize.call(this);
-        this.font = `100px ${normalFont}`;
-        this.text = "Start";
-        this.moveTo(410, 380);
-        this.width = 630;
-        this.height = 190;
-        this.addEventListener(Event.TOUCH_START, startGame);
-    })(startBt.initialize));
-
-    var backBt = new Button();
-    backBt.initialize = (((_initialize) => function () {
-        _initialize.call(this);
-        this.font = `30px ${normalFont}`;
-        this.text = "Back";
-        this.moveTo(1110, 470);
-        this.width = 240;
-        this.height = 95;
-        this.addEventListener(Event.TOUCH_START, () => {
-            socket.leave();
-            changeScreenToTitle1();
+        socket.on('leaveRoom', (req) => {
+            if (!this.enabled) { return; }
+            this.updateUserList(req.game.players);
         });
-    })(backBt.initialize));
 
-    //sheep 560 * 316
-    //position 235 * 680
-    var sImg = new Sprite(560, 320);
-    sImg.image = game.assets[sheepImg];
-    sImg.moveTo(235, 680);
+        socket.on('yourInfo', (req) => {
+            if (!this.enabled) { return; }
+            myId = req.id;
+            this.changeScreenToTop2();
+        });
 
-    //940 720
-    var wImg = new Sprite(560, 320);
-    wImg.image = game.assets[wolfImg];
-    wImg.moveTo(910, 680);
-
-    var userList = new Label();
-    userList.font = `50px ${normalFont}`;
-    userList.moveTo(1580,400);
-
-    scene.addChild(bg);
-    scene.addChild(label);
-    scene.addChild(tb);
-    enterBt.initialize();
-    scene.addChild(enterBt);
-    scene.addChild(sImg);
-    scene.addChild(wImg);
-
-    game.pushScene(scene);
-    //End top page one
-
-    function changeScreenToTitle1 () {
-        //back button action
-        game.assets[decisionSe].play();
-        //change screen to Title 1 after leave
-
-        //remove nodes
-        scene.removeChild(startBt);
-        scene.removeChild(backBt);
-        scene.removeChild(userList);
-
-        //add nodes
-        scene.addChild(label);
-        scene.addChild(tb);
-        enterBt.initialize();
-        scene.addChild(enterBt);
+        socket.on('initGame', (req) => {
+            // initPlayScene(this.game, req.game);
+            playPage.init(req.game);
+            this.enabled = false;
+        });
     }
 
-    function changeScreenToTitle2 () {
-        game.assets[decisionSe].play();
-        //change screen to Title 2 after join
+    init () {
+        // bgm
+        bgmController.stop();
+        bgmController.play(topPageBgm);
 
-        //remove label, textbox and enterButton
-        scene.removeChild(label);
-        scene.removeChild(tb);
-        scene.removeChild(enterBt);
+        this.enabled = true;
+        this.game.replaceScene(this.scene);
 
-        //add new startButton
-        startBt.initialize();
-        backBt.initialize();
-        scene.addChild(startBt);
-        scene.addChild(backBt);
-        scene.addChild(userList);
+        this.changeScreenToTop1();
     }
 
-    function startGame () {
-        game.assets[decisionSe].play();
-        game.assets[topPageBgm].stop();
+    changeScreenToTop1 () {
+        // remove nodes
+        this.scene.removeChild(this.startButton);
+        this.scene.removeChild(this.backButton);
+        this.scene.removeChild(this.userList);
 
-        socket.initGame();
+        // add nodes
+        this.enterButton.initialize();
+        this.scene.addChild(this.usernameLabel);
+        this.scene.addChild(this.usernameInputBox);
+        this.scene.addChild(this.enterButton);
     }
 
-    //prepare socket
-    socket.on('joinRoom', (req) => {
-        updateUserList(req.game.players, userList);
-    });
+    changeScreenToTop2 () {
+        // remove nodes
+        this.scene.removeChild(this.usernameLabel);
+        this.scene.removeChild(this.usernameInputBox);
+        this.scene.removeChild(this.enterButton);
 
-    socket.on('leaveRoom', (req) => {
-        updateUserList(req.game.players, userList);
-    });
+        // add nodes
+        this.startButton.initialize();
+        this.backButton.initialize();
+        this.scene.addChild(this.startButton);
+        this.scene.addChild(this.backButton);
+        this.scene.addChild(this.userList);
+    }
 
-    socket.on('yourInfo', (req) => {
-        myId = req.id;
-        changeScreenToTitle2();
-    });
-
-    socket.on('initGame', (req) => {
-    	game.assets[readySe].play();
-    	initPlayScene(req.game.players, req.game.map, req.game.normalItems, req.game.powerItems,
-                req.game.timeLimit, req.game.score, game);
-    });
-
-    socket.on('startGame', (req) => {
-    	
-    });
-    //end prepare socket
-}
-
-
-function updateUserList(userObj,userList){
-    userList.text = "";
-    for(var i=0;i<userObj.length;i++){
-        //$("#userList").append(userObj[i].user.username + "<br>");
-        if (userObj[i].user) {
-            userList.text += userObj[i].user.username + "<br>";
-        }
+    updateUserList (players) {
+        this.userList.text = players.filter(player => player.user).map(player => player.user.username).join('<br>');
     }
 }
