@@ -13,13 +13,13 @@ class TopPage {
         this.usernameLabel = new Label('Username :');
         this.usernameLabel.font = `12px ${normalFont}`;
         this.usernameLabel.scale(3);
-        this.usernameLabel.moveTo(800, 340);
+        this.usernameLabel.moveTo(850, 340);
 
         // input text for username
         this.usernameInputBox = new InputTextBox();
         this.usernameInputBox.scale(3);
-        this.usernameInputBox.moveTo(1075, 340);
-        this.usernameInputBox.width = 330;
+        this.usernameInputBox.moveTo(1075-150, 340);
+        this.usernameInputBox.width = 150;
         this.usernameInputBox.height = 24;
         this.usernameInputBox.placeholder = 'Input your name';
         this.usernameInputBox._input.setAttribute('maxLength', '8');
