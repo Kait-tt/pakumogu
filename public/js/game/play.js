@@ -398,14 +398,18 @@ class PlayPage {
         const sprite = this.playerSprites[req.player.id];
 
         
-        const headFrame = this.rotateHeadPlayer(player.imageIndex , sprite, {x, y});
+        const headFrame = this.rotateHeadPlayer(player, player.imageIndex , sprite, {x, y});
+        const oldIdx = sprite.frame;
         const idx = (player.imageIndex * 5)+headFrame;
         
         //add case +3 ,+4 for up down head
         if (player.isAI) {
         	sprite.frame = sprite.frame === (idx) ? idx + 1 : idx;
         } else {
-            if (++player.moveFrameCount > MOVE_FRAME_COUNT_LIMIT) {
+        	if (Math.abs(oldIdx - idx) > 1) {
+                player.moveFrameCount = 0;
+                sprite.frame = idx;
+        	} else if (++player.moveFrameCount > MOVE_FRAME_COUNT_LIMIT) {
                 player.moveFrameCount = 0;
                 sprite.frame = sprite.frame === (idx) ? idx + 1 : idx;
             }
@@ -762,9 +766,10 @@ class PlayPage {
         }
     }
 
-    rotateHeadPlayer (imageIndex , playerSprite, {x, y}) {
+    rotateHeadPlayer (player, imageIndex , playerSprite, {x, y}) {
     	//not rotate head but change frame
         playerSprite.rotation = 0;
+       
         if (playerSprite.x < x) { //right
             playerSprite.scaleX  = playerSprite.scaleX < 0?playerSprite.scaleX:-playerSprite.scaleX;
             return 0;
@@ -772,7 +777,7 @@ class PlayPage {
             playerSprite.scaleX  = playerSprite.scaleX > 0?playerSprite.scaleX:-playerSprite.scaleX;
             return 0;
         } else if (playerSprite.y < y){ // down
-            playerSprite.scaleX  = playerSprite.scaleX > 0?playerSprite.scaleX:-playerSprite.scaleX;
+            playerSprite.scaleX  = playerSprite.scaleX < 0?playerSprite.scaleX:-playerSprite.scaleX;
             playerSprite.rotation = 180;
             return 3;
         } else if (playerSprite.y > y){ // up
