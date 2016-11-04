@@ -254,6 +254,7 @@ class PlayPage {
         //starting point
         sprite.x = player.coordinate.x;
         sprite.y = player.coordinate.y;
+        sprite.tl.scaleTo(1, 1);
 
         // if enemy = wolf
         if (player.isEnemy){
@@ -499,13 +500,10 @@ class PlayPage {
     }
 
     onEndSlow () {
-        if (this.isEnded || !this.isSlow) { return; }
-
-        this.isSlow = false;
         const sheep = this.sheep;
         const sprite = this.playerSprites[sheep.id];
 
-        sprite.scale(2,2);
+        sprite.tl.scaleTo(1, 10);
 
         if (myId == sheep.id) {
             this.mySpeed = SHEEP_SPEED;
@@ -529,10 +527,6 @@ class PlayPage {
 
         this.isEnded = true;
         this.isTimeLimit = req.isTimeLimit;
-
-        if (this.isSlow) {
-            this.playerSprites[this.sheep.id].scale(2,2);
-        }
 
         this.stateSprite.image = this.game.assets[finishImg];
 
