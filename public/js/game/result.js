@@ -168,7 +168,7 @@ class ResultPage {
 		backBt.y = 1000;
 		backBt.addEventListener(Event.TOUCH_START, function(){
 			game.assets[decisionSe].play();
-			topPage.init();
+			topPage.init({entered: true});
 		});
 		this.scene.addChild(backBt);
 	}
