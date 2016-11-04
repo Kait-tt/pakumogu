@@ -108,6 +108,10 @@ class SocketRouter {
 
     joinRoom (user) {
         if (this.gameMaster.game.state !== Game.STATES.idle) { return; }
+        if (this.gameMaster.game.players.length >= 5) {
+            console.error('cannot join game joined 5 players');
+            return;
+        }
 
         user.socket.join(this.gameRoomKey);
 
