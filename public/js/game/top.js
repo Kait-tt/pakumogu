@@ -58,7 +58,7 @@ class TopPage {
             .moveBy(0, -10, 5).moveBy(0, 10, 5)
             .moveBy(0, -10, 5).moveBy(0, 10, 5)
             .moveBy(0, -10, 5).moveBy(0, 10, 5)
-            .moveBy(-300+(timeOffSet), 0, 30+(timeOffSet))
+            .moveBy(-300-(timeOffSet), 0, 30+(timeOffSet))
             .scaleTo(-2, 2, 10)
             .loop();
     	    
