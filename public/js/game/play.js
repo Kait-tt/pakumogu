@@ -354,7 +354,7 @@ class PlayPage {
 
         const sprite = this.playerSprites[sheep.id];
         this.playerSprites[sheep.id].frame = sheep.imageIndex * 3 + 2;
-
+        
         // show corpse 3 sec
         setTimeout(() => {
             this.scene.removeChild(sprite);
@@ -371,7 +371,7 @@ class PlayPage {
 
         const sprite = this.playerSprites[wolf.id];
         sprite.frame = wolf.imageIndex * 3 + 2;
-
+        
         // show corpse 3 sec
         setTimeout(() => {
             this.scene.removeChild(sprite);
@@ -480,7 +480,7 @@ class PlayPage {
 
                 const sprite = this.playerSprites[wolf.id];
                 sprite.frame = wolf.imageIndex * 3 + 2;
-
+                              
                 //show corpse 3 sec
                 setTimeout(() => {
                     this.scene.removeChild(sprite);
@@ -696,8 +696,27 @@ class PlayPage {
 
         this.scene.addChild(this.blackBoxes[id]);
         profile.frame = this.players.find(x => x.id === id).imageIndex * 3 + 2;
+        
+        
+        const sprite = this.playerSprites[id];
+        //add death animate
+    	sprite.tl.moveBy(0, -10, 5).moveBy(0, 10, 5)
+        .moveBy(0, -10, 5).moveBy(0, 10, 5)
+        .moveBy(0, -10, 5).moveBy(0, 10, 5);
+        
+        // beep character image
+        const respawnIntervalId = setInterval(() => {
+            profile.opacity = profile.opacity ? 0 : 1;
+            sprite.opacity = sprite.opacity ? 0 : 1;
+        }, 200);
+        
+        setTimeout(() => {
+            clearInterval(respawnIntervalId);
+            profile.opacity = 1;
+            sprite.opacity = 1;
+        }, 2000);
     }
-
+    
     getMapBgm (serverMap) {
         switch (serverMap.bgm){
             case 1: return gameBgm;
