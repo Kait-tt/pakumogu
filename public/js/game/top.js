@@ -40,7 +40,9 @@ class TopPage {
             this.enterButton.on(Event.TOUCH_START, () => {
                 this.game.assets[decisionSe].play();
                 const username = this.usernameInputBox.value;
-                socket.join(username);
+                if (username.trim()) {
+                    socket.join(username);
+                }
             });
         })(this.enterButton.initialize));
 
