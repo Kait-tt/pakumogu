@@ -604,10 +604,12 @@ class PlayPage {
     onBomb () {
         this.game.assets[bombSe].play();
 
+        Earthquake.start();
+
         this.scene.addChild(this.bombEffect);
         setTimeout(() => {
             this.scene.removeChild(this.bombEffect);
-        }, 500);
+        }, 800);
 
         this.wolfs.forEach(wolf => {
             if (wolf.isEnemy && wolf.isAlive) {
