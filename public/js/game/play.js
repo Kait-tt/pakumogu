@@ -114,7 +114,7 @@ class PlayPage {
             profile.scale(3);
 
             const profileTagLabel = new Label();
-            profileTagLabel.font = `36px ${normalFont}`;
+            profileTagLabel.font = `24px ${normalFont}`;
 
             const blackBox = new Sprite(180, 170);
             blackBox.image = this.game.assets[blackImg];
@@ -122,12 +122,12 @@ class PlayPage {
             this.blackBoxesPool.push(blackBox);
 
             profile.initializeProfile = (player, idx) => {
-                profile.x = fixPositionRightSide[idx][0] + 52;
+                profile.x = fixPositionRightSide[idx][0] + 40;
                 profile.y = fixPositionRightSide[idx][1] + 25;
 
                 const playerName = player.user ? player.user.username : 'AI';
                 profileTagLabel.text = `[${playerName}]`;
-                profileTagLabel.moveTo(fixPositionRightSide[i][0] + 200, fixPositionRightSide[i][1]);
+                profileTagLabel.moveTo(fixPositionRightSide[i][0] + 180, fixPositionRightSide[i][1]);
 
                 const blackBox = this.blackBoxesPool[idx];
                 blackBox.moveTo(profile.x - 60,profile.y - 30);
@@ -249,6 +249,16 @@ class PlayPage {
             if (myId === player.id) {
                 // set speed every move
                 this.mySpeed = player.isEnemy ? WOLF_SPEED : SHEEP_SPEED;
+                
+                //add effect for my sprite when start
+                const respawnIntervalId = setInterval(() => {
+                	playerSprite.opacity = playerSprite.opacity ? 0 : 1;
+                }, 200);
+
+                setTimeout(() => {
+                    clearInterval(respawnIntervalId);
+                    playerSprite.opacity = 1;
+                }, 3000);//for 3 sec
             }
 
             this.scene.addChild(playerSprite);
@@ -346,8 +356,8 @@ class PlayPage {
 
                 // count game time after start game
                 this.startTimeLabelUpdate();
-            }, 500);
-        }, 2000);
+            }, 1500);
+        }, 3000);
     }
 
     updateScores (scores) {
