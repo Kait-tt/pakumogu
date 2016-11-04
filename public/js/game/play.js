@@ -10,7 +10,7 @@ class PlayPage {
         this.mapWidth = 0;
 
         this.isInvincible = false;
-        this.isEnded = false;
+        this.isEnded = true;
         this.isTimeLimit = false;
         this.wolfImageIndex = 0;
         this.mySpeed = 0;
@@ -126,6 +126,19 @@ class PlayPage {
                 this.blackBoxes[player.id] = blackBox;
             };
 
+            profile.updateFrame = (frame, {stable = false} = {}) => {
+                if (stable) {
+                    profile.frame = frame;
+                } else {
+                    const i1 = frame;
+                    const i2 = i1 + 1;
+                    profile.frame = [
+                        i1, i1, i1, i1, i1, i1, i1, i1,
+                        i2, i2, i2, i2, i2, i2, i2, i2
+                    ];
+                }
+            };
+
             this.profileSpritesPool.push(profile);
             this.scene.addChild(profile);
             this.scene.addChild(profileTagLabel);
@@ -160,6 +173,7 @@ class PlayPage {
         socket.on('endSlow', () => this.onEndSlow());
         socket.on('endGame', (req) => this.onEndGame(req));
         socket.on('updateScore', (scores) => this.onUpdateScore(scores));
+        socket.on('startGame', (req) => this.onStartGame());
     }
 
     init (serverGame) {
@@ -174,7 +188,6 @@ class PlayPage {
         this.mapWidth = serverGame.map.width;
 
         this.isInvincible = false;
-        this.isEnded = false;
         this.isTimeLimit = false;
         this.wolfImageIndex = 0;
         this.mySpeed = 0;
@@ -233,7 +246,7 @@ class PlayPage {
         this.profileSprites = {};
         this.players.forEach((player, i) => {
             const profile = this.profileSpritesPool[i];
-            profile.frame = player.imageIndex * 3;
+            profile.updateFrame(player.imageIndex * 3);
             profile.initializeProfile(player, i);
             this.profileSprites[player.id] = profile;
         });
@@ -250,23 +263,46 @@ class PlayPage {
     initPlayer (player, sprite) {
         //count for change frame
         player.moveFrameCount = 0;
-
-        //starting point
-        sprite.x = player.coordinate.x;
-        sprite.y = player.coordinate.y;
-        sprite.tl.scaleTo(1, 1);
-
+        
+        const fixPositionRightSide = [[1515, 90], [1515, 275], [1515, 455], [1515, 640], [1515, 825]];
+        
         // if enemy = wolf
         if (player.isEnemy){
             // wolf
             player.imageIndex = this.wolfImageIndex % 4 + 1;
             ++this.wolfImageIndex;
+            
+            sprite.x = fixPositionRightSide[this.wolfImageIndex][0];
+            sprite.y = fixPositionRightSide[this.wolfImageIndex][1];
         } else {
             // sheep
             player.imageIndex = 0;
+            
+            sprite.x = fixPositionRightSide[0][0];
+            sprite.y = fixPositionRightSide[0][1];
         }
 
         sprite.frame = player.imageIndex * 3;
+        
+        //moving character to starting point
+        sprite.tl.moveTo(player.coordinate.x, player.coordinate.y,18)
+        	.exec(() => {
+        		    sprite.x = player.coordinate.x;
+        		    sprite.y = player.coordinate.y;
+        		});
+    }
+    
+    onStartGame (){
+    	//reset all player position
+    	//starting point
+    	this.players.forEach((player, i) => {
+            const playerSprite = this.playerSpritesPool[i];
+            this.playerSprites[player.id] = playerSprite;
+            player.moveFrameCount = 0;
+            playerSprite.tl.scaleTo(1, 1);
+        });
+
+        this.isEnded = false;
     }
 
     ready () {
@@ -395,7 +431,7 @@ class PlayPage {
         this.scene.addChild(sprite);
 
         // remove death profile
-        profile.frame = wolf.imageIndex * 3;
+        profile.updateFrame(wolf.imageIndex * 3);
         this.scene.removeChild(this.blackBoxes[wolf.id]);
 
         // beep character image
@@ -419,7 +455,9 @@ class PlayPage {
         item.enabled = false;
 
         const sprite = this.normalItemSprites[item.id];
-        this.scene.removeChild(sprite);
+        
+        //eat item effect
+        sprite.tl.moveTo(60, 656,20);
     }
 
     onTakePowerItem (req) {
@@ -445,7 +483,7 @@ class PlayPage {
         const profile = this.profileSprites[sheep.id];
         
         sprite.frame = 3 * 5;
-        profile.frame = 3 * 5;
+        profile.updateFrame(3 * 5);
 
         bgmController.stop();
         bgmController.play(powerup1Bgm);
@@ -456,7 +494,7 @@ class PlayPage {
         		 .scaleTo(1, 5)
         		 .scaleTo(5, 5)
         		 .scaleTo(1, 5);
-        sprite.tl.scaleTo(1, 1);
+        sprite.tl.scaleTo(1, 0);
         
         //invincible duration is 5
         //switch between sheep and dragon on last sec
@@ -467,11 +505,11 @@ class PlayPage {
         		if(sprite.frame == 0){
         			//dragon
         			sprite.frame = 3 * 5;
-        			profile.frame = 3 * 5;
+                    profile.updateFrame(3 * 5);
         		}else{
         			//sheep
         			sprite.frame = 0;
-        			profile.frame = 0;
+                    profile.updateFrame(0);
         		}
             }, 200);
         	
@@ -492,7 +530,7 @@ class PlayPage {
         sheep.moveFrameCount = 0;
 
         this.playerSprites[sheep.id].frame = 0;
-        this.profileSprites[sheep.id].frame = 0;
+        this.profileSprites[sheep.id].updateFrame(0);
         
         bgmController.stop();
         bgmController.play(this.bgm);
@@ -537,7 +575,7 @@ class PlayPage {
         const sheep = this.sheep;
         const sprite = this.playerSprites[sheep.id];
 
-        sprite.tl.scaleTo(1, 10);
+        sprite.tl.scaleTo(1, 0);
 
         if (myId == sheep.id) {
             this.mySpeed = SHEEP_SPEED;
@@ -579,6 +617,8 @@ class PlayPage {
     // in the player being in a "hit" zone, then back the player up to
     // its original location. Tweak "hits" by "offset" pixels.
     onMyPlayerEnterFrame () {
+    	if (this.isEnded) { return; }
+    	
         this.enterMove();
 
         const myPlayer = this.myPlayer;
@@ -723,9 +763,8 @@ class PlayPage {
         }
 
         this.scene.addChild(this.blackBoxes[id]);
-        profile.frame = this.players.find(x => x.id === id).imageIndex * 3 + 2;
-        
-        
+        profile.updateFrame(this.players.find(x => x.id === id).imageIndex * 3 + 2, {stable: true});
+
         const sprite = this.playerSprites[id];
         
         const killSprite = new Sprite(pixel, pixel);
