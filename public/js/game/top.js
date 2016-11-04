@@ -22,11 +22,6 @@ class TopPage {
         this.usernameInputBox.width = 330;
         this.usernameInputBox.height = 24;
         this.usernameInputBox.placeholder = 'Input your name';
-
-        // joined user list label
-        this.userList = new Label();
-        this.userList.font = `50px ${normalFont}`;
-        this.userList.moveTo(1580,400);
         
         // sprite animate
         const pixel = 64;
@@ -34,7 +29,7 @@ class TopPage {
         this.sImg.image = game.assets[charImg];
         this.sImg.frame = [0,0,0,1,1,1];
         this.sImg.scale(-2,2);
-        this.sImg.moveTo(235, 700);
+        this.sImg.moveTo(235, 800);
 
         this.sImg.tl.moveBy(300, 0, 90)
             .scaleTo(2, 2, 10)
@@ -62,58 +57,57 @@ class TopPage {
             .scaleTo(-2, 2, 10)
             .loop();
     	    
-    	    wImg.moveTo(800 + (i*150), 700);
+    	    wImg.moveTo(800 + (i*150), 800);
     	    this.wImgList[i] = wImg;
         }
 
         // enter button
-        this.enterButton = new Button();
-        this.enterButton.initialize = (((_initialize) => () => {
-            _initialize.call(this.enterButton);
-            this.enterButton.font = `100px ${normalFont}`;
-            this.enterButton.text = 'Enter';
-            this.enterButton.moveTo(580, 440);
-            this.enterButton.width = 630;
-            this.enterButton.height = 190;
-            this.enterButton.on(Event.TOUCH_START, () => {
-                this.game.assets[decisionSe].play();
-                const username = this.usernameInputBox.value;
-                if (username.trim()) {
-                    socket.join(username);
-                }
-            });
-        })(this.enterButton.initialize));
+        this.enterButton = new Sprite(480, 272);
+        this.enterButton.image = game.assets[enterButtonImg];
+        this.enterButton.moveTo(720, 440);
+        this.enterButton.on(Event.TOUCH_START, () => {
+            this.game.assets[decisionSe].play();
+            const username = this.usernameInputBox.value;
+            if (username.trim()) {
+                socket.join(username);
+            }
+        });
 
         // start button
-        this.startButton = new Button();
-        this.startButton.initialize = (((_initialize) => () => {
-            _initialize.call(this.startButton);
-            this.startButton.font = `100px ${normalFont}`;
-            this.startButton.text = 'Start';
-            this.startButton.moveTo(410, 380);
-            this.startButton.width = 630;
-            this.startButton.height = 190;
-            this.startButton.on(Event.TOUCH_START, () => {
-                this.game.assets[decisionSe].play();
-                socket.initGame();
-            });
-        })(this.startButton.initialize));
+        this.startButton = new Sprite(480, 272);
+        this.startButton.image = game.assets[startButtonImg];
+        this.startButton.moveTo(420, 440);
+        this.startButton.on(Event.TOUCH_START, () => {
+            this.game.assets[decisionSe].play();
+            socket.initGame();
+        });
 
         // back button
-        this.backButton = new Button();
-        this.backButton.initialize = (((_initialize) => () => {
-            _initialize.call(this.backButton);
-            this.backButton.font = `30px ${normalFont}`;
-            this.backButton.text = 'Back';
-            this.backButton.moveTo(1110, 470);
-            this.backButton.width = 240;
-            this.backButton.height = 95;
-            this.backButton.on(Event.TOUCH_START, () => {
-                this.game.assets[decisionSe].play();
-                socket.leave();
-                this.changeScreenToTop1();
-            });
-        })(this.backButton.initialize));
+        this.backButton = new Sprite(480, 272);
+        this.backButton.image = game.assets[backButtonImg];
+        this.backButton.moveTo(870, 490);
+        this.backButton.on(Event.TOUCH_START, () => {
+            this.game.assets[decisionSe].play();
+            socket.leave();
+            this.changeScreenToTop1();
+        });
+
+        // name board
+        this.nameBoard = new Sprite(595, 842);
+        this.nameBoard.image = game.assets[nameBoardImg];
+        this.nameBoard.tl.scaleTo(0.9, 0);
+        this.nameBoard.moveTo(1300, 300);
+
+        // label for name board
+        this.userListLabel = new Label('players');
+        this.userListLabel.font = `32px ${normalFont}`;
+        this.userListLabel.tl.scaleTo(0.9, 0);
+        this.userListLabel.moveTo(1530, 430);
+
+        // joined user list label
+        this.userList = new Label();
+        this.userList.font = `40px ${normalFont}`;
+        this.userList.moveTo(1420, 500);
 
         // set socket events
         socket.on('joinRoom', (req) => {
@@ -160,10 +154,11 @@ class TopPage {
         // remove nodes
         this.scene.removeChild(this.startButton);
         this.scene.removeChild(this.backButton);
+        this.scene.removeChild(this.nameBoard);
         this.scene.removeChild(this.userList);
+        this.scene.removeChild(this.userListLabel);
 
         // add nodes
-        this.enterButton.initialize();
         this.scene.addChild(this.usernameLabel);
         this.scene.addChild(this.usernameInputBox);
         this.scene.addChild(this.enterButton);
@@ -184,10 +179,10 @@ class TopPage {
         }
 
         // add nodes
-        this.startButton.initialize();
-        this.backButton.initialize();
         this.scene.addChild(this.startButton);
         this.scene.addChild(this.backButton);
+        this.scene.addChild(this.nameBoard);
+        this.scene.addChild(this.userListLabel);
         this.scene.addChild(this.userList);
     }
 
