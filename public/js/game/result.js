@@ -23,7 +23,7 @@ class ResultPage {
 		const detailBaseY = 250;
 
 		// item and kill score icon
-		[[itemImg, 2, 20], [itemImg, 3, 10], [charImg, 5, 0]].forEach(([img, frame, offsetX], idx) => {
+		[[itemImg, 2, 20], [itemImg, 3, 10], [charImg, 7, 0]].forEach(([img, frame, offsetX], idx) => {
 			const sprite = new Sprite(pixel, pixel);
 			sprite.image = game.assets[img];
 			sprite.frame = frame;
