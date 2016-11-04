@@ -55,15 +55,21 @@ class PlayPage {
             playerSprite.image = this.game.assets[charImg];
             this.playerSpritesPool.push(playerSprite);
         }
-
+       
         // left side
         const leftXMargin = 60;
         let leftYItemMargin = 656;
 
         // score on left side
+        this.scoreTxt = new Label();
+        this.scoreTxt.font = `50px ${normalFont}`;
+        this.scoreTxt.moveTo(leftXMargin, 150);
+        this.scoreTxt.text = "SCORE";
+        this.scene.addChild(this.scoreTxt);
+        
         this.scoreLabel = new Label();
-        this.scoreLabel.font = `36px ${normalFont}`;
-        this.scoreLabel.moveTo(leftXMargin, 350);
+        this.scoreLabel.font = `75px ${normalFont}`;
+        this.scoreLabel.moveTo(leftXMargin + 50, 210);
         this.scene.addChild(this.scoreLabel);
 
         // item status on left side
@@ -86,6 +92,8 @@ class PlayPage {
                 } else {
                     itemLabel.text = `${itemTypes[i]} : ${value}/${itemPointMax[i]}`;
                 }
+                //change first letter to capital
+                itemLabel.text = itemLabel.text.charAt(0).toUpperCase() + itemLabel.text.slice(1);
             };
 
             this.sideItemLabels.push(itemLabel);
@@ -119,7 +127,7 @@ class PlayPage {
 
                 const playerName = player.user ? player.user.username : 'AI';
                 profileTagLabel.text = `[${playerName}]`;
-                profileTagLabel.moveTo(fixPositionRightSide[i][0] + 50, fixPositionRightSide[i][1] + 120);
+                profileTagLabel.moveTo(fixPositionRightSide[i][0] + 200, fixPositionRightSide[i][1]);
 
                 const blackBox = this.blackBoxesPool[idx];
                 blackBox.moveTo(profile.x - 60,profile.y - 30);
@@ -145,9 +153,15 @@ class PlayPage {
         }
 
         // time label
+        this.timeTxt = new Label();
+        this.timeTxt.font = `50px ${normalFont}`;
+        this.timeTxt.moveTo(leftXMargin, 350);
+        this.timeTxt.text = "TIME";
+        this.scene.addChild(this.timeTxt);
+        
         this.timeLabel = new Label();
-        this.timeLabel.font = `36px ${normalFont}`;
-        this.timeLabel.moveTo(leftXMargin, 530);
+        this.timeLabel.font = `75px ${normalFont}`;
+        this.timeLabel.moveTo(leftXMargin + 50, 410);
         this.scene.addChild(this.timeLabel);
 
         // ready sprite
@@ -189,6 +203,10 @@ class PlayPage {
         this.timeLimit = serverGame.timeLimit;
         this.mapHeight = serverGame.map.height;
         this.mapWidth = serverGame.map.width;
+        
+        //prepare corpse pool
+        this.corpseSpritesPool = [];
+        this.corpseCount = {};
 
         this.isInvincible = false;
         this.isTimeLimit = false;
@@ -234,6 +252,9 @@ class PlayPage {
             }
 
             this.scene.addChild(playerSprite);
+            
+            //init corpseCount
+            this.corpseCount[player.id] = 0;
         });
 
         this.myPlayer = this.players.find(x => x.id === myId);
@@ -257,7 +278,7 @@ class PlayPage {
         this.updateTimeLabel();
 
         this.game.replaceScene(this.scene);
-
+        
         // ready
         this.ready();
     }
@@ -331,7 +352,7 @@ class PlayPage {
 
     updateScores (scores) {
         const scoreText = ('00000' + scores.score).slice(-5);
-        this.scoreLabel.text = `score : ${scoreText}`;
+        this.scoreLabel.text = `${scoreText}`;
 
         ['takeNormalItemCount', 'takeInvincibleItemCount', 'takeBombItemCount', 'takeSlowItemCount'].forEach((key, i) => {
             this.sideItemLabels[i].updateText(scores[key]);
@@ -356,7 +377,7 @@ class PlayPage {
 
     updateTimeLabel () {
         const timeText = this.timeLimit / 1000;
-        this.timeLabel.text = `time : ${timeText}`;
+        this.timeLabel.text = `${timeText}`;
     }
 
     onMovePlayer (req) {
@@ -415,6 +436,7 @@ class PlayPage {
         // show corpse 3 sec
         setTimeout(() => {
             this.scene.removeChild(sprite);
+            this.moveCropseUnderName(sprite,wolf.id);
         }, 3000);
     }
 
@@ -572,6 +594,7 @@ class PlayPage {
                 //show corpse 3 sec
                 setTimeout(() => {
                     this.scene.removeChild(sprite);
+                    this.moveCropseUnderName(sprite,wolf.id);
                 }, 3000);
             }
         });
@@ -620,6 +643,10 @@ class PlayPage {
         this.scene.addChild(this.stateSprite);
         setTimeout(() => {
             this.scene.removeChild(this.stateSprite);
+            //clear this scene cropse
+            for(let i=0;i<this.corpseSpritesPool.length;i++){
+            	this.scene.removeChild(this.corpseSpritesPool[i]);
+            }
             resultPage.init(req.game);
         }, 2000);
     }
@@ -816,5 +843,20 @@ class PlayPage {
             case 2: return game2Bgm;
             case 3: return game3Bgm;
         }
+    }
+    
+    moveCropseUnderName (sprite,id){
+    	const profile = this.profileSprites[id];
+    	//create cropse sprite to move
+    	const corpseSprite = new Sprite(pixel, pixel);
+    	corpseSprite.image = sprite.image;
+    	corpseSprite.frame = sprite.frame;
+    	corpseSprite.x = sprite.x;
+    	corpseSprite.y = sprite.y;
+        this.corpseSpritesPool.push(corpseSprite);
+        ++this.corpseCount[id];
+        const cIndex = this.corpseCount[id]>3?this.corpseCount[id]-3:this.corpseCount[id];
+        corpseSprite.tl.moveTo(profile.x + 100 + (pixel * cIndex) , profile.y+30+(pixel * (this.corpseCount[id]>3?1:0)), 20);
+        this.scene.addChild(corpseSprite);
     }
 }

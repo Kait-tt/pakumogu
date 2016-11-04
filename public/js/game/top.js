@@ -48,12 +48,12 @@ class TopPage {
     	    wImg.frame = [fIndex,fIndex,fIndex,fIndex+1,fIndex+1,fIndex+1];
     	    wImg.scale(-2,2);
     	    const timeOffSet = (i*5);
-    	    wImg.tl.moveBy(300+(timeOffSet), 0, 30+(timeOffSet))
+    	    wImg.tl.moveBy(300, 0, 30+(timeOffSet))
             .scaleTo(2, 2, 10)
             .moveBy(0, -10, 5).moveBy(0, 10, 5)
             .moveBy(0, -10, 5).moveBy(0, 10, 5)
             .moveBy(0, -10, 5).moveBy(0, 10, 5)
-            .moveBy(-300-(timeOffSet), 0, 30+(timeOffSet))
+            .moveBy(-300, 0, 30+(timeOffSet))
             .scaleTo(-2, 2, 10)
             .loop();
     	    
