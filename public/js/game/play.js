@@ -159,6 +159,9 @@ class PlayPage {
         this.bombEffect.moveTo(1920 / 2 - 220, 1080 / 2 - 150);
         this.bombEffect.image = this.game.assets[bombImg];
 
+        // set move event
+        this.scene.on(Event.ENTER_FRAME, () => this.onMyPlayerEnterFrame());
+
         // set socket events
         socket.on('movePlayer', req => this.onMovePlayer(req));
         socket.on('killSheep', req => this.onKillSheep(req));
@@ -235,9 +238,6 @@ class PlayPage {
 
         this.myPlayer = this.players.find(x => x.id === myId);
         this.mySprite = this.playerSprites[myId];
-
-        // set move event
-        this.mySprite.on(Event.ENTER_FRAME, () => this.onMyPlayerEnterFrame());
 
         // set sheep and wolfs
         this.sheep = this.players.find(x => !x.isEnemy);
@@ -366,20 +366,19 @@ class PlayPage {
         const player = this.players.find(x => x.id === req.player.id);
         const sprite = this.playerSprites[req.player.id];
 
-        const headFrame = this.rotateHeadPlayer(player.imageIndex , req.player.id, {x, y});
         
-        const idx = player.imageIndex * 5;
+        const headFrame = this.rotateHeadPlayer(player.imageIndex , sprite, {x, y});
+        const idx = (player.imageIndex * 5)+headFrame;
         
         //add case +3 ,+4 for up down head
         if (player.isAI) {
-            sprite.frame = sprite.frame === (idx+headFrame) ? idx + 1 + headFrame : idx + headFrame;
+        	sprite.frame = sprite.frame === (idx) ? idx + 1 : idx;
         } else {
             if (++player.moveFrameCount > MOVE_FRAME_COUNT_LIMIT) {
                 player.moveFrameCount = 0;
-                sprite.frame = sprite.frame === (idx+headFrame) ? idx + 1 + headFrame : idx + headFrame;
+                sprite.frame = sprite.frame === (idx) ? idx + 1 : idx;
             }
         }
-
         // change position
         sprite.x = x;
         sprite.y = y;
@@ -681,14 +680,12 @@ class PlayPage {
     enterMove () {
         const mySprite = this.mySprite;
         const mySpeed  = this.mySpeed;
-
+        
         for (let i = 0; i < 4; i++) {
             if (!this.game.input[DIRS[i]]) { continue; }
-
             let {x, y} = mySprite;
             x += DX[i] * mySpeed;
             y += DY[i] * mySpeed;
-
             // check the wall
             if (!this.hitTest({x, y})) {
                 this.warpPortal({x, y});
@@ -719,7 +716,6 @@ class PlayPage {
                             } else {
                                 x += sign * mySpeed;
                             }
-
                             this.warpPortal({x, y});
                             return;
                         }
@@ -729,9 +725,8 @@ class PlayPage {
         }
     }
 
-    rotateHeadPlayer (imageIndex , id, {x, y}) {
+    rotateHeadPlayer (imageIndex , playerSprite, {x, y}) {
     	//not rotate head but change frame
-    	const playerSprite = this.playerSprites[id];
         playerSprite.rotation = 0;
         if (playerSprite.x < x) { //right
             playerSprite.scaleX  = playerSprite.scaleX < 0?playerSprite.scaleX:-playerSprite.scaleX;
@@ -772,7 +767,6 @@ class PlayPage {
         } else if (y < pixel / 2 + GAME_OFFSET_Y){
             y = mapYLimit;
         }
-
         socket.movePlayer({x, y});
     }
 
