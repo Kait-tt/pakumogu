@@ -157,6 +157,7 @@ class SocketRouter {
 
         try {
             const player = this.gameMaster.movePlayer(user, {x, y});
+            if (!player.isAlive) { return; }
             this.emits('movePlayer', {player: player.serialize()});
         } catch (e) {
             console.error(e);
