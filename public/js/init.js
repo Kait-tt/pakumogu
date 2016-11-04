@@ -4,6 +4,7 @@ const normalFont = 'Kazesawa, Arial, Helvetica, sans-serif';
 
 const bgImg = '/img/title.png';
 const gameImg = '/img/game.png';
+const game2Img = '/img/game2.png';
 const charImg = '/img/chara.png';
 const resultImg = '/img/result.png';
 const blackImg = '/img/blackbox.png';
@@ -94,7 +95,7 @@ function enchantInit(){
 	var game = new Core(1920, 1080);
 	game.fps = 30;
 	game.preload( 
-			bgImg, gameImg, mapImg, charImg, itemImg, resultImg, blackImg, startImg, readyImg, finishImg, bombImg, enterButtonImg, startButtonImg, backButtonImg, nameBoardImg, //img
+			bgImg, gameImg, game2Img, mapImg, charImg, itemImg, resultImg, blackImg, startImg, readyImg, finishImg, bombImg, enterButtonImg, startButtonImg, backButtonImg, nameBoardImg, //img
 			gameBgm, game2Bgm, game3Bgm, topPageBgm, powerup1Bgm, resultPageBgm,//bgm
 			foodSe, sheepDeathSe, readySe, startSe, waitingSe, footStepsSe, decisionSe, clearSe, endSe, powerUpSe, wolfDeathSe, bombSe, respawnSe//se
 			);
