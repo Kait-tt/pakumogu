@@ -3,7 +3,18 @@ function initPowerItem(game, type = 'power'){
     var item = new Sprite(pixel, pixel);
     item.image = game.assets[itemImg];
 
-    if (type === 'invincible' || type === 'power') {
+    if (type === 'power') {
+        item.frame = [
+            3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+            3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+            3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+            3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+            3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+            3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+            7, 7, 7, 7, 7, 8, 8, 8, 8, 8,
+            7, 7, 7, 7, 7, 8, 8, 8, 8, 8, 7, 7, 7, 7, 7
+        ];
+    } else if (type === 'invincible') {
         item.frame = 3;
     } else if (type === 'bomb') {
         item.frame = 5;
