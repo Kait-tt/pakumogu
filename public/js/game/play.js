@@ -501,18 +501,19 @@ class PlayPage {
 	    			sprite.scale(sprite.scaleX * 5, sprite.scaleY * 5);
 	    		}
 	        }, 200);
-	    	
-	    	setTimeout(() => {
-	            clearInterval(transformInverval);
-	            sprite.tl.scaleTo(1, 0);
-	        }, 1000);
+
+            setTimeout(() => {
+                clearInterval(transformInverval);
+                this.playerSprites[sheep.id].tl.scaleTo(1, 0);
+            }, 1000);
         }, 100);
+
         //invincible duration is 5
         //switch between sheep and dragon on last sec
         clearTimeout(this.endInvinsibleEffectTimeoutId);
         this.endInvinsibleEffectTimeoutId = setTimeout(() => {
         	//after 4 sec start switching
-        	const fadeInvincIntervalId = setInterval(() => {
+            this.fadeInvincIntervalId = setInterval(() => {
         		if(sprite.frame < 5*5 ){
         			//sheep -> dragon
         			sprite.frame = sprite.frame + (5*5);
@@ -525,12 +526,7 @@ class PlayPage {
                     profile.updateFrame(0);
         		}
             }, 200);
-        	
-        	setTimeout(() => {
-                clearInterval(fadeInvincIntervalId);
-            }, 1000);
         }, 4000);
-        
     }
 
     onEndInvincible () {
@@ -542,6 +538,7 @@ class PlayPage {
         sheep.imageIndex = 0;
         sheep.moveFrameCount = 0;
 
+        clearInterval(this.fadeInvincIntervalId);
         this.playerSprites[sheep.id].frame = 0;
         this.profileSprites[sheep.id].updateFrame(0);
         
