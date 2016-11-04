@@ -490,14 +490,6 @@ class PlayPage {
         //switch between sheep and dragon then up-down-size
         //use timeline have problem when moving while transform
         //try to use interval instead
-        /*sprite.tl.scaleTo(1, 8)
-        		 .scaleTo(5, 8)
-        		 .scaleTo(1, 8)
-        		 .scaleTo(5, 8)
-        		 .scaleTo(1, 8)
-        		 .scaleTo(5, 8)
-        		 .scaleTo(1, 8)
-        		 .scaleTo(1, 8);*/
         clearTimeout(this.transformTimeOutId);
         this.transformTimeOutId = setTimeout(() => {
 	        const transformInverval = setInterval(() => {
