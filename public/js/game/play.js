@@ -34,7 +34,7 @@ class PlayPage {
         // make normal item sprites
         this.normalItemSprites = {};
         this.normalItemSpritesPool = [];
-        for (let i = 0; i < 150; i++) {
+        for (let i = 0; i < 180; i++) {
             const itemSprite = initNormalItem(this.game);
             this.normalItemSpritesPool.push(itemSprite);
         }
@@ -200,6 +200,7 @@ class PlayPage {
 
         // init normal items
         this.normalItemSprites = {};
+        this.normalItemSpritesPool.forEach(x => this.scene.removeChild(x));
         this.normalItems.forEach((item, i) => {
             const itemSprite = this.normalItemSpritesPool[i];
             itemSprite.x = item.coordinate.x;
@@ -210,6 +211,7 @@ class PlayPage {
 
         // init all power items
         this.powerItemSprites = {};
+        this.powerItemSpritesPool.forEach(x => this.scene.removeChild(x));
         this.powerItems.forEach((item, i) => {
             const itemSprite = this.powerItemSpritesPool[i];
             this.powerItemSprites[item.id] = itemSprite;
