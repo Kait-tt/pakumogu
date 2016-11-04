@@ -10,7 +10,7 @@ class PlayPage {
         this.mapWidth = 0;
 
         this.isInvincible = false;
-        this.isEnded = false;
+        this.isEnded = true;
         this.isTimeLimit = false;
         this.wolfImageIndex = 0;
         this.mySpeed = 0;
@@ -160,6 +160,7 @@ class PlayPage {
         socket.on('endSlow', () => this.onEndSlow());
         socket.on('endGame', (req) => this.onEndGame(req));
         socket.on('updateScore', (scores) => this.onUpdateScore(scores));
+        socket.on('startGame', (req) => this.onStartGame());
     }
 
     init (serverGame) {
@@ -174,7 +175,6 @@ class PlayPage {
         this.mapWidth = serverGame.map.width;
 
         this.isInvincible = false;
-        this.isEnded = false;
         this.isTimeLimit = false;
         this.wolfImageIndex = 0;
         this.mySpeed = 0;
@@ -251,22 +251,45 @@ class PlayPage {
         //count for change frame
         player.moveFrameCount = 0;
 
-        //starting point
-        sprite.x = player.coordinate.x;
-        sprite.y = player.coordinate.y;
-        sprite.tl.scaleTo(1, 1);
-
+        const fixPositionRightSide = [[1515, 90], [1515, 275], [1515, 455], [1515, 640], [1515, 825]];
+        
         // if enemy = wolf
         if (player.isEnemy){
             // wolf
             player.imageIndex = this.wolfImageIndex % 4 + 1;
             ++this.wolfImageIndex;
+            
+            sprite.x = fixPositionRightSide[this.wolfImageIndex][0];
+            sprite.y = fixPositionRightSide[this.wolfImageIndex][1];
         } else {
             // sheep
             player.imageIndex = 0;
+            
+            sprite.x = fixPositionRightSide[0][0];
+            sprite.y = fixPositionRightSide[0][1];
         }
 
         sprite.frame = player.imageIndex * 3;
+        
+        //moving character to starting point
+        sprite.tl.moveTo(player.coordinate.x, player.coordinate.y,18)
+        	.exec(() => {
+        		    sprite.x = player.coordinate.x;
+        		    sprite.y = player.coordinate.y;
+        		});
+    }
+    
+    onStartGame (){
+    	//reset all player position
+    	//starting point
+    	this.players.forEach((player, i) => {
+            const playerSprite = this.playerSpritesPool[i];
+            this.playerSprites[player.id] = playerSprite;
+            player.moveFrameCount = 0;
+            playerSprite.tl.scaleTo(1, 1);
+        });
+
+        this.isEnded = false;
     }
 
     ready () {
@@ -419,7 +442,9 @@ class PlayPage {
         item.enabled = false;
 
         const sprite = this.normalItemSprites[item.id];
-        this.scene.removeChild(sprite);
+        
+        //eat item effect
+        sprite.tl.moveTo(60, 656,20);
     }
 
     onTakePowerItem (req) {
@@ -579,6 +604,8 @@ class PlayPage {
     // in the player being in a "hit" zone, then back the player up to
     // its original location. Tweak "hits" by "offset" pixels.
     onMyPlayerEnterFrame () {
+    	if (this.isEnded) { return; }
+    	
         this.enterMove();
 
         const myPlayer = this.myPlayer;
