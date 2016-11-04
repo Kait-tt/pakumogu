@@ -27,6 +27,44 @@ class TopPage {
         this.userList = new Label();
         this.userList.font = `50px ${normalFont}`;
         this.userList.moveTo(1580,400);
+        
+        // sprite animate
+        const pixel = 64;
+        this.sImg = new Sprite(pixel, pixel);
+        this.sImg.image = game.assets[charImg];
+        this.sImg.frame = [0,0,0,1,1,1];
+        this.sImg.scale(-2,2);
+        this.sImg.moveTo(235, 700);
+
+        this.sImg.tl.moveBy(300, 0, 90)
+            .scaleTo(2, 2, 10)
+            .moveBy(-300, 0, 90)
+            .scaleTo(-2, 2, 10)
+            .loop();
+        
+        this.wolfImageIndex = 0;
+        this.wImgList = [];
+        for(let i=0;i<4;i++){
+        	const wImg = new Sprite(pixel, pixel);
+        	wImg.image = game.assets[charImg];
+    	    
+    	    ++this.wolfImageIndex;
+    	    const fIndex = (this.wolfImageIndex % 4 + 1) * 3;
+    	    wImg.frame = [fIndex,fIndex,fIndex,fIndex+1,fIndex+1,fIndex+1];
+    	    wImg.scale(-2,2);
+    	    const timeOffSet = (i*5);
+    	    wImg.tl.moveBy(300+(timeOffSet), 0, 30+(timeOffSet))
+            .scaleTo(2, 2, 10)
+            .moveBy(0, -10, 5).moveBy(0, 10, 5)
+            .moveBy(0, -10, 5).moveBy(0, 10, 5)
+            .moveBy(0, -10, 5).moveBy(0, 10, 5)
+            .moveBy(-300+(timeOffSet), 0, 30+(timeOffSet))
+            .scaleTo(-2, 2, 10)
+            .loop();
+    	    
+    	    wImg.moveTo(800 + (i*150), 700);
+    	    this.wImgList[i] = wImg;
+        }
 
         // enter button
         this.enterButton = new Button();
@@ -121,6 +159,10 @@ class TopPage {
         this.scene.addChild(this.usernameLabel);
         this.scene.addChild(this.usernameInputBox);
         this.scene.addChild(this.enterButton);
+        this.scene.addChild(this.sImg);
+        for(let i=0;i<this.wImgList.length;i++){
+        	this.scene.addChild(this.wImgList[i]);
+        }
     }
 
     changeScreenToTop2 () {
@@ -128,6 +170,10 @@ class TopPage {
         this.scene.removeChild(this.usernameLabel);
         this.scene.removeChild(this.usernameInputBox);
         this.scene.removeChild(this.enterButton);
+        this.scene.removeChild(this.sImg);
+        for(let i=0;i<this.wImgList.length;i++){
+        	this.scene.removeChild(this.wImgList[i]);
+        }
 
         // add nodes
         this.startButton.initialize();

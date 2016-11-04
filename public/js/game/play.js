@@ -469,7 +469,7 @@ class PlayPage {
         this.scene.addChild(this.bombEffect);
         setTimeout(() => {
             this.scene.removeChild(this.bombEffect);
-        }, 2000);
+        }, 500);
 
         this.wolfs.forEach(wolf => {
             if (wolf.isEnemy && wolf.isAlive) {
