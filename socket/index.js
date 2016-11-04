@@ -107,7 +107,10 @@ class SocketRouter {
     }
 
     joinRoom (user) {
+        if (this.gameMaster.game.state !== Game.STATES.idle) { return; }
+
         user.socket.join(this.gameRoomKey);
+
         try {
             this.gameMaster.addPlayer(user);
             this.emits('joinRoom', {username: user.username, id: user.id, game: this.gameMaster.game.serialize()});
