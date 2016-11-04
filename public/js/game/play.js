@@ -289,6 +289,7 @@ class PlayPage {
         	.exec(() => {
         		    sprite.x = player.coordinate.x;
         		    sprite.y = player.coordinate.y;
+        		    sprite.rotation = 0;
         		});
     }
     
@@ -363,16 +364,17 @@ class PlayPage {
         const player = this.players.find(x => x.id === req.player.id);
         const sprite = this.playerSprites[req.player.id];
 
-        this.rotateHeadPlayer(sprite, {x, y});
-
+        const headFrame = this.rotateHeadPlayer(player.imageIndex , req.player.id, {x, y});
+        
         const idx = player.imageIndex * 5;
-
+        
+        //add case +3 ,+4 for up down head
         if (player.isAI) {
-            sprite.frame = sprite.frame === idx ? idx + 1 : idx;
+            sprite.frame = sprite.frame === (idx+headFrame) ? idx + 1 + headFrame : idx + headFrame;
         } else {
             if (++player.moveFrameCount > MOVE_FRAME_COUNT_LIMIT) {
                 player.moveFrameCount = 0;
-                sprite.frame = sprite.frame === idx ? idx + 1 : idx;
+                sprite.frame = sprite.frame === (idx+headFrame) ? idx + 1 + headFrame : idx + headFrame;
             }
         }
 
@@ -390,8 +392,8 @@ class PlayPage {
         this.addDeathOnProfile(sheep.id);
 
         const sprite = this.playerSprites[sheep.id];
-        this.playerSprites[sheep.id].frame = sheep.imageIndex * 5 + 2;
-        
+        sprite.frame = sheep.imageIndex * 5 + 2;
+        sprite.rotation = 0;
         // show corpse 3 sec
         setTimeout(() => {
             this.scene.removeChild(sprite);
@@ -408,7 +410,7 @@ class PlayPage {
 
         const sprite = this.playerSprites[wolf.id];
         sprite.frame = wolf.imageIndex * 5 + 2;
-        
+        sprite.rotation = 0;
         // show corpse 3 sec
         setTimeout(() => {
             this.scene.removeChild(sprite);
@@ -511,13 +513,15 @@ class PlayPage {
         this.endInvinsibleEffectTimeoutId = setTimeout(() => {
         	//after 4 sec start switching
         	const fadeInvincIntervalId = setInterval(() => {
-        		if(sprite.frame == 0){
-        			//dragon
-        			sprite.frame = 5 * 5;
+        		if(sprite.frame < 5*5 ){
+        			//sheep -> dragon
+        			sprite.frame = sprite.frame + (5*5);
+        			sprite.rotation = 0;
                     profile.updateFrame(5 * 5);
         		}else{
         			//sheep
-        			sprite.frame = 0;
+        			sprite.frame = sprite.frame - (5*5);
+        			sprite.rotation = 0;
                     profile.updateFrame(0);
         		}
             }, 200);
@@ -562,7 +566,7 @@ class PlayPage {
 
                 const sprite = this.playerSprites[wolf.id];
                 sprite.frame = wolf.imageIndex * 5 + 2;
-                              
+                sprite.rotation = 0;
                 //show corpse 3 sec
                 setTimeout(() => {
                     this.scene.removeChild(sprite);
@@ -722,19 +726,23 @@ class PlayPage {
         }
     }
 
-    rotateHeadPlayer (playerSprite, {x, y}) {
+    rotateHeadPlayer (imageIndex , id, {x, y}) {
+    	//not rotate head but change frame
+    	const playerSprite = this.playerSprites[id];
+        playerSprite.rotation = 0;
         if (playerSprite.x < x) { //right
             playerSprite.scaleX  = playerSprite.scaleX < 0?playerSprite.scaleX:-playerSprite.scaleX;
-            playerSprite.rotation = 0;
+            return 0;
         } else if (playerSprite.x > x){ // left
             playerSprite.scaleX  = playerSprite.scaleX > 0?playerSprite.scaleX:-playerSprite.scaleX;
-            playerSprite.rotation = 0;
+            return 0;
         } else if (playerSprite.y < y){ // down
-            playerSprite.scaleX  = playerSprite.scaleX < 0?playerSprite.scaleX:-playerSprite.scaleX;
-            playerSprite.rotation = 90;
+            playerSprite.scaleX  = playerSprite.scaleX > 0?playerSprite.scaleX:-playerSprite.scaleX;
+            playerSprite.rotation = 180;
+            return 3;
         } else if (playerSprite.y > y){ // up
-            playerSprite.scaleX  = playerSprite.scaleX < 0?playerSprite.scaleX:-playerSprite.scaleX;
-            playerSprite.rotation = 270;
+            playerSprite.scaleX  = playerSprite.scaleX > 0?playerSprite.scaleX:-playerSprite.scaleX;
+            return 3;
         }
     }
 
