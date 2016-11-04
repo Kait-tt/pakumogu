@@ -27,6 +27,12 @@ class PlayPage {
         this.bg.image = this.game.assets[gameImg];
         this.scene.addChild(this.bg);
 
+        // dragon mode background image
+        this.bg2 = new Sprite(1920, 1080);
+        this.bg2.image = this.game.assets[game2Img];
+        this.bg2.visible = false;
+        this.scene.addChild(this.bg2);
+
         // map
         this.map = initDynamicMap(this.game);
         this.scene.addChild(this.map);
@@ -196,6 +202,9 @@ class PlayPage {
     init (serverGame) {
         // stop the music
         bgmController.stop();
+
+        this.bg.visible = true;
+        this.bg2.visible = false;
 
         this.normalItems = serverGame.normalItems;
         this.powerItems = serverGame.powerItems;
@@ -512,6 +521,9 @@ class PlayPage {
     onStartInvincible () {
         if (this.isEnded) { return; }
 
+        this.bg2.visible = true;
+        this.bg.visible = false;
+
         this.isInvincible = true;
 
         const sheep = this.sheep;
@@ -575,6 +587,8 @@ class PlayPage {
     onEndInvincible () {
         if (this.isEnded) { return; }
 
+        this.bg.visible = true;
+        this.bg2.visible = false;
         this.isInvincible = false;
 
         const sheep = this.sheep;
