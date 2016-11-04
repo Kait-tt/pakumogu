@@ -187,6 +187,6 @@ class TopPage {
     }
 
     updateUserList (players) {
-        this.userList.text = players.filter(player => player.user).map(player => player.user.username).join('<br>');
+        this.userList.text = players.filter(player => player.user).map(player => '・ ' + player.user.username).join('<br>');
     }
 }
