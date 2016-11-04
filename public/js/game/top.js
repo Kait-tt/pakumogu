@@ -99,7 +99,7 @@ class TopPage {
         });
     }
 
-    init () {
+    init ({entered = false} = {}) {
         // bgm
         bgmController.stop();
         bgmController.play(topPageBgm);
@@ -107,7 +107,11 @@ class TopPage {
         this.enabled = true;
         this.game.replaceScene(this.scene);
 
-        this.changeScreenToTop1();
+        if (entered) {
+            this.changeScreenToTop2();
+        } else {
+            this.changeScreenToTop1();
+        }
     }
 
     changeScreenToTop1 () {
