@@ -78,7 +78,9 @@ class TopPage {
             this.enterButton.on(Event.TOUCH_START, () => {
                 this.game.assets[decisionSe].play();
                 const username = this.usernameInputBox.value;
-                socket.join(username);
+                if (username.trim()) {
+                    socket.join(username);
+                }
             });
         })(this.enterButton.initialize));
 
@@ -131,13 +133,12 @@ class TopPage {
         });
 
         socket.on('initGame', (req) => {
-            // initPlayScene(this.game, req.game);
             playPage.init(req.game);
             this.enabled = false;
         });
     }
 
-    init () {
+    init ({entered = false} = {}) {
         // bgm
         bgmController.stop();
         bgmController.play(topPageBgm);
@@ -145,7 +146,14 @@ class TopPage {
         this.enabled = true;
         this.game.replaceScene(this.scene);
 
-        this.changeScreenToTop1();
+        if (entered) {
+            this.changeScreenToTop1();
+            const username = this.usernameInputBox.value;
+            socket.join(username);
+            this.changeScreenToTop2();
+        } else {
+            this.changeScreenToTop1();
+        }
     }
 
     changeScreenToTop1 () {
