@@ -32,13 +32,25 @@ class SocketRouter {
             this.emits('endInvincible', {});
         });
 
+        this.gameMaster.on('bomb', () => {
+            this.emits('bomb', {});
+        });
+
+        this.gameMaster.on('startSlow', () => {
+            this.emits('startSlow', {});
+        });
+
+        this.gameMaster.on('endSlow', () => {
+            this.emits('endSlow', {});
+        });
+
         this.gameMaster.on('endGame', ({game, isTimeLimit}) => {
             this.emits('endGame', {game: game.serialize(), isTimeLimit});
             this.gameMaster.reCreateGame();
         });
 
-        this.gameMaster.on('updateScore', ({score, remainingTime, killCount, takeNormalItemCount, takePowerItemCount}) => {
-            this.emits('updateScore', {score, remainingTime, killCount, takeNormalItemCount, takePowerItemCount});
+        this.gameMaster.on('updateScore', (scores) => {
+            this.emits('updateScore', scores);
         });
 
         this.io.sockets.on('connection', socket => {
@@ -145,6 +157,7 @@ class SocketRouter {
 
         try {
             const player = this.gameMaster.movePlayer(user, {x, y});
+            if (!player.isAlive) { return; }
             this.emits('movePlayer', {player: player.serialize()});
         } catch (e) {
             console.error(e);
