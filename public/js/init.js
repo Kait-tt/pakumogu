@@ -91,7 +91,7 @@ function enchantInit(){
 	game.fps = 30;
 	game.preload( 
 			bgImg, gameImg, mapImg, charImg, itemImg, resultImg, blackImg, startImg, readyImg, finishImg, bombImg, //img
-			gameBgm, game2Bgm, game3Bgm, topPageBgm, powerup1Bgm, resultPageBgm,//bgm
+			/*gameBgm, game2Bgm, game3Bgm, topPageBgm, powerup1Bgm, */resultPageBgm,//bgm
 			foodSe, sheepDeathSe, readySe, startSe, waitingSe, footStepsSe, decisionSe, clearSe, endSe, powerUpSe, wolfDeathSe, bombSe, respawnSe//se
 			);
 
@@ -101,7 +101,22 @@ function enchantInit(){
 		topPage = new TopPage(game);
 		playPage = new PlayPage(game);
 		resultPage = new ResultPage(game);
-		topPage.init();
+		// topPage.init();
+
+		resultPage.init({
+			takeNormalItemCount: 1,
+			takePowerItemCount: 1,
+			killCount: 1,
+			remainingTime: 10000,
+			score: 4213,
+			players: [
+				{isEnemy: false, isAI: false, user: {username: 'AAA'}},
+				{isEnemy: true, isAI: false, user: {username: 'BBB'}},
+				{isEnemy: true, isAI: false, user: {username: 'CCC'}},
+				{isEnemy: true, isAI: true},
+				{isEnemy: true, isAI: true},
+			]
+		});
 	};
 
 	game.start();
