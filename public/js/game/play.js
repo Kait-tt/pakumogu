@@ -69,7 +69,7 @@ class PlayPage {
         
         this.scoreLabel = new Label();
         this.scoreLabel.font = `75px ${normalFont}`;
-        this.scoreLabel.moveTo(leftXMargin + 50, 250);
+        this.scoreLabel.moveTo(leftXMargin + 50, 210);
         this.scene.addChild(this.scoreLabel);
 
         // item status on left side
@@ -161,7 +161,7 @@ class PlayPage {
         
         this.timeLabel = new Label();
         this.timeLabel.font = `75px ${normalFont}`;
-        this.timeLabel.moveTo(leftXMargin + 50, 450);
+        this.timeLabel.moveTo(leftXMargin + 50, 410);
         this.scene.addChild(this.timeLabel);
 
         // ready sprite
@@ -644,7 +644,7 @@ class PlayPage {
         setTimeout(() => {
             this.scene.removeChild(this.stateSprite);
             //clear this scene cropse
-            for(const i=0;i<this.corpseSpritesPool.length;i++){
+            for(let i=0;i<this.corpseSpritesPool.length;i++){
             	this.scene.removeChild(this.corpseSpritesPool[i]);
             }
             resultPage.init(req.game);
