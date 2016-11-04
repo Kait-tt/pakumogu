@@ -488,14 +488,23 @@ class PlayPage {
         bgmController.stop();
         bgmController.play(powerup1Bgm);
         //switch between sheep and dragon then up-down-size
-        sprite.tl.scaleTo(5, 5)
-        		 .scaleTo(1, 5)
-        		 .scaleTo(5, 5)
-        		 .scaleTo(1, 5)
-        		 .scaleTo(5, 5)
-        		 .scaleTo(1, 5);
-        sprite.tl.scaleTo(1, 0);
-        
+        //use timeline have problem when moving while transform
+        //try to use interval instead
+        clearTimeout(this.transformTimeOutId);
+        this.transformTimeOutId = setTimeout(() => {
+	        const transformInverval = setInterval(() => {
+	    		if(sprite.scaleX != 1 && sprite.scaleX != -1){
+	    			sprite.tl.scaleTo(1, 0);
+	    		}else{
+	    			sprite.scale(sprite.scaleX * 5, sprite.scaleY * 5);
+	    		}
+	        }, 200);
+	    	
+	    	setTimeout(() => {
+	            clearInterval(transformInverval);
+	            sprite.tl.scaleTo(1, 0);
+	        }, 1000);
+        }, 100);
         //invincible duration is 5
         //switch between sheep and dragon on last sec
         clearTimeout(this.endInvinsibleEffectTimeoutId);
