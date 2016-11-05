@@ -195,6 +195,8 @@ class ResultPage {
 		bgmController.stop();
 		bgmController.play(resultPageBgm);
 
+		socket.leaveRoom();
+
 		this.updateScores(serverGame);
 		this.updateUsernames(serverGame.players);
 		this.game.replaceScene(this.scene);
