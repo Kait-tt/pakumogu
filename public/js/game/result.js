@@ -195,7 +195,7 @@ class ResultPage {
 		bgmController.stop();
 		bgmController.play(resultPageBgm);
 
-		socket.leaveRoom();
+		socket.leave();
 
 		this.updateScores(serverGame);
 		this.updateUsernames(serverGame.players);
