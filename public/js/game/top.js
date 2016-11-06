@@ -146,7 +146,6 @@ class TopPage {
             this.changeScreenToTop1();
             const username = this.usernameInputBox.value;
             socket.join(username);
-            this.changeScreenToTop2();
         } else {
             this.changeScreenToTop1();
         }
