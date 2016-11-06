@@ -49,10 +49,14 @@ class PlayPage {
         // make power power item sprites
         this.powerItemSpritesPool = [];
         this.powerItemSprites = {};
-        for (let i = 0; i < 5; i++) {
-            const itemSprite = initPowerItem(this.game);
+        for (let i = 0; i < 3; i++) {
+            const itemSprite = initPowerItem(this.game, 'invincible');
             this.powerItemSpritesPool.push(itemSprite);
         }
+        const bombItemSprite = initPowerItem(this.game, 'bomb');
+        this.powerItemSpritesPool.push(bombItemSprite);
+        const slowItemSprite = initPowerItem(this.game, 'slow');
+        this.powerItemSpritesPool.push(slowItemSprite);
 
         // make player sprites
         this.playerSpritesPool = [];
@@ -242,8 +246,20 @@ class PlayPage {
         // init all power items
         this.powerItemSprites = {};
         this.powerItemSpritesPool.forEach(x => this.scene.removeChild(x));
-        this.powerItems.forEach((item, i) => {
-            const itemSprite = this.powerItemSpritesPool[i];
+        this.powerItemSpritesPool.forEach(x => {
+            this.scene.removeChild(x);
+            x.updateActualFrame();
+        });
+        let pCnt = 0;
+        this.powerItems.forEach(item => {
+            let itemSprites = this.powerItemSpritesPool.filter(x => x.type === item.type);
+            let itemSprite;
+            if (item.type === 'invincible') {
+                itemSprite = itemSprites[pCnt++];
+            } else {
+                itemSprite = itemSprites[0];
+            }
+
             this.powerItemSprites[item.id] = itemSprite;
             itemSprite.x = item.coordinate.x;
             itemSprite.y = item.coordinate.y;
@@ -347,6 +363,8 @@ class PlayPage {
             player.moveFrameCount = 0;
             playerSprite.tl.scaleTo(1, 1);
         });
+
+        this.powerItemSpritesPool.forEach(x => x.updatePowerFrame());
 
         this.isEnded = false;
     }
