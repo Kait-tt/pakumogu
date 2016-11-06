@@ -431,8 +431,14 @@ class PlayPage {
 
         
         const headFrame = this.rotateHeadPlayer(player, player.imageIndex , sprite, {x, y});
+        let idx;
         const oldIdx = sprite.frame;
-        const idx = (player.imageIndex * 5)+headFrame;
+        if (headFrame !== -1) {
+            idx = player.imageIndex * 5 + headFrame;
+        } else {
+            const i = player.imageIndex * 5;
+            idx = Math.abs(oldIdx - i) < 2 ? i : i + 3;
+        }
         
         //add case +3 ,+4 for up down head
         if (player.isAI) {
@@ -822,6 +828,8 @@ class PlayPage {
         } else if (playerSprite.y > y){ // up
             playerSprite.scaleX  = playerSprite.scaleX > 0?playerSprite.scaleX:-playerSprite.scaleX;
             return 3;
+        } else {
+            return -1;
         }
     }
 
