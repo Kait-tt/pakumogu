@@ -116,4 +116,5 @@ function enchantInit(){
 	const mainEle = document.getElementById('enchant-stage');
 	mainEle.style.left = 0;
 	mainEle.style.top = 0;
+    mainEle.style.position = 'static';
 }
