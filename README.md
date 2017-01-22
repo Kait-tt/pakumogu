@@ -13,7 +13,7 @@ paku paku mogu mogu
 - 正式名称はPAKUPAKUMOGUMOGUだったような、PAKUMOGUだったような...（曖昧）
 
 ## 音声素材のライセンス
-以下のものを利用しています。
+以下のサイトの音声を利用しています。
 
 - [フリー音素材 01SoundEarth](http://www.01earth.net/sound/)
 - [フリー音楽素材/魔王魂](http://maoudamashii.jokersounds.com/)
